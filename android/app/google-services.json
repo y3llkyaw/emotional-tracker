@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "52163657696",
+    "project_id": "emotion-tracker-7728e",
+    "storage_bucket": "emotion-tracker-7728e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:52163657696:android:3f65ac651a4142e01b3585",
+        "android_client_info": {
+          "package_name": "com.emotions.tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCh6SvCc6LmXAVOMvD-ouzuoTyTBX65aZk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:52163657696:android:3d7f772c443095451b3585",
+        "android_client_info": {
+          "package_name": "com.example.emotion_tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCh6SvCc6LmXAVOMvD-ouzuoTyTBX65aZk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
