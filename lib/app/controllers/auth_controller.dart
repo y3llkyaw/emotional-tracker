@@ -20,6 +20,7 @@ class AuthController extends GetxController {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       Get.snackbar("Success", "Logged in successfully!");
+      Get.offAllNamed("/home");
     } catch (e) {
       Get.snackbar("Error", e.toString());
     }

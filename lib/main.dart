@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'app/data/services/dependency_injection.dart';
@@ -11,7 +10,7 @@ import 'app/ui/theme/themes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  DependecyInjection.init();
+  await DependecyInjection.init();
 
   runApp(const MyApp());
 }
@@ -32,7 +31,7 @@ class MyApp extends StatelessWidget {
           translations: Translation(),
           locale: const Locale('en'),
           fallbackLocale: const Locale('en'),
-          initialRoute: AppRoutes.INITIAL,
+          initialRoute: AppRoutes.HOME,
           unknownRoute: AppPages.unknownRoutePage,
           getPages: AppPages.pages,
           builder: (_, child) {

@@ -1,20 +1,61 @@
+import 'dart:developer';
+
+import 'package:emotion_tracker/app/ui/global_widgets/custom_radio_button.dart';
+import 'package:emotion_tracker/app/ui/pages/calendar_page/calendar_page.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_page/profile_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../layouts/main/main_layout.dart';
-
 import '../../../controllers/home_controller.dart';
 
 class HomePage extends GetView<HomeController> {
-  const HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
+  final HomeController homeController = Get.find();
   @override
   Widget build(BuildContext context) {
-    return const MainLayout(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('HomePage'),
-        ],
+    return Scaffold(
+      appBar: AppBar(),
+      body: Obx(() => IndexedStack(
+            index: homeController.pageIndex.value,
+            children: [
+              const Center(child: Text('Home')),
+              CalendarPage(),
+              const ProfilePage(),
+            ],
+          )),
+      bottomNavigationBar: ClipRRect(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+        child: Obx(
+          () => BottomNavigationBar(
+            currentIndex: homeController.pageIndex.value,
+            onTap: (index) {
+              homeController.changeIndex(index);
+            },
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor: Colors.black,
+            unselectedItemColor: Colors.grey,
+            backgroundColor: Get.isDarkMode ? Colors.black : Colors.white,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(CupertinoIcons.home),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(CupertinoIcons.calendar),
+                label: 'Calendar',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(CupertinoIcons.person),
+                label: 'Profile',
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

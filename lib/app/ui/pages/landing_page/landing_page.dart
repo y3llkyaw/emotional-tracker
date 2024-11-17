@@ -1,5 +1,4 @@
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
-import 'package:emotion_tracker/app/ui/layouts/main/main_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -9,7 +8,6 @@ class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(),
       body: Column(
         children: [
           SizedBox(

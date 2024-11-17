@@ -9,7 +9,7 @@ import 'package:get_storage/get_storage.dart';
 
 class DependecyInjection {
   static Future<void> init() async {
-// firebase init
+    // firebase init
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );

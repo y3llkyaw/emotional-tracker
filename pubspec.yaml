@@ -22,9 +22,11 @@ dependencies:
 
   firebase_auth:
   firebase_messaging:
-  firebase_core:
+  firebase_core: ^3.8.0
   cloud_firestore:
   flutter_svg: ^2.0.14
+  flutter_spinkit: ^5.2.1
+  table_calendar: ^3.1.2
 
 
 dev_dependencies:

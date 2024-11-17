@@ -1,11 +1,16 @@
+import 'package:emotion_tracker/app/controllers/auth_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/form_container_widget.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/outline_button.dart';
-import 'package:emotion_tracker/app/ui/layouts/main/main_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  LoginPage({Key? key}) : super(key: key);
+
+  final AuthController authController = Get.find();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -26,15 +31,17 @@ class LoginPage extends StatelessWidget {
                   width: double.infinity,
                   child: Image.asset('assets/image/login_account.png'),
                 ),
-                const FormContainerWidget(
+                FormContainerWidget(
                   hintText: 'Email Address',
+                  controller: emailController,
                 ),
                 const SizedBox(
                   height: 20,
                 ),
-                const FormContainerWidget(
+                FormContainerWidget(
                   hintText: 'Password',
                   isPasswordField: true,
+                  controller: passwordController,
                 ),
                 const SizedBox(
                   height: 20,
@@ -42,7 +49,12 @@ class LoginPage extends StatelessWidget {
                 CustomButton(
                   text: 'Log In',
                   isDisabled: false,
-                  onPressed: () {},
+                  onPressed: () async {
+                    await authController.signInWithEmail(
+                      emailController.text,
+                      passwordController.text,
+                    );
+                  },
                 ),
                 const SizedBox(
                   height: 5,

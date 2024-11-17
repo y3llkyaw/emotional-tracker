@@ -1,3 +1,5 @@
+import 'package:emotion_tracker/app/bindings/login_binding.dart';
+import 'package:emotion_tracker/app/routes/middlewares/auth_middleware.dart';
 import 'package:emotion_tracker/app/ui/pages/landing_page/landing_page.dart';
 import 'package:emotion_tracker/app/ui/pages/login_page/login_page.dart';
 import 'package:get/get.dart';
@@ -26,14 +28,23 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.HOME,
-      page: () => const HomePage(),
+      page: () => HomePage(),
       binding: HomeBinding(),
+      transition: _defaultTransition,
+      middlewares: [
+        AuthMiddleware(),
+      ],
+    ),
+    GetPage(
+      name: AppRoutes.LOGIN,
+      page: () => LoginPage(),
+      binding: LoginBinding(),
       transition: _defaultTransition,
     ),
     GetPage(
       name: AppRoutes.LOGIN,
-      page: () => const LoginPage(),
-      // binding: HomeBinding(),
+      page: () => LoginPage(),
+      binding: LoginBinding(),
       transition: _defaultTransition,
     ),
   ];
