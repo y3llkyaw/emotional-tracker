@@ -1,4 +1,3 @@
-
 class ModelHelpers {
   Map<String, dynamic> fromDocument(dynamic data) {
     data['createdAt'] = dateFromDocument(data['createdAt']);

@@ -39,7 +39,6 @@ class OutlineButtonWidget extends StatelessWidget {
                 text,
                 style: const TextStyle(
                   fontSize: 15,
-                  color: Colors.black,
                 ),
               ),
             ),

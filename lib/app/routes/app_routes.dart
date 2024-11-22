@@ -6,5 +6,6 @@ class AppRoutes {
   static const LOGIN = '/login';
   static const REGISTER = '/register';
   static const REGISTER_GOOGLE = '/register/google';
+  static const REGISTER_EMAIL = '/register/email';
   static const UNKNOWN = '/404';
 }

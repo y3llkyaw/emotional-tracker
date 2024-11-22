@@ -59,7 +59,7 @@ class LandingPage extends StatelessWidget {
             height: 50,
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
+            padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
             child: CustomButton(
                 text: "LET'S FIND OUT",
                 isDisabled: false,

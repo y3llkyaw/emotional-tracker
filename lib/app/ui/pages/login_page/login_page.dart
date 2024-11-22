@@ -46,15 +46,36 @@ class LoginPage extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                CustomButton(
-                  text: 'Log In',
-                  isDisabled: false,
-                  onPressed: () async {
-                    await authController.signInWithEmail(
-                      emailController.text,
-                      passwordController.text,
-                    );
-                  },
+                Obx(
+                  () => CustomButton(
+                    text: 'Log In',
+                    isLoading: authController.isLoading.value,
+                    onPressed: () async {
+                      if (emailController.text.isEmpty ||
+                          passwordController.text.isEmpty) {
+                        Get.snackbar(
+                          'Error',
+                          'Please enter email and password',
+                          backgroundColor: Colors.red,
+                          colorText: Colors.white,
+                        );
+                        return;
+                      }
+                      if (!emailController.text.isEmail) {
+                        Get.snackbar(
+                          'Error',
+                          'Please enter a valid email',
+                          backgroundColor: Colors.red,
+                          colorText: Colors.white,
+                        );
+                        return;
+                      }
+                      await authController.signInWithEmail(
+                        emailController.text,
+                        passwordController.text,
+                      );
+                    },
+                  ),
                 ),
                 const SizedBox(
                   height: 5,
@@ -65,7 +86,7 @@ class LoginPage extends StatelessWidget {
                     const Text('Don\'t have an account?'),
                     TextButton(
                       onPressed: () {
-                        // Get.to(() => const CreateAccountScreen());
+                        Get.toNamed('/register');
                       },
                       child: const Text('Sign Up'),
                     ),

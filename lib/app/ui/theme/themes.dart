@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class Themes {
@@ -11,6 +10,16 @@ class Themes {
   final darkTheme = ThemeData.dark().copyWith(
     primaryColor: Colors.grey[900],
     cardColor: Colors.grey[900],
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: Colors.blue,
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        iconColor: Colors.white,
+      ),
+    ),
     // scaffoldBackgroundColor: Colors.grey[800],
     shadowColor: Colors.grey,
   );

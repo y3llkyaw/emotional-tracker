@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 class AuthController extends GetxController {
   // FirebaseAuth instance
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  var isLoading = false.obs;
   // Reactive user object
   Rx<User?> firebaseUser = Rx<User?>(null);
 
@@ -17,6 +17,7 @@ class AuthController extends GetxController {
 
   // Sign In with Email and Password
   Future<void> signInWithEmail(String email, String password) async {
+    isLoading.value = true;
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       Get.snackbar("Success", "Logged in successfully!");
@@ -24,17 +25,21 @@ class AuthController extends GetxController {
     } catch (e) {
       Get.snackbar("Error", e.toString());
     }
+    isLoading.value = false;
   }
 
   // Register with Email and Password
   Future<void> registerWithEmail(String email, String password) async {
+    isLoading.value = true;
     try {
       await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       Get.snackbar("Success", "Account created successfully!");
+      Get.offAllNamed("/home");
     } catch (e) {
       Get.snackbar("Error", e.toString());
     }
+    isLoading.value = false;
   }
 
   // Sign Out
