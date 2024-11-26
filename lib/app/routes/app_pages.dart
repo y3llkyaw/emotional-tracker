@@ -1,10 +1,12 @@
 import 'package:emotion_tracker/app/bindings/login_binding.dart';
 import 'package:emotion_tracker/app/bindings/register_binding.dart';
 import 'package:emotion_tracker/app/routes/middlewares/auth_middleware.dart';
+import 'package:emotion_tracker/app/routes/middlewares/profile_middleware.dart';
 import 'package:emotion_tracker/app/ui/pages/create_account_page/create_account_page.dart';
 import 'package:emotion_tracker/app/ui/pages/create_account_page/register_email_page.dart';
 import 'package:emotion_tracker/app/ui/pages/landing_page/landing_page.dart';
 import 'package:emotion_tracker/app/ui/pages/login_page/login_page.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_setup_page/profile_name_page.dart';
 import 'package:get/get.dart';
 
 import '../bindings/home_binding.dart';
@@ -39,6 +41,7 @@ class AppPages {
       transitionDuration: defaultTransitionDuration,
       middlewares: [
         AuthMiddleware(),
+        ProfileMiddleware(),
       ],
     ),
     GetPage(
@@ -61,10 +64,17 @@ class AppPages {
       transition: _defaultTransition,
       transitionDuration: defaultTransitionDuration,
     ),
-     GetPage(
+    GetPage(
       name: AppRoutes.REGISTER_EMAIL,
       page: () => const RegisterEmailPage(),
       binding: RegisterBinding(),
+      transition: _defaultTransition,
+      transitionDuration: defaultTransitionDuration,
+    ),
+    GetPage(
+      name: AppRoutes.PROFILE_NAME,
+      page: () => ProfileNamePage(),
+      // binding: RegisterBinding(),
       transition: _defaultTransition,
       transitionDuration: defaultTransitionDuration,
     ),

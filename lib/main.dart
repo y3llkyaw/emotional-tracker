@@ -39,6 +39,7 @@ class MyApp extends StatelessWidget {
           },
         );
       },
+
       //! Must change it to true if you want to use the ScreenUtil
       designSize: const Size(411, 823),
     );

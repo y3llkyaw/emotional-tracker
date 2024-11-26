@@ -4,18 +4,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class AuthMiddleware extends GetMiddleware {
+class ProfileMiddleware extends GetMiddleware {
   @override
-
   RouteSettings? redirect(String? route) {
-    bool isAuthenticated;
-    if (FirebaseAuth.instance.currentUser != null) {
-      isAuthenticated = true;
+    bool isSetupped;
+    if (FirebaseAuth.instance.currentUser?.displayName != null) {
+      isSetupped = true;
     } else {
-      isAuthenticated = false;
+      isSetupped = false;
     }
-    if (!isAuthenticated) {
-      return const RouteSettings(name: '/');
+    if (!isSetupped) {
+      return const RouteSettings(name: '/profile/name');
     }
     return null; // Proceed to the intended route
   }
@@ -23,21 +22,22 @@ class AuthMiddleware extends GetMiddleware {
   @override
   GetPageBuilder? onPageBuildStart(GetPageBuilder? page) {
     // Perform tasks before the page builds (e.g., logging)
-    log("Page is about to build: ${page.runtimeType}", name: "auth-middleware");
+    log("Page is about to build: ${page.runtimeType}",
+        name: "profile-middleware");
     return super.onPageBuildStart(page);
   }
 
   @override
   Widget onPageBuilt(Widget page) {
     // Modify the page widget after it's built
-    log("Page built: ${page.runtimeType}", name: "auth-middleware");
+    log("Page built: ${page.runtimeType}", name: "profile-middleware");
     return super.onPageBuilt(page);
   }
 
   @override
   void onPageDispose() {
     // Cleanup when the page is disposed
-    log("Page is disposed", name: "auth-middleware");
+    log("Page is disposed", name: "profile-middleware");
     super.onPageDispose();
   }
 }

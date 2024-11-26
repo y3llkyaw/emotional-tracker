@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CustomRadioButton extends StatefulWidget {
-  const CustomRadioButton({Key? key, required this.title, required this.title2})
+  const CustomRadioButton(
+      {Key? key,
+      required this.title,
+      required this.title2,
+      this.selectedColor = Colors.orange,
+      this.unselectedColor = Colors.white})
       : super(key: key);
   final String title;
   final String title2;
+  final Color selectedColor;
+  final Color unselectedColor;
 
   @override
   State<CustomRadioButton> createState() => _CustomRadioButtonState();
@@ -49,7 +56,7 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
           width: Get.width * 0.4,
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
           decoration: BoxDecoration(
-              color: isSelected ? Colors.orange : Colors.white,
+              color: isSelected ? widget.selectedColor : widget.unselectedColor,
               borderRadius: isSelected
                   ? const BorderRadius.only(
                       topLeft: Radius.circular(30),
