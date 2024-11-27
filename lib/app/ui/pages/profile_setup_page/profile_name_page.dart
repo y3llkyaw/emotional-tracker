@@ -1,9 +1,9 @@
 import 'package:cool_dropdown/cool_dropdown.dart';
 import 'package:cool_dropdown/models/cool_dropdown_item.dart';
+import 'package:emotion_tracker/app/controllers/profile_setup_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/form_container_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:gender_picker/source/enums.dart';
 import 'package:gender_picker/source/gender_picker.dart';
 import 'package:get/get.dart';
@@ -16,10 +16,12 @@ class ProfileNamePage extends StatefulWidget {
 }
 
 class _ProfileNamePageState extends State<ProfileNamePage> {
+  final ProfileSetupController profileSetupController = Get.find();
   final nameController = TextEditingController();
-  final DropdownController<String> dayController = DropdownController();
-  final DropdownController<String> monthController = DropdownController();
-  final DropdownController<String> yearController = DropdownController();
+  final DropdownController<int> dayController = DropdownController();
+  final DropdownController<int> monthController = DropdownController();
+  final DropdownController<int> yearController = DropdownController();
+  var gender = Gender.Male;
 
   // Generate lists for days, months, and years
   final List<Map<String, dynamic>> days = List.generate(
@@ -50,7 +52,7 @@ class _ProfileNamePageState extends State<ProfileNamePage> {
       "value": "${DateTime.now().year - index}"
     },
   );
-  var gender = Gender.Male;
+
   @override
 
   /// Clean up the used resources.
@@ -110,9 +112,7 @@ class _ProfileNamePageState extends State<ProfileNamePage> {
               ),
               GenderPickerWithImage(
                 onChanged: (value) {
-                  setState(() {
-                    gender = value!;
-                  });
+                  profileSetupController.gender.value = value!;
                 },
                 selectedGender: gender,
                 selectedGenderTextStyle: const TextStyle(
@@ -149,7 +149,11 @@ class _ProfileNamePageState extends State<ProfileNamePage> {
                           );
                         }).toList(),
                         controller: DropdownController(),
-                        onChange: (value) {}),
+                        onChange: (value) {
+                          // print(value.runtimeType);
+                          profileSetupController.year.value =
+                              int.parse(value.toString());
+                        }),
                   ),
                   SizedBox(
                     width: Get.width / 3 - 20,
@@ -164,7 +168,10 @@ class _ProfileNamePageState extends State<ProfileNamePage> {
                           );
                         }).toList(),
                         controller: DropdownController(),
-                        onChange: (value) {}),
+                        onChange: (value) {
+                          profileSetupController.month.value =
+                              int.parse(value.toString());
+                        }),
                   ),
                   SizedBox(
                     width: Get.width / 3 - 20,
@@ -179,22 +186,30 @@ class _ProfileNamePageState extends State<ProfileNamePage> {
                                   value: index + 1,
                                 )).toList(),
                         controller: DropdownController(),
-                        onChange: (value) {}),
+                        onChange: (value) {
+                          profileSetupController.day.value =
+                              int.parse(value.toString());
+                        }),
                   ),
                 ],
               ),
 
-              CustomButton(
-                text: "Continue",
-                isDisabled: false,
-                isLoading: false,
-                onPressed: () {
-                  if (nameController.text.isEmpty ||
-                      nameController.text == "") {
-                    Get.snackbar("Error", "Please enter your name");
-                    return;
-                  }
-                },
+              Obx(
+                () => CustomButton(
+                  text: "Continue",
+                  isDisabled: false,
+                  isLoading: profileSetupController.loading.value,
+                  onPressed: () async {
+                    if (nameController.text.isEmpty ||
+                        nameController.text == "") {
+                      Get.snackbar("Error", "Please enter your name");
+                      return;
+                    } else {
+                      profileSetupController.name.value = nameController.text;
+                      await profileSetupController.setupProfile();
+                    }
+                  },
+                ),
               ),
             ],
           ),

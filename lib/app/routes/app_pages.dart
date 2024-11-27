@@ -1,4 +1,5 @@
 import 'package:emotion_tracker/app/bindings/login_binding.dart';
+import 'package:emotion_tracker/app/bindings/profile_binding.dart';
 import 'package:emotion_tracker/app/bindings/register_binding.dart';
 import 'package:emotion_tracker/app/routes/middlewares/auth_middleware.dart';
 import 'package:emotion_tracker/app/routes/middlewares/profile_middleware.dart';
@@ -73,8 +74,8 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.PROFILE_NAME,
-      page: () => ProfileNamePage(),
-      // binding: RegisterBinding(),
+      page: () => const ProfileNamePage(),
+      binding: ProfileBinding(),
       transition: _defaultTransition,
       transitionDuration: defaultTransitionDuration,
     ),
