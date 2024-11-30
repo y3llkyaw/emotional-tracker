@@ -7,7 +7,9 @@ class AppRoutes {
 
   // Profile Middlware
   static const PROFILE_NAME = '/profile/name';
-  static const PROFILE_DOB = '/profile/dob';
+  static const PROFILE_EDIT = '/profile/edit';
+  static const PROFILE_EDIT_PASSWORD = '/profile/update/password';
+  
 
   // Auth Middleware
   static const LOGIN = '/login';

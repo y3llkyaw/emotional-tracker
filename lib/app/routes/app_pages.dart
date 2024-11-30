@@ -1,5 +1,5 @@
 import 'package:emotion_tracker/app/bindings/login_binding.dart';
-import 'package:emotion_tracker/app/bindings/profile_binding.dart';
+import 'package:emotion_tracker/app/bindings/profile_setup_binding.dart';
 import 'package:emotion_tracker/app/bindings/register_binding.dart';
 import 'package:emotion_tracker/app/routes/middlewares/auth_middleware.dart';
 import 'package:emotion_tracker/app/routes/middlewares/profile_middleware.dart';
@@ -8,6 +8,8 @@ import 'package:emotion_tracker/app/ui/pages/create_account_page/register_email_
 import 'package:emotion_tracker/app/ui/pages/landing_page/landing_page.dart';
 import 'package:emotion_tracker/app/ui/pages/login_page/login_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_setup_page/profile_name_page.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_update_page/change_password_page/change_password_page.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_update_page/profile_update_page.dart';
 import 'package:get/get.dart';
 
 import '../bindings/home_binding.dart';
@@ -16,7 +18,7 @@ import '../ui/pages/unknown_route_page/unknown_route_page.dart';
 import 'app_routes.dart';
 
 const _defaultTransition = Transition.size;
-const defaultTransitionDuration = Duration(milliseconds: 500);
+const defaultTransitionDuration = Duration(milliseconds: 400);
 
 class AppPages {
   static final unknownRoutePage = GetPage(
@@ -75,9 +77,22 @@ class AppPages {
     GetPage(
       name: AppRoutes.PROFILE_NAME,
       page: () => const ProfileNamePage(),
-      binding: ProfileBinding(),
+      binding: ProfileSetupBinding(),
       transition: _defaultTransition,
       transitionDuration: defaultTransitionDuration,
+    ),
+    GetPage(
+      name: AppRoutes.PROFILE_EDIT,
+      page: () => const ProfileUpdatePage(),
+      transition: Transition.rightToLeft,
+      transitionDuration: defaultTransitionDuration,
+    ),
+    GetPage(
+      name: AppRoutes.PROFILE_EDIT_PASSWORD,
+      page: () => const ChangePasswordPage(),
+      transition: Transition.rightToLeft,
+      transitionDuration: defaultTransitionDuration,
+      
     ),
   ];
 }
