@@ -172,10 +172,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           height: Get.width * 0.3,
                           width: Get.width * 0.3,
                           child: Obx(
-                            () => AvatarPlus(
-                              "${FirebaseAuth.instance.currentUser!.uid.toString()} ${FirebaseAuth.instance.currentUser!.email.toString()} ${profilePageController.userProfile.value!.name}",
-                              controller: AvatarPlusController(),
-                            ),
+                            () =>
+                                profilePageController.userProfile.value != null
+                                    ? AvatarPlus(
+                                        "${FirebaseAuth.instance.currentUser!.uid.toString()} ${FirebaseAuth.instance.currentUser!.email.toString()} ${profilePageController.userProfile.value!.name}",
+                                      )
+                                    : SvgPicture.asset(
+                                        'assets/image/avatar.svg',
+                                      ),
                           ),
                         ),
                       ),
