@@ -19,12 +19,17 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: "21.0.2"
+
       - uses: subosito/flutter-action@v1
         with:
           flutter-version: "3.22.2"
+          # Build Android Release
+      - name: Clean and Build
+        run: flutter clean build
+        env:
+          CI: true
       - run: flutter pub get
-      
-      # Build Android Release
+
       - name: Build Android Beta APK
         run: flutter build apk --release
         env:
@@ -36,4 +41,3 @@ jobs:
         with:
           name: beta-apk
           path: build/app/outputs/flutter-apk/app-release.apk
-
