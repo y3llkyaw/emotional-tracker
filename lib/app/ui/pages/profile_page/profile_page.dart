@@ -1,9 +1,11 @@
 import 'package:alarm/alarm.dart';
 import 'package:animated_emoji/animated_emoji.dart';
+import 'package:avatar_plus/avatar_plus.dart';
 import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
 import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -169,10 +171,11 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: SizedBox(
                           height: Get.width * 0.3,
                           width: Get.width * 0.3,
-                          child: SvgPicture.asset(
-                            'assets/image/avatar.svg',
-                            height: 250,
-                            width: 250,
+                          child: Obx(
+                            () => AvatarPlus(
+                              "${FirebaseAuth.instance.currentUser!.uid.toString()} ${FirebaseAuth.instance.currentUser!.email.toString()} ${profilePageController.userProfile.value!.name}",
+                              controller: AvatarPlusController(),
+                            ),
                           ),
                         ),
                       ),
