@@ -23,3 +23,17 @@ jobs:
         with:
           flutter-version: "3.22.2"
       - run: flutter pub get
+      
+      # Build Android Release
+      - name: Build Android Beta APK
+        run: flutter build apk --release
+        env:
+          CI: true
+
+      # Upload APK Artifact
+      - name: Upload Android APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: beta-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
