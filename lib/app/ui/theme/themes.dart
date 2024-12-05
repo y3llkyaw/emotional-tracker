@@ -4,23 +4,22 @@ class Themes {
   final lightTheme = ThemeData.light().copyWith(
     primaryColor: Colors.red,
     cardColor: Colors.white,
-    // scaffoldBackgroundColor: Colors.grey[200],
     shadowColor: Colors.grey,
   );
-  final darkTheme = ThemeData.dark().copyWith(
-    primaryColor: Colors.grey[900],
-    cardColor: Colors.grey[900],
-    textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(
-        foregroundColor: Colors.blue,
-      ),
-    ),
-    outlinedButtonTheme: OutlinedButtonThemeData(
-      style: OutlinedButton.styleFrom(
-        iconColor: Colors.white,
-      ),
-    ),
-    // scaffoldBackgroundColor: Colors.grey[800],
+
+  final darkTheme = ThemeData.light().copyWith(
+    primaryColor: Colors.red,
+    cardColor: Colors.white,
     shadowColor: Colors.grey,
   );
+  // final darkTheme = ThemeData.dark().copyWith(
+  //   primaryColor: Colors.grey[900],
+  //   cardColor: Colors.grey[900],
+  //   textTheme: const TextTheme(
+  //     headlineLarge: TextStyle(
+  //       fontSize: 32,
+  //     ),
+  //   ),
+  //   shadowColor: Colors.grey,
+  // );
 }

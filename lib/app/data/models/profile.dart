@@ -6,12 +6,14 @@ class Profile {
   final String name;
   final Gender gender;
   final Timestamp dateOfBirth;
+  final String? avatar;
 
   Profile({
     required this.uid,
     required this.name,
     required this.gender,
     required this.dateOfBirth,
+    this.avatar,
   });
 
   Map<String, dynamic> toDocument() {
@@ -20,6 +22,7 @@ class Profile {
       "name": name,
       "gender": gender.toString(),
       "dateOfBirth": dateOfBirth.toString(),
+      "avatar": dateOfBirth.toString(),
     };
   }
 
@@ -30,6 +33,7 @@ class Profile {
       gender: Gender.values
           .firstWhere((element) => element.toString() == json['gender']),
       dateOfBirth: json['dob'],
+      avatar: json['avatar'],
     );
   }
 }

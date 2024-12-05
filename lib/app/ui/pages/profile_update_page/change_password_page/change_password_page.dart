@@ -1,5 +1,7 @@
+import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({Key? key}) : super(key: key);
@@ -9,6 +11,7 @@ class ChangePasswordPage extends StatefulWidget {
 }
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
+  final ProfilePageController profilePageController = Get.find();
   final currentPasswordController = TextEditingController();
   final newPasswordController = TextEditingController();
   final confirmNewPasswordController = TextEditingController();
@@ -24,7 +27,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           // mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             const ListTile(
-              leading: Icon(Icons.lock, color: Colors.black),
+              leading: Icon(Icons.lock, color: Colors.blueAccent),
               title: Text(
                 "Change Your Password",
                 style: TextStyle(
@@ -32,7 +35,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              subtitle: Text("make sure noone is looking at your screen"),
+              subtitle: Text("make sure none is looking at your screen"),
             ),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 15),
@@ -56,14 +59,28 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             Container(
               margin: const EdgeInsets.symmetric(vertical: 15),
               child: TextField(
+                onChanged: (value) {},
                 obscureText: true,
                 controller: confirmNewPasswordController,
                 decoration: const InputDecoration(
-                    labelText: "Confirm New Password",
-                    border: OutlineInputBorder()),
+                  labelText: "Confirm New Password",
+                  border: OutlineInputBorder(),
+                ),
               ),
             ),
-            CustomButton(text: "Change Password", onPressed: () {}),
+            Obx(
+              () => CustomButton(
+                isLoading: profilePageController.isLoading.value,
+                isDisabled: profilePageController.isLoading.value,
+                text: "Change Password",
+                onPressed: () {
+                  profilePageController.updatePassword(
+                    currentPasswordController.text,
+                    newPasswordController.text,
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),

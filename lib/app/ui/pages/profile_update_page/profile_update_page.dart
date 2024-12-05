@@ -1,4 +1,4 @@
-import 'package:emotion_tracker/app/ui/pages/profile_update_page/change_password_page/change_password_page.dart';
+import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,11 +13,17 @@ class ProfileUpdatePage extends StatefulWidget {
 
 class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
   final nameController = TextEditingController();
+  final ProfilePageController controller = Get.find();
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseAuth.instance.currentUser!.reload();
+  }
 
   @override
   Widget build(BuildContext context) {
-    nameController.text =
-        FirebaseAuth.instance.currentUser!.displayName.toString();
+    nameController.text = controller.userProfile.value!.name.toString();
 
     return Scaffold(
       appBar: AppBar(),
@@ -26,26 +32,27 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            // name
+            // name update
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Get.toNamed("profile/update/name");
+              },
               child: ListTile(
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: Get.width * 0.09),
                 isThreeLine: false,
                 leading: const Icon(Icons.person),
-                title: const Text(
+                title: Text(
                   "Name",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: Get.theme.textTheme.titleMedium,
                 ),
-                subtitle: Text(
-                  FirebaseAuth.instance.currentUser!.displayName.toString(),
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
+                subtitle: Obx(
+                  () => Text(
+                    controller.userProfile.value!.name.toString(),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                 ),
                 trailing: const Icon(
@@ -57,20 +64,30 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
             ),
             // Email
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Get.toNamed("profile/update/email");
+              },
               child: ListTile(
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: Get.width * 0.09),
                 isThreeLine: false,
                 leading: const Icon(
                   CupertinoIcons.mail,
+                  color: Colors.black,
                 ),
-                title: const Text(
-                  "Email",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Email ",
+                      style: Get.theme.textTheme.titleMedium,
+                    ),
+                    const Icon(
+                      Icons.check_circle,
+                      size: 14,
+                      color: Colors.green,
+                    ),
+                  ],
                 ),
                 subtitle: Text(
                   FirebaseAuth.instance.currentUser!.email.toString(),
@@ -99,12 +116,9 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
                 leading: const Icon(
                   CupertinoIcons.lock,
                 ),
-                title: const Text(
+                title: Text(
                   "Password",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: Get.theme.textTheme.titleMedium,
                 ),
                 subtitle: const Text(
                   "change your password",

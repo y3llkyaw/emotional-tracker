@@ -1,4 +1,8 @@
-import 'package:flutter_svg/flutter_svg.dart';
+// import 'dart:ffi';
+import 'dart:ui';
+import 'package:animated_emoji/animated_emoji.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:get/get.dart';
 
 import 'package:emotion_tracker/app/ui/global_widgets/custom_radio_button.dart';
@@ -58,37 +62,105 @@ class CalendarPage extends GetView<HomeController> {
                 //   ),
                 // ),
                 todayBuilder: (context, day, focusedDay) {
-                  return Center(
-                    child: Container(
-                      margin: const EdgeInsets.all(4.0),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            'assets/icons/overjoy.svg',
-                            width: Get.width * 0.08,
-                          ),
-                          Transform(
-                            transform: Matrix4.translationValues(15, 15, 0),
-                            child: Container(
-                              width: Get.width * 0.05,
-                              height: Get.width * 0.05,
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  day.day.toString(),
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 11,
+                  return GestureDetector(
+                    onTap: () {},
+                    child: Center(
+                      child: Container(
+                        margin: const EdgeInsets.all(4.0),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            ReactionButton(
+                              onReactionChanged: (val) {},
+                              reactions: const [
+                                Reaction<String>(
+                                  value: 'furious',
+                                  icon: AnimatedEmoji(
+                                    AnimatedEmojis.angry,
+                                    errorWidget: Text(
+                                      "😡",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Reaction<String>(
+                                  value: 'sad',
+                                  icon: AnimatedEmoji(
+                                    AnimatedEmojis.sad,
+                                    errorWidget: Text(
+                                      "😢",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Reaction<String>(
+                                  value: 'neutral',
+                                  icon: AnimatedEmoji(
+                                    AnimatedEmojis.neutralFace,
+                                    errorWidget: Text(
+                                      "😐",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Reaction<String>(
+                                  value: 'happy',
+                                  icon: AnimatedEmoji(
+                                    AnimatedEmojis.smile,
+                                    errorWidget: Text(
+                                      "😊",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Reaction<String>(
+                                  value: 'joy',
+                                  icon: AnimatedEmoji(
+                                    AnimatedEmojis.joy,
+                                    errorWidget: Text(
+                                      "😂",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              boxColor: Colors.black.withOpacity(0.5),
+                              boxRadius: 15,
+                              itemsSpacing: 20,
+                              itemSize: const Size(30, 30),
+                            ),
+                            Transform(
+                              transform: Matrix4.translationValues(15, 15, 0),
+                              child: Container(
+                                width: Get.width * 0.05,
+                                height: Get.width * 0.05,
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    day.day.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 11,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   );

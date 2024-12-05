@@ -28,31 +28,38 @@ class HomePage extends GetView<HomeController> {
         child: Obx(
           () => Padding(
             padding: const EdgeInsets.only(top: 20.0),
-            child: BottomNavigationBar(
-              currentIndex: homeController.pageIndex.value,
-              onTap: (index) {
-                homeController.changeIndex(index);
-              },
-              type: BottomNavigationBarType.fixed,
-              selectedItemColor: Colors.black,
-              unselectedItemColor: Colors.grey,
-              backgroundColor: Get.isDarkMode ? Colors.black : Colors.white,
-              showSelectedLabels: true,
-              showUnselectedLabels: false,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(CupertinoIcons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(CupertinoIcons.calendar),
-                  label: 'Calendar',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(CupertinoIcons.settings),
-                  label: 'Setting',
-                ),
-              ],
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+              child: BottomNavigationBar(
+                currentIndex: homeController.pageIndex.value,
+                onTap: (index) {
+                  homeController.changeIndex(index);
+                },
+                type: BottomNavigationBarType.fixed,
+                selectedItemColor: Colors.black,
+                unselectedItemColor: Colors.grey,
+                backgroundColor:
+                    Get.isDarkMode ? Colors.black : Colors.grey[200],
+                showSelectedLabels: true,
+                showUnselectedLabels: false,
+                items: const [
+                  BottomNavigationBarItem(
+                    icon: Icon(CupertinoIcons.home),
+                    label: 'Home',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(CupertinoIcons.calendar),
+                    label: 'Calendar',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(CupertinoIcons.settings),
+                    label: 'Setting',
+                  ),
+                ],
+              ),
             ),
           ),
         ),

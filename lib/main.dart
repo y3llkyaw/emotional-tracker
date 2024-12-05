@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       builder: (_, __) {
         return GetMaterialApp(
-          title: 'Emotion_ tracker',
+          title: 'Emotion_tracker',
           debugShowCheckedModeBanner: false,
           theme: Themes().lightTheme,
           darkTheme: Themes().darkTheme,

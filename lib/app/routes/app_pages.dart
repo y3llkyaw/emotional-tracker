@@ -8,7 +8,9 @@ import 'package:emotion_tracker/app/ui/pages/create_account_page/register_email_
 import 'package:emotion_tracker/app/ui/pages/landing_page/landing_page.dart';
 import 'package:emotion_tracker/app/ui/pages/login_page/login_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_setup_page/profile_name_page.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_update_page/change_name_page/change_name_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_update_page/change_password_page/change_password_page.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_update_page/email_verify_page/email_verify_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_update_page/profile_update_page.dart';
 import 'package:get/get.dart';
 
@@ -57,7 +59,6 @@ class AppPages {
     GetPage(
       name: AppRoutes.LOGIN,
       page: () => LoginPage(),
-      binding: LoginBinding(),
       transition: _defaultTransition,
       transitionDuration: defaultTransitionDuration,
     ),
@@ -92,7 +93,18 @@ class AppPages {
       page: () => const ChangePasswordPage(),
       transition: Transition.rightToLeft,
       transitionDuration: defaultTransitionDuration,
-      
+    ),
+    GetPage(
+      name: AppRoutes.PROFILE_EDIT_NAME,
+      page: () => const ChangeNamePage(),
+      transition: Transition.rightToLeft,
+      transitionDuration: defaultTransitionDuration,
+    ),
+    GetPage(
+      name: AppRoutes.PROFILE_EDIT_EMAIL,
+      page: () => const EmailVerifyPage(),
+      transition: Transition.rightToLeft,
+      transitionDuration: defaultTransitionDuration,
     ),
   ];
 }
