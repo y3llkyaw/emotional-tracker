@@ -1,3 +1,6 @@
+import 'package:animated_emoji/animated_emoji.dart';
+import 'package:animated_emoji/emoji.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/radio_emoji_selction.dart';
 import 'package:emotion_tracker/app/ui/pages/calendar_page/calendar_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/profile_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,7 +18,11 @@ class HomePage extends GetView<HomeController> {
       body: Obx(() => IndexedStack(
             index: homeController.pageIndex.value,
             children: [
-              const Center(child: Text('Home')),
+              Center(
+                  child: RadioEmojiSelection(
+                selectedEmoji: AnimatedEmojis.neutralFace,
+                onEmojiSelected: (value) {},
+              )),
               CalendarPage(),
               const ProfilePage(),
             ],

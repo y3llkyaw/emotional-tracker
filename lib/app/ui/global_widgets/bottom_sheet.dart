@@ -1,89 +1,123 @@
-import 'package:animated_emoji/emoji.dart';
-import 'package:animated_emoji/emojis.g.dart';
+import 'package:animated_emoji/animated_emoji.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/radio_emoji_selction.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-void showEmojiBottomSheet() {
+void showEmojiBottomSheet(DateTime date) {
+  AnimatedEmojiData selectedEmoji = AnimatedEmojis.neutralFace;
+
   Get.bottomSheet(
-    InkWell(
-      onTap: () {
-        Get.back();
-      },
-      child: SizedBox(
-        height: Get.height * 0.8,
-        child: SingleChildScrollView(
+    StatefulBuilder(
+      builder: (context, setState) {
+        return SizedBox(
+          height: Get.height,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
-                  height: Get.height * 0.05,
-                ),
-                Text(
-                  "Choose your Emotion",
-                  style: TextStyle(
-                    fontSize: Get.theme.textTheme.titleMedium!.fontSize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                ListTile(
+                  leading: AnimatedEmoji(
+                    selectedEmoji,
+                    errorWidget: Center(
+                      child: Text(
+                        "👀",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: Get.width * 0.09,
+                        ),
+                      ),
+                    ),
+                    size: 50,
+                  ),
+                  title: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(
+                      Icons.calendar_month,
+                      color: Colors.white,
+                    ),
+                    title: Text(
+                      "${date.day}/${date.month}/${date.year}",
+                      style: TextStyle(
+                        fontSize: Get.theme.textTheme.titleSmall!.fontSize,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    subtitle: Text(
+                      date.isAfter(DateTime.now())
+                          ? "'how are you feeling ?'"
+                          : "how were you feeling? ",
+                      style: const TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  trailing: IconButton(
+                    splashColor: Colors.orangeAccent,
+                    icon: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      Get.back();
+                    },
                   ),
                 ),
-                SizedBox(
-                  height: Get.height * 0.05,
-                ),
-                Text(
-                  "Emotions",
-                  style: TextStyle(
-                    fontSize: Get.theme.textTheme.titleSmall!.fontSize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextField(
+                    maxLength: 500,
+                    maxLines: 5,
+                    scrollPadding: EdgeInsets.all(20),
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.orangeAccent,
+                          width: 2.0,
+                        ),
+                      ),
+                      counterStyle: TextStyle(color: Colors.grey),
+                      focusColor: Colors.white,
+                      hintText: "write about your feelings..",
+                      hintStyle: TextStyle(
+                        color: Colors.grey,
+                      ),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      hintMaxLines: 5,
+                    ),
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-                SizedBox(
-                  height: Get.height * 0.05,
+                RadioEmojiSelection(
+                  selectedEmoji: selectedEmoji,
+                  onEmojiSelected: (emoji) {
+                    setState(() => selectedEmoji = emoji);
+                  },
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    InkWell(
-                      borderRadius: BorderRadius.circular(50),
-                      onTap: () {},
-                      child: const AnimatedEmoji(
-                        AnimatedEmojis.angry,
-                        size: 40,
+                    SizedBox(
+                      width: Get.width * 0.45,
+                      child: CustomButton(
+                        text: "Back",
+                        onPressed: () {
+                          Get.back();
+                        },
                       ),
                     ),
-                    InkWell(
-                      borderRadius: BorderRadius.circular(50),
-                      onTap: () {},
-                      child: const AnimatedEmoji(
-                        AnimatedEmojis.sad,
-                        size: 40,
-                      ),
-                    ),
-                    InkWell(
-                      borderRadius: BorderRadius.circular(50),
-                      onTap: () {},
-                      child: const AnimatedEmoji(
-                        AnimatedEmojis.neutralFace,
-                        size: 40,
-                      ),
-                    ),
-                    InkWell(
-                      borderRadius: BorderRadius.circular(50),
-                      onTap: () {},
-                      child: const AnimatedEmoji(
-                        AnimatedEmojis.smile,
-                        size: 40,
-                      ),
-                    ),
-                    InkWell(
-                      borderRadius: BorderRadius.circular(50),
-                      onTap: () {},
-                      child: const AnimatedEmoji(
-                        AnimatedEmojis.joy,
-                        size: 40,
+                    SizedBox(
+                      width: Get.width * 0.45,
+                      child: CustomButton(
+                        text: "Next",
+                        onPressed: () {},
                       ),
                     ),
                   ],
@@ -91,11 +125,11 @@ void showEmojiBottomSheet() {
               ],
             ),
           ),
-        ),
-      ),
+        );
+      },
     ),
     elevation: 1,
-    persistent: false,
     backgroundColor: Colors.black54,
+    enableDrag: true,
   );
 }

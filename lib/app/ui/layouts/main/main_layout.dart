@@ -9,6 +9,6 @@ class MainLayout extends GetView<MainController> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: child);
+    return Scaffold(body: child);
   }
 }

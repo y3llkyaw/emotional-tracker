@@ -30,7 +30,7 @@ class CustomButton extends StatelessWidget {
                 onPressed();
               },
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
           child: isLoading
               ? const SizedBox(
                   height: 20,

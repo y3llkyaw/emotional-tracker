@@ -1,7 +1,6 @@
 // import 'dart:ffi';
-import 'dart:ui';
 import 'package:animated_emoji/animated_emoji.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:get/get.dart';
 
@@ -16,7 +15,6 @@ class CalendarPage extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 30),
         child: Column(
@@ -49,18 +47,23 @@ class CalendarPage extends GetView<HomeController> {
               firstDay: DateTime(DateTime.now().year - 1),
               lastDay: DateTime(DateTime.now().year + 1),
               calendarBuilders: CalendarBuilders(
-                // defaultBuilder: (context, date, events) => Container(
-                //   margin: const EdgeInsets.all(4.0),
-                //   alignment: Alignment.center,
-                //   decoration: BoxDecoration(
-                //     color: Colors.orange,
-                //     borderRadius: BorderRadius.circular(20.0),
-                //   ),
-                //   child: Text(
-                //     date.day.toString(),
-                //     style: const TextStyle(color: Colors.white),
-                //   ),
-                // ),
+                defaultBuilder: (context, date, events) => InkWell(
+                  splashColor: Colors.orangeAccent,
+                  borderRadius: BorderRadius.circular(40),
+                  onTap: date.isBefore(DateTime.now())
+                      ? () => showEmojiBottomSheet(date)
+                      : null,
+                  child: CircleAvatar(
+                    backgroundColor: Colors.transparent,
+                    child: Text(
+                      date.day.toString(),
+                      style: TextStyle(
+                          color: date.isBefore(DateTime.now())
+                              ? Colors.black
+                              : Colors.grey),
+                    ),
+                  ),
+                ),
                 todayBuilder: (context, day, focusedDay) {
                   return GestureDetector(
                     onTap: () {},
@@ -71,6 +74,18 @@ class CalendarPage extends GetView<HomeController> {
                           alignment: Alignment.center,
                           children: [
                             ReactionButton(
+                              selectedReaction: const Reaction<String>(
+                                value: 'neutral',
+                                icon: AnimatedEmoji(
+                                  AnimatedEmojis.neutralFace,
+                                  errorWidget: Text(
+                                    "😐",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                              ),
                               onReactionChanged: (val) {},
                               reactions: const [
                                 Reaction<String>(
