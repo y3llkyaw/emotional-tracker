@@ -2,11 +2,11 @@ import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/radio_emoji_selction.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 void showEmojiBottomSheet(DateTime date) {
   AnimatedEmojiData selectedEmoji = AnimatedEmojis.neutralFace;
-
   Get.bottomSheet(
     StatefulBuilder(
       builder: (context, setState) {
@@ -22,12 +22,8 @@ void showEmojiBottomSheet(DateTime date) {
                   leading: AnimatedEmoji(
                     selectedEmoji,
                     errorWidget: Center(
-                      child: Text(
-                        "👀",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: Get.width * 0.09,
-                        ),
+                      child: SvgPicture.asset(
+                        "assets/svg/emoji_u${selectedEmoji.id.replaceAll("_fe0f", "")}.svg",
                       ),
                     ),
                     size: 50,

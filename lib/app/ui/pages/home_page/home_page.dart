@@ -1,5 +1,4 @@
 import 'package:animated_emoji/animated_emoji.dart';
-import 'package:animated_emoji/emoji.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/radio_emoji_selction.dart';
 import 'package:emotion_tracker/app/ui/pages/calendar_page/calendar_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/profile_page.dart';
@@ -14,19 +13,23 @@ class HomePage extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Obx(() => IndexedStack(
+      body: SafeArea(
+        child: Obx(
+          () => IndexedStack(
             index: homeController.pageIndex.value,
             children: [
               Center(
-                  child: RadioEmojiSelection(
-                selectedEmoji: AnimatedEmojis.neutralFace,
-                onEmojiSelected: (value) {},
-              )),
+                child: RadioEmojiSelection(
+                  selectedEmoji: AnimatedEmojis.neutralFace,
+                  onEmojiSelected: (value) {},
+                ),
+              ),
               CalendarPage(),
               const ProfilePage(),
             ],
-          )),
+          ),
+        ),
+      ),
       bottomNavigationBar: ClipRRect(
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),

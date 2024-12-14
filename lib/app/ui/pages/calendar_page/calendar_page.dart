@@ -1,4 +1,3 @@
-// import 'dart:ffi';
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';

@@ -1,11 +1,15 @@
+import 'package:emotion_tracker/app/bindings/local_auth_binding.dart';
 import 'package:emotion_tracker/app/bindings/login_binding.dart';
 import 'package:emotion_tracker/app/bindings/profile_setup_binding.dart';
+import 'package:emotion_tracker/app/bindings/profile_update_binding.dart';
 import 'package:emotion_tracker/app/bindings/register_binding.dart';
 import 'package:emotion_tracker/app/routes/middlewares/auth_middleware.dart';
+import 'package:emotion_tracker/app/routes/middlewares/local_auth_middleware.dart';
 import 'package:emotion_tracker/app/routes/middlewares/profile_middleware.dart';
 import 'package:emotion_tracker/app/ui/pages/create_account_page/create_account_page.dart';
 import 'package:emotion_tracker/app/ui/pages/create_account_page/register_email_page.dart';
 import 'package:emotion_tracker/app/ui/pages/landing_page/landing_page.dart';
+import 'package:emotion_tracker/app/ui/pages/local_auth_page/local_auth_page.dart';
 import 'package:emotion_tracker/app/ui/pages/login_page/login_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_setup_page/profile_name_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_update_page/change_name_page/change_name_page.dart';
@@ -47,6 +51,7 @@ class AppPages {
       middlewares: [
         AuthMiddleware(),
         ProfileMiddleware(),
+        LocalAuthMiddleware(),
       ],
     ),
     GetPage(
@@ -85,6 +90,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.PROFILE_EDIT,
       page: () => const ProfileUpdatePage(),
+      binding: ProfileUpdateBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: defaultTransitionDuration,
     ),
@@ -104,6 +110,13 @@ class AppPages {
       name: AppRoutes.PROFILE_EDIT_EMAIL,
       page: () => const EmailVerifyPage(),
       transition: Transition.rightToLeft,
+      transitionDuration: defaultTransitionDuration,
+    ),
+    GetPage(
+      name: AppRoutes.LOCAL_AUTH,
+      page: () => const LocalAuthPage(),
+      binding: LocalAuthBinding(),
+      transition: _defaultTransition,
       transitionDuration: defaultTransitionDuration,
     ),
   ];

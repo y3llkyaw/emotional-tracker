@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'app/data/services/dependency_injection.dart';
@@ -15,8 +17,49 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this); // Remove observer
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    // Handle app lifecycle changes
+    switch (state) {
+      case AppLifecycleState.resumed:
+        log('App is in the foreground.');
+        break;
+      case AppLifecycleState.inactive:
+        log('App is inactive.');
+        break;
+      case AppLifecycleState.hidden:
+        log('App is inactive.');
+        break;
+      case AppLifecycleState.paused:
+        log('App is in the background.');
+        break;
+      case AppLifecycleState.detached:
+        log('App is detached.');
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

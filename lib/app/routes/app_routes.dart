@@ -12,7 +12,6 @@ class AppRoutes {
   static const PROFILE_EDIT_NAME = '/profile/update/name';
   static const PROFILE_EDIT_EMAIL = '/profile/update/email';
 
-
   // Auth Middleware
   static const LOGIN = '/login';
   static const REGISTER = '/register';
@@ -21,6 +20,9 @@ class AppRoutes {
 
   // alarm
   static const ALARM = '/alarm';
+
+  // local auth
+  static const LOCAL_AUTH = '/local-auth';
 
   // Error
   static const UNKNOWN = '/404';

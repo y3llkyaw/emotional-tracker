@@ -20,8 +20,8 @@ class DependecyInjection {
     );
     await Alarm.init();
     await GetStorage.init();
+    // Add observer
 
-    
     Alarm.ringStream.stream
         .listen(
       (_) {},

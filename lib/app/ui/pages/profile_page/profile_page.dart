@@ -160,7 +160,6 @@ class _ProfilePageState extends State<ProfilePage> {
               SizedBox(
                 height: Get.height * 0.05,
               ),
-
               Column(
                 children: [
                   // avatar goes here
@@ -201,7 +200,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ],
                   ),
-
                   SizedBox(
                     height: Get.height * 0.05,
                   ),

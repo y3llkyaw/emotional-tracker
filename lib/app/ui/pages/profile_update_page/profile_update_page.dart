@@ -1,3 +1,4 @@
+import 'package:emotion_tracker/app/controllers/local_auth_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,6 +15,7 @@ class ProfileUpdatePage extends StatefulWidget {
 class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
   final nameController = TextEditingController();
   final ProfilePageController controller = Get.find();
+  final LocalAuthController localAuthController = Get.find();
 
   @override
   void initState() {
@@ -131,6 +133,49 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
                   CupertinoIcons.right_chevron,
                   color: Colors.black,
                   weight: 20,
+                ),
+              ),
+            ),
+            ListTile(
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: Get.width * 0.09),
+              isThreeLine: false,
+              leading: const Icon(
+                CupertinoIcons.lock_circle,
+              ),
+              title: Text(
+                "App Lock",
+                style: Get.theme.textTheme.titleMedium,
+              ),
+              subtitle: const Text(
+                "turn on lock App",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              trailing: Obx(
+                () => SizedBox(
+                  height: Get.width * 0.09,
+                  child: FittedBox(
+                    fit: BoxFit.contain,
+                    child: Switch(
+                      inactiveTrackColor: const Color.fromARGB(255, 27, 36, 85),
+                      activeTrackColor: const Color.fromARGB(255, 75, 39, 255),
+                      activeColor: Colors.white,
+                      inactiveThumbColor: Colors.white,
+                      activeThumbImage: const AssetImage(
+                        'assets/image/check.png',
+                      ),
+                      inactiveThumbImage: const AssetImage(
+                        'assets/image/red_cross.png',
+                      ),
+                      value: localAuthController.isEnabled.value,
+                      onChanged: (value) async {
+                        localAuthController.toggleLocalAuth();
+                      },
+                    ),
+                  ),
                 ),
               ),
             ),
