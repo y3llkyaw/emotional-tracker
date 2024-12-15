@@ -4,6 +4,7 @@ import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/controllers/local_auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -34,16 +35,15 @@ class _LocalAuthPageState extends State<LocalAuthPage> {
             Column(
               children: [
                 AnimatedEmoji(
-                  AnimatedEmojis.thinkingFace,
+                  AnimatedEmojis.monocle,
                   size: Get.width * 0.09,
                   errorWidget: Center(
-                    child: Text(
-                      '😔',
-                      style: TextStyle(
-                        fontSize: Get.width * 0.06,
-                      ),
-                    ),
-                  ),
+                      child: SvgPicture.asset(
+                    "assets/svg/emoji_u${AnimatedEmojis.monocle.id.replaceAll("_fe0f", "")}.svg",
+                  )),
+                ),
+                const SizedBox(
+                  height: 20,
                 ),
                 const Text(
                   'Please verify, it\'s you!',

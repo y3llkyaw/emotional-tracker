@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:animated_emoji/animated_emoji.dart';
-import 'package:flutter_svg/svg.dart';
 
 class RadioEmojiSelection extends StatefulWidget {
   final AnimatedEmojiData selectedEmoji;
@@ -106,8 +105,11 @@ class _RadioEmojiSelectionState extends State<RadioEmojiSelection> {
           emoji,
           size: 40,
           errorWidget: Center(
-            child: SvgPicture.asset(
-              "assets/svg/emoji_u${emoji.id.replaceAll("_fe0f", "")}.svg",
+            child: Text(
+              emoji.toUnicodeEmoji(),
+              style: const TextStyle(
+                fontSize: 30,
+              ),
             ),
           ),
           onLoaded: (duration) {

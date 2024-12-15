@@ -1,11 +1,13 @@
+import 'dart:async';
+
 import 'package:alarm/alarm.dart';
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:avatar_plus/avatar_plus.dart';
+import 'package:chat_bubbles/bubbles/bubble_special_three.dart';
 import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
 import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -23,6 +25,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final box = GetStorage();
   var isOn = false;
+  bool _showBubble = false;
 
   final ProfilePageController profilePageController = Get.find();
   Time selectedTime = Time(hour: 21, minute: 0, second: 0);
@@ -34,10 +37,21 @@ class _ProfilePageState extends State<ProfilePage> {
     selectedTime = readTime();
   }
 
-  /// Reads the time from storage and returns a [Time] object representing
-  /// the hour, minute and second.
-  ///
-  /// If no value is stored, a default time of 21:00:00 is returned.
+  void _onAvatarTap() {
+    setState(() {
+      _showBubble = true;
+    });
+
+    // Hide the bubble after 3 seconds
+    Timer(const Duration(seconds: 3), () {
+      if (mounted) {
+        setState(() {
+          _showBubble = false;
+        });
+      }
+    });
+  }
+
   Time readTime() {
     final timeMap = box.read('time');
     if (timeMap != null) {
@@ -50,13 +64,6 @@ class _ProfilePageState extends State<ProfilePage> {
     // Default time if no value is stored
     return Time(hour: 21, minute: 0, second: 0);
   }
-
-  /// Saves the specified [time] to the storage.
-  ///
-  /// This function saves the time in the form of a map with hour, minute, and
-  /// second as keys.
-  ///
-  /// The saved time is used to set the alarm.
 
   Future<void> saveTime(Time time) async {
     final timeMap = {
@@ -173,11 +180,19 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: Obx(
                             () =>
                                 profilePageController.userProfile.value != null
-                                    ? AvatarPlus(
-                                        "${FirebaseAuth.instance.currentUser!.uid.toString()} ${FirebaseAuth.instance.currentUser!.email.toString()} ${profilePageController.userProfile.value!.name}",
+                                    ? InkWell(
+                                        borderRadius: BorderRadius.circular(80),
+                                        onTap: _onAvatarTap,
+                                        child: AvatarPlus(
+                                          "${FirebaseAuth.instance.currentUser!.uid.toString()} ${FirebaseAuth.instance.currentUser!.email.toString()} ${profilePageController.userProfile.value!.name}",
+                                        ),
                                       )
-                                    : SvgPicture.asset(
-                                        'assets/image/avatar.svg',
+                                    : InkWell(
+                                        borderRadius: BorderRadius.circular(80),
+                                        onTap: _onAvatarTap,
+                                        child: SvgPicture.asset(
+                                          'assets/image/avatar.svg',
+                                        ),
                                       ),
                           ),
                         ),
@@ -198,6 +213,28 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                       ),
+                      _showBubble
+                          ? Transform(
+                              transform: Matrix4.translationValues(
+                                -Get.width * 0.28,
+                                -Get.height * 0.04,
+                                0,
+                              ),
+                              child: SizedBox(
+                                width: Get.width * 0.4,
+                                child: const BubbleSpecialThree(
+                                  color: Colors.black26,
+                                  text:
+                                      "you have to change your name to change your profile picture",
+                                  textStyle: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                  ),
+                                  tail: true,
+                                ),
+                              ),
+                            )
+                          : Container(),
                     ],
                   ),
                   SizedBox(

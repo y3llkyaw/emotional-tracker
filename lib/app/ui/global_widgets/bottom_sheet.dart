@@ -1,12 +1,14 @@
+import 'dart:developer';
+
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/radio_emoji_selction.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 void showEmojiBottomSheet(DateTime date) {
   AnimatedEmojiData selectedEmoji = AnimatedEmojis.neutralFace;
+  final messageController = TextEditingController();
   Get.bottomSheet(
     StatefulBuilder(
       builder: (context, setState) {
@@ -22,8 +24,11 @@ void showEmojiBottomSheet(DateTime date) {
                   leading: AnimatedEmoji(
                     selectedEmoji,
                     errorWidget: Center(
-                      child: SvgPicture.asset(
-                        "assets/svg/emoji_u${selectedEmoji.id.replaceAll("_fe0f", "")}.svg",
+                      child: Text(
+                        selectedEmoji.toUnicodeEmoji(),
+                        style: const TextStyle(
+                          fontSize: 40,
+                        ),
                       ),
                     ),
                     size: 50,
@@ -42,11 +47,9 @@ void showEmojiBottomSheet(DateTime date) {
                         color: Colors.white,
                       ),
                     ),
-                    subtitle: Text(
-                      date.isAfter(DateTime.now())
-                          ? "'how are you feeling ?'"
-                          : "how were you feeling? ",
-                      style: const TextStyle(
+                    subtitle: const Text(
+                      "how were you feeling? ",
+                      style: TextStyle(
                         color: Colors.white,
                       ),
                     ),
@@ -62,13 +65,14 @@ void showEmojiBottomSheet(DateTime date) {
                     },
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: TextField(
+                    controller: messageController,
                     maxLength: 500,
                     maxLines: 5,
-                    scrollPadding: EdgeInsets.all(20),
-                    decoration: InputDecoration(
+                    scrollPadding: const EdgeInsets.all(20),
+                    decoration: const InputDecoration(
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: Colors.orangeAccent,
@@ -86,7 +90,7 @@ void showEmojiBottomSheet(DateTime date) {
                       ),
                       hintMaxLines: 5,
                     ),
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                     ),
                   ),
@@ -113,7 +117,11 @@ void showEmojiBottomSheet(DateTime date) {
                       width: Get.width * 0.45,
                       child: CustomButton(
                         text: "Next",
-                        onPressed: () {},
+                        onPressed: () {
+                          log("selected emoji: ${selectedEmoji.toUnicodeEmoji()}");
+                          log("date: $date");
+                          log("message: ${messageController.text}");
+                        },
                       ),
                     ),
                   ],
