@@ -150,6 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     profilePageController.onInit();
     return Scaffold(
+      appBar: AppBar(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
