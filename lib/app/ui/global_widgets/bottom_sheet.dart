@@ -1,11 +1,13 @@
 import 'dart:developer';
 
 import 'package:animated_emoji/animated_emoji.dart';
+import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/radio_emoji_selction.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+final JournalController journalController = Get.put(JournalController());
 void showEmojiBottomSheet(DateTime date) {
   AnimatedEmojiData selectedEmoji = AnimatedEmojis.neutralFace;
   final messageController = TextEditingController();
@@ -79,7 +81,9 @@ void showEmojiBottomSheet(DateTime date) {
                           width: 2.0,
                         ),
                       ),
-                      counterStyle: TextStyle(color: Colors.grey),
+                      counterStyle: TextStyle(
+                        color: Colors.grey,
+                      ),
                       focusColor: Colors.white,
                       hintText: "write about your feelings..",
                       hintStyle: TextStyle(
@@ -115,13 +119,31 @@ void showEmojiBottomSheet(DateTime date) {
                     ),
                     SizedBox(
                       width: Get.width * 0.45,
-                      child: CustomButton(
-                        text: "Next",
-                        onPressed: () {
-                          log("selected emoji: ${selectedEmoji.toUnicodeEmoji()}");
-                          log("date: $date");
-                          log("message: ${messageController.text}");
-                        },
+                      child: Obx(
+                        () => CustomButton(
+                          isLoading: journalController.isLoading.value,
+                          text: "Next",
+                          onPressed: () async {
+                            journalController.content.value =
+                                messageController.text;
+                            journalController.emotion.value = selectedEmoji;
+                            journalController.date.value = date;
+                            await journalController
+                                .createJournal()
+                                .then((value) {
+                              if (value != null) {
+                                Get.back();
+                                Get.snackbar(
+                                    "Success", "Journal created successfully!");
+                              } else {
+                                Get.snackbar(
+                                  "Error",
+                                  value.toString(),
+                                );
+                              }
+                            });
+                          },
+                        ),
                       ),
                     ),
                   ],

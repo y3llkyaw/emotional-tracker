@@ -112,11 +112,6 @@ class _RadioEmojiSelectionState extends State<RadioEmojiSelection> {
               ),
             ),
           ),
-          onLoaded: (duration) {
-            if (duration.inMilliseconds > 1000) {
-              _onSelect(emoji);
-            }
-          },
         ),
       ),
     );

@@ -17,10 +17,12 @@ class ProfileSetupController extends GetxController {
 
   Future<void> setupProfile() async {
     loading.value = true;
+
     if (!isProflieValid(name, gender, day, month, year)) {
       loading.value = false;
       return;
     }
+
     dob.value = DateTime(year.value, month.value, day.value);
     await auth.currentUser!.updateDisplayName(name.value);
     await firestore.collection("profile").doc(auth.currentUser!.uid).set({

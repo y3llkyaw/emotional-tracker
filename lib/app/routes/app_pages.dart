@@ -1,3 +1,4 @@
+import 'package:emotion_tracker/app/bindings/calendar_page_binding.dart';
 import 'package:emotion_tracker/app/bindings/local_auth_binding.dart';
 import 'package:emotion_tracker/app/bindings/login_binding.dart';
 import 'package:emotion_tracker/app/bindings/profile_setup_binding.dart';
@@ -6,6 +7,7 @@ import 'package:emotion_tracker/app/bindings/register_binding.dart';
 import 'package:emotion_tracker/app/routes/middlewares/auth_middleware.dart';
 import 'package:emotion_tracker/app/routes/middlewares/local_auth_middleware.dart';
 import 'package:emotion_tracker/app/routes/middlewares/profile_middleware.dart';
+import 'package:emotion_tracker/app/ui/pages/calendar_page/calendar_page.dart';
 import 'package:emotion_tracker/app/ui/pages/create_account_page/create_account_page.dart';
 import 'package:emotion_tracker/app/ui/pages/create_account_page/register_email_page.dart';
 import 'package:emotion_tracker/app/ui/pages/landing_page/landing_page.dart';
@@ -62,8 +64,9 @@ class AppPages {
       transitionDuration: defaultTransitionDuration,
     ),
     GetPage(
-      name: AppRoutes.LOGIN,
-      page: () => LoginPage(),
+      name: AppRoutes.CALENDAR,
+      page: () => CalendarPage(),
+      binding: CalendarPageBinding(),
       transition: _defaultTransition,
       transitionDuration: defaultTransitionDuration,
     ),

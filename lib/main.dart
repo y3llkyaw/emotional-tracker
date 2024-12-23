@@ -13,7 +13,6 @@ import 'app/ui/theme/themes.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DependecyInjection.init();
-
   runApp(const MyApp());
 }
 
