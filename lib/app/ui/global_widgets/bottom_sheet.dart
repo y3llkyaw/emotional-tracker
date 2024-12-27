@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
@@ -148,6 +146,86 @@ void showEmojiBottomSheet(DateTime date) {
                     ),
                   ],
                 ),
+              ],
+            ),
+          ),
+        );
+      },
+    ),
+    elevation: 1,
+    backgroundColor: Colors.black54,
+    enableDrag: true,
+  );
+}
+
+void showDataBottomSheet(
+    DateTime date, String content, AnimatedEmojiData emoji) {
+  AnimatedEmojiData selectedEmoji = emoji;
+  Get.bottomSheet(
+    StatefulBuilder(
+      builder: (context, setState) {
+        return SizedBox(
+          height: Get.height,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ListTile(
+                  leading: AnimatedEmoji(
+                    selectedEmoji,
+                    errorWidget: Center(
+                      child: Text(
+                        selectedEmoji.toUnicodeEmoji(),
+                        style: const TextStyle(
+                          fontSize: 40,
+                        ),
+                      ),
+                    ),
+                    size: 50,
+                  ),
+                  title: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(
+                      Icons.calendar_month,
+                      color: Colors.white,
+                    ),
+                    title: Text(
+                      "${date.day}/${date.month}/${date.year}",
+                      style: TextStyle(
+                        fontSize: Get.theme.textTheme.titleSmall!.fontSize,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    subtitle: const Text(
+                      "how were you feeling? ",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  trailing: IconButton(
+                    splashColor: Colors.orangeAccent,
+                    icon: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      Get.back();
+                    },
+                  ),
+                ),
+                const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    content,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+                const Spacer(),
               ],
             ),
           ),

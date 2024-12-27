@@ -158,10 +158,10 @@ class _ProfilePageState extends State<ProfilePage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 "Profile",
                 style: TextStyle(
-                  fontSize: 25,
+                  fontSize: Get.width * 0.06,
                   fontWeight: FontWeight.bold,
                 ),
               ),
