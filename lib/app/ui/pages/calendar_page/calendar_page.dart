@@ -93,81 +93,100 @@ Widget disableCalaneder(DateTime date) {
           height: Get.width * 0.12,
         ),
         Center(
-            child: Text(
-          date.day.toString(),
-          style: const TextStyle(color: Colors.grey),
-        )),
+          child: Text(
+            date.day.toString(),
+            style: const TextStyle(color: Colors.grey),
+          ),
+        ),
       ],
     ),
   );
 }
 
 Widget defaultCalendar(DateTime date) {
-  return Padding(
-    padding: const EdgeInsets.only(top: 15),
-    child: InkWell(
-      // splashColor: Colors.orangeAccent,
-      borderRadius: BorderRadius.circular(40),
-      onTap: date.isBefore(DateTime.now())
-          ? () => showEmojiBottomSheet(date)
-          : null,
-      child: Column(
-        children: [
-          SizedBox(
-            height: Get.width * 0.1,
-          ),
-          CircleAvatar(
-            backgroundColor: Colors.white,
-            child: Text(
-              date.day.toString(),
-              style: TextStyle(
-                color:
-                    date.isBefore(DateTime.now()) ? Colors.black : Colors.grey,
+  return Container(
+    margin: EdgeInsets.all(Get.width * 0.002),
+    decoration: const BoxDecoration(
+      color: Colors.grey,
+      borderRadius: BorderRadius.all(
+        Radius.circular(20),
+      ),
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(3),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(40),
+        onTap: date.isBefore(DateTime.now())
+            ? () => showEmojiBottomSheet(date)
+            : null,
+        child: Column(
+          children: [
+            SizedBox(
+              height: Get.width * 0.12,
+            ),
+            CircleAvatar(
+              backgroundColor: Colors.white38,
+              child: Text(
+                date.day.toString(),
+                style: TextStyle(
+                  color: date.isBefore(DateTime.now())
+                      ? Colors.black
+                      : Colors.grey,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ),
   );
 }
 
 Widget dataCalendar(DateTime day, String content, AnimatedEmojiData emojiData) {
-  return Padding(
-    padding: const EdgeInsets.only(top: 15),
-    child: GestureDetector(
-      onTap: () {
-        showDataBottomSheet(day, content, emojiData);
-      },
-      child: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            AnimatedEmoji(
-              emojiData,
-              size: Get.width * 0.1,
-              errorWidget: Center(
-                child: Text(
-                  emojiData.toUnicodeEmoji(),
-                  style: TextStyle(
-                    fontSize: Get.width * 0.1,
+  return Container(
+    margin: const EdgeInsets.all(2),
+    decoration: const BoxDecoration(
+      color: Colors.black12,
+      borderRadius: BorderRadius.all(
+        Radius.circular(20),
+      ),
+    ),
+    child: Padding(
+      padding: const EdgeInsets.only(top: 15),
+      child: GestureDetector(
+        onTap: () {
+          showDataBottomSheet(day, content, emojiData);
+        },
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              AnimatedEmoji(
+                emojiData,
+                size: Get.width * 0.1,
+                errorWidget: Center(
+                  child: Text(
+                    emojiData.toUnicodeEmoji(),
+                    style: TextStyle(
+                      fontSize: Get.width * 0.1,
+                    ),
                   ),
                 ),
               ),
-            ),
-            Center(
-              child: CircleAvatar(
-                backgroundColor: Colors.yellow.withOpacity(0.1),
-                child: Text(
-                  day.day.toString(),
-                  style: const TextStyle(
-                    color: Colors.black,
-                    // fontSize: 11,
+              Center(
+                child: CircleAvatar(
+                  backgroundColor: Colors.yellow.withOpacity(0.1),
+                  child: Text(
+                    day.day.toString(),
+                    style: const TextStyle(
+                      color: Colors.black,
+                      // fontSize: 11,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     ),
