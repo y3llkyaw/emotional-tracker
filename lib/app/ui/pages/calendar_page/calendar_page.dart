@@ -114,10 +114,11 @@ Widget defaultCalendar(DateTime date) {
       child: Column(
         children: [
           SizedBox(
-            height: Get.width * 0.1,
+            height: Get.width * 0.12,
           ),
           CircleAvatar(
-            backgroundColor: Colors.white,
+            radius: Get.width * 0.028,
+            backgroundColor: Colors.grey.shade200,
             child: Text(
               date.day.toString(),
               style: TextStyle(
@@ -155,9 +156,13 @@ Widget dataCalendar(DateTime day, String content, AnimatedEmojiData emojiData) {
                 ),
               ),
             ),
+            SizedBox(
+              height: Get.height * 0.01,
+            ),
             Center(
               child: CircleAvatar(
-                backgroundColor: Colors.yellow.withOpacity(0.1),
+                radius: Get.width * 0.028,
+                backgroundColor: Colors.yellow,
                 child: Text(
                   day.day.toString(),
                   style: const TextStyle(

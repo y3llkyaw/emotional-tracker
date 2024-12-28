@@ -1,3 +1,4 @@
+import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,19 +13,24 @@ class ChangeNamePage extends StatefulWidget {
 }
 
 class _ChangeNamePageState extends State<ChangeNamePage> {
-  final nameController = TextEditingController();
   final ProfilePageController profilePageController = Get.find();
+  String name = FirebaseAuth.instance.currentUser!.displayName.toString();
+  TextEditingController nameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    nameController.text =
-        FirebaseAuth.instance.currentUser!.displayName.toString();
+    nameController.text = name;
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
+            AvatarPlus(
+              "${FirebaseAuth.instance.currentUser!.uid.toString()} ${FirebaseAuth.instance.currentUser!.email.toString()} $name",
+              width: Get.width * 0.5,
+              height: Get.width * 0.5,
+            ),
             const ListTile(
               title: Text(
                 "Change Name",
@@ -33,7 +39,8 @@ class _ChangeNamePageState extends State<ChangeNamePage> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              subtitle: Text("you can change your name here"),
+              subtitle:
+                  Text("try to match your name with your favourite Avatar."),
             ),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 15),
@@ -43,6 +50,12 @@ class _ChangeNamePageState extends State<ChangeNamePage> {
                   labelText: "Name",
                   border: OutlineInputBorder(),
                 ),
+                onChanged: (value) {
+                  setState(() {
+                    name = value;
+                    nameController.text = value;
+                  });
+                },
               ),
             ),
             Obx(
@@ -51,7 +64,7 @@ class _ChangeNamePageState extends State<ChangeNamePage> {
                 isLoading: profilePageController.isLoading.value,
                 text: "Upate Name",
                 onPressed: () {
-                  profilePageController.updateDisplayName(nameController.text);
+                  profilePageController.updateDisplayName(name);
                 },
               ),
             )
