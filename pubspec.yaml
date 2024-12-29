@@ -37,6 +37,7 @@ dependencies:
   avatar_plus: ^0.0.5
   local_auth: ^2.3.0
   chat_bubbles: ^1.6.0
+  rename: ^3.0.2
 
 dev_dependencies:
   build_runner:
