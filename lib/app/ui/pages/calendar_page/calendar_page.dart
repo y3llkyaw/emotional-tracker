@@ -122,6 +122,7 @@ Widget defaultCalendar(DateTime date) {
             child: Text(
               date.day.toString(),
               style: TextStyle(
+                fontSize: Get.width * 0.023,
                 color:
                     date.isBefore(DateTime.now()) ? Colors.black : Colors.grey,
               ),
@@ -165,7 +166,8 @@ Widget dataCalendar(DateTime day, String content, AnimatedEmojiData emojiData) {
                 backgroundColor: Colors.yellow,
                 child: Text(
                   day.day.toString(),
-                  style: const TextStyle(
+                  style: TextStyle(
+                    fontSize: Get.width * 0.023,
                     color: Colors.black,
                     // fontSize: 11,
                   ),
