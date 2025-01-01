@@ -10,6 +10,7 @@ import 'package:emotion_tracker/app/routes/middlewares/profile_middleware.dart';
 import 'package:emotion_tracker/app/ui/pages/calendar_page/calendar_page.dart';
 import 'package:emotion_tracker/app/ui/pages/create_account_page/create_account_page.dart';
 import 'package:emotion_tracker/app/ui/pages/create_account_page/register_email_page.dart';
+import 'package:emotion_tracker/app/ui/pages/friends_pages/friends_add_page.dart';
 import 'package:emotion_tracker/app/ui/pages/landing_page/landing_page.dart';
 import 'package:emotion_tracker/app/ui/pages/local_auth_page/local_auth_page.dart';
 import 'package:emotion_tracker/app/ui/pages/login_page/login_page.dart';
@@ -120,6 +121,13 @@ class AppPages {
       page: () => const LocalAuthPage(),
       binding: LocalAuthBinding(),
       transition: _defaultTransition,
+      transitionDuration: defaultTransitionDuration,
+    ),
+    GetPage(
+      name: AppRoutes.ADD_FRIENDS,
+      page: () => const FriendsAddPage(),
+      binding: LocalAuthBinding(),
+      transition: Transition.rightToLeft,
       transitionDuration: defaultTransitionDuration,
     ),
   ];

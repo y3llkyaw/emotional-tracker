@@ -4,6 +4,7 @@ class AppRoutes {
   static const INITIAL = '/';
   static const HOME = '/home';
   static const CALENDAR = '/calendar';
+  static const ADD_FRIENDS = '/add-friends';
 
   // Profile Middlware
   static const PROFILE_NAME = '/profile/name';
