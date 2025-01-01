@@ -10,24 +10,24 @@ MoodMate is a cross-platform mobile application designed to help users track and
 - **Reminders:** Set daily reminders to log your mood.
 - **Secure:** Protect your data with optional biometric authentication.
 
-## Screenshots
+<!-- ## Screenshots
 
 ![MoodMate Screenshot](path_to_screenshot_1)
-![MoodMate Screenshot](path_to_screenshot_2)
+![MoodMate Screenshot](path_to_screenshot_2) -->
 
 ## Installation
 
 ### Android
 
-1. Download the APK from the [releases page](link_to_releases).
+1. Download the APK from the [releases page](https://github.com/y3llkyaw/emotional-tracker/releases).
 2. Open the APK file on your device.
 3. Follow the on-screen instructions to install the app.
 
-### iOS
+<!-- ### iOS
 
 1. Download the app from the [App Store](link_to_app_store).
 2. Open the app on your device.
-3. Follow the on-screen instructions to set up the app.
+3. Follow the on-screen instructions to set up the app. -->
 
 ## Usage
 
@@ -60,15 +60,15 @@ MoodMate is a cross-platform mobile application designed to help users track and
     ```bash
     flutter run
     ```
-
+<!-- 
 ## Contributing
 
-Contributions are welcome! Please read the [contributing guidelines](link_to_contributing_guidelines) first.
+Contributions are welcome! Please read the [contributing guidelines](link_to_contributing_guidelines) first. -->
 
-## License
+<!-- ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. -->
 
 ## Contact
 
-If you have any questions or feedback, feel free to reach out at [your_email@example.com](mailto:your_email@example.com).
+If you have any questions or feedback, feel free to reach out at [yellhtetkyaw.developer@gmail.com](mailto:yellhtetkyaw.developer@gmail.com).
