@@ -1,6 +1,7 @@
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/user_card.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -15,30 +16,41 @@ class CalendarPage extends GetView<HomeController> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Obx(
-          () => Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // title goes here
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Text(
-                  journalController.journals.isEmpty
-                      ? 'No Journals'
-                      : 'Journals',
-                  style: TextStyle(
-                    fontSize: Get.width * 0.06,
-                    fontWeight: FontWeight.bold,
-                  ),
+          () => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            // title goes here
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                journalController.journals.isEmpty ? 'No Journals' : 'Journals',
+                style: TextStyle(
+                  fontSize: Get.width * 0.06,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
 
-              // calendar goes here
-              calendar(),
-            ],
-          ),
+            // calendar goes here
+            calendar(),
+            const Center(
+              child: Wrap(
+                spacing: 40,
+                runSpacing: 20,
+                children: [
+                  UserCard(),
+                  UserCard(),
+                  UserCard(),
+                  UserCard(),
+                  UserCard(),
+                  UserCard(),
+                  UserCard(),
+                  UserCard(),
+                ],
+              ),
+            ),
+          ]),
         ),
       ),
     );
@@ -48,7 +60,7 @@ class CalendarPage extends GetView<HomeController> {
 Widget calendar() {
   return SizedBox(
     height: journalController.formatCalender.value == CalendarFormat.week
-        ? Get.height * 0.3
+        ? Get.height * 0.22
         : Get.height * 0.7,
     child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),

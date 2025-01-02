@@ -14,11 +14,12 @@ class UserCard extends StatelessWidget {
         vertical: Get.width * 0.03,
       ),
       decoration: BoxDecoration(
-        color: Get.theme.canvasColor, // Background color
+        color: Colors.white70,
+        // color: Get.theme.canvasColor, // Background color
         borderRadius: BorderRadius.circular(24.0), // Rounded corners
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.5), // Shadow color
+            color: Colors.grey.shade300.withOpacity(0.5), // Shadow color
             spreadRadius: 2, // Spread radius
             blurRadius: 5, // Blur radius
             offset: const Offset(0, 0), // Offset
