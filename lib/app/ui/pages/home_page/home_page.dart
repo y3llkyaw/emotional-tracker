@@ -23,54 +23,63 @@ class HomePage extends GetView<HomeController> {
               //     onEmojiSelected: (value) {},
               //   ),
               // ),
-              const FriendsPage(),
               CalendarPage(),
+              const FriendsPage(),
+              const Center(
+                child: Text('Notification Page'),
+              ),
               const ProfilePage(),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-        child: Obx(
-          () => Padding(
-            padding: const EdgeInsets.only(top: 20.0),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
+      bottomNavigationBar: Obx(
+        () => ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+          child: BottomNavigationBar(
+            currentIndex: homeController.pageIndex.value,
+            onTap: (index) {
+              homeController.changeIndex(index);
+            },
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor: Colors.black,
+            unselectedItemColor: Colors.grey,
+            backgroundColor: Get.isDarkMode ? Colors.black : Colors.grey[200],
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: Icon(CupertinoIcons.home),
+                ),
+                label: 'Home',
               ),
-              child: BottomNavigationBar(
-                currentIndex: homeController.pageIndex.value,
-                onTap: (index) {
-                  homeController.changeIndex(index);
-                },
-                type: BottomNavigationBarType.fixed,
-                selectedItemColor: Colors.black,
-                unselectedItemColor: Colors.grey,
-                backgroundColor:
-                    Get.isDarkMode ? Colors.black : Colors.grey[200],
-                showSelectedLabels: true,
-                showUnselectedLabels: false,
-                items: const [
-                  BottomNavigationBarItem(
-                    icon: Icon(CupertinoIcons.home),
-                    label: 'Home',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(CupertinoIcons.calendar),
-                    label: 'Calendar',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(CupertinoIcons.settings),
-                    label: 'Setting',
-                  ),
-                ],
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: Icon(CupertinoIcons.person_2),
+                ),
+                label: 'Friends',
               ),
-            ),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: Icon(CupertinoIcons.bell),
+                ),
+                label: 'Notification',
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: Icon(CupertinoIcons.settings),
+                ),
+                label: 'Setting',
+              ),
+            ],
           ),
         ),
       ),

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class SearchWidget extends StatefulWidget {
   final TextEditingController controller;
-
-  const SearchWidget({Key? key, required this.controller}) : super(key: key);
+  final String hintText;
+  const SearchWidget(
+      {Key? key, required this.controller, required this.hintText})
+      : super(key: key);
 
   @override
   State<SearchWidget> createState() => _SearchWidgetState();
@@ -21,13 +24,18 @@ class _SearchWidgetState extends State<SearchWidget> {
         ),
         child: TextField(
           controller: widget.controller,
-          decoration: const InputDecoration(
-            prefixIcon: Icon(Icons.search, color: Colors.grey), // Search icon
+          decoration: InputDecoration(
+            prefixIcon: const Icon(
+              Icons.search,
+              color: Colors.grey,
+            ), // Search icon
             hintText: 'Search', // Placeholder text
-            hintStyle: TextStyle(color: Colors.grey), // Placeholder text style
+            hintStyle: const TextStyle(
+              color: Colors.grey,
+            ), // Placeholder text style
             border: InputBorder.none, // Remove underline
             contentPadding: EdgeInsets.symmetric(
-                vertical: 15.0), // Padding inside TextField
+                vertical: Get.height * 0.01), // Padding inside TextField
           ),
         ),
       ),

@@ -13,18 +13,20 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: false,
         title: const Text('Add Friends'),
       ),
       body: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SearchWidget(controller: TextEditingController()),
-            ],
-          )),
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SearchWidget(
+                controller: TextEditingController(),
+                hintText: 'Search for friends'),
+          ],
+        ),
+      ),
     );
   }
 }

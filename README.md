@@ -46,21 +46,24 @@ MoodMate is a cross-platform mobile application designed to help users track and
 ### Getting Started
 
 1. Clone the repository:
-    ```bash
-    git clone https://github.com/yourusername/moodmate.git
-    cd moodmate
-    ```
+
+   ```bash
+   git clone https://github.com/yourusername/moodmate.git
+   cd moodmate
+   ```
 
 2. Install dependencies:
-    ```bash
-    flutter pub get
-    ```
+
+   ```bash
+   flutter pub get
+   ```
 
 3. Run the app:
-    ```bash
+`bash
     flutter run
-    ```
-<!-- 
+    `
+<!--
+
 ## Contributing
 
 Contributions are welcome! Please read the [contributing guidelines](link_to_contributing_guidelines) first. -->

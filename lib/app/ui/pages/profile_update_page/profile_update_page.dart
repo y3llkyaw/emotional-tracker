@@ -28,7 +28,9 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
     nameController.text = controller.userProfile.value!.name.toString();
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text('Profile Settings'),
+      ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: Get.width * 0.0),
         child: Column(

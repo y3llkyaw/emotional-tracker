@@ -10,6 +10,7 @@ import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -241,6 +242,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   SizedBox(
                     height: Get.height * 0.05,
                   ),
+                  // display name section goes here
                   Center(
                     child: Obx(
                       () => Text(
@@ -254,6 +256,32 @@ class _ProfilePageState extends State<ProfilePage> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
+                    ),
+                  ),
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "uid: ${FirebaseAuth.instance.currentUser!.uid.toString()}",
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        IconButton(
+                          iconSize: Get.width * 0.04,
+                          onPressed: () async {
+                            await Clipboard.setData(
+                              ClipboardData(
+                                text: FirebaseAuth.instance.currentUser!.uid
+                                    .toString(),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.copy),
+                        ),
+                      ],
                     ),
                   ),
                 ],
