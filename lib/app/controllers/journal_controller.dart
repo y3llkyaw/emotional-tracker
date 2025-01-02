@@ -5,11 +5,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/data/models/journal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class JournalController extends GetxController {
   var isLoading = false.obs;
   var journals = <Journal>[].obs;
-
+  var formatCalender = CalendarFormat.week.obs;
   // Data for the journal
   final uid = FirebaseAuth.instance.currentUser!.uid;
   var content = ''.obs;
@@ -40,6 +41,12 @@ class JournalController extends GetxController {
       isLoading.value = false;
       return null;
     }
+  }
+
+  toggleCalendarFormat() {
+    formatCalender.value = formatCalender.value == CalendarFormat.week
+        ? CalendarFormat.month
+        : CalendarFormat.week;
   }
 
   Future<void> getJournal(DateTime date) async {

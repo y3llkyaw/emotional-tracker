@@ -13,75 +13,86 @@ class CalendarPage extends GetView<HomeController> {
   Widget build(BuildContext context) {
     journalController.fetchJournals();
     return Scaffold(
-      body: Obx(
-        () => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // title goes here
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                journalController.journals.isEmpty ? 'No Journals' : 'Journals',
-                style: TextStyle(
-                  fontSize: Get.width * 0.06,
-                  fontWeight: FontWeight.bold,
+      body: SingleChildScrollView(
+        child: Obx(
+          () => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // title goes here
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  journalController.journals.isEmpty
+                      ? 'No Journals'
+                      : 'Journals',
+                  style: TextStyle(
+                    fontSize: Get.width * 0.06,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            // fliter widget goes here
-            // const Padding(
-            //   padding: EdgeInsets.symmetric(horizontal: 20),
-            //   child: CustomRadioButton(
-            //     title: 'September',
-            //     title2: 'History',
-            //   ),
-            // ),
-            // const SizedBox(
-            //   height: 20,
-            // ),
-            // calendar goes here
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: TableCalendar(
-                rowHeight: Get.height * 0.11,
-                headerVisible: true,
-                headerStyle: const HeaderStyle(
-                  titleCentered: true,
-                  formatButtonVisible: false,
-                ),
-                weekNumbersVisible: true,
-                focusedDay: DateTime.now(),
-                firstDay: DateTime(DateTime.now().year - 1),
-                lastDay: DateTime(DateTime.now().year + 1),
-                calendarBuilders: CalendarBuilders(
-                  defaultBuilder: (context, date, events) {
-                    for (var element in journalController.journals) {
-                      if (DateTime(element.date.day, element.date.month,
-                              element.date.year) ==
-                          DateTime(date.day, date.month, date.year)) {
-                        return dataCalendar(
-                            date, element.content, element.emotion);
-                      }
-                    }
-                    return defaultCalendar(date);
-                  },
-                  todayBuilder: (context, day, focusedDay) =>
-                      defaultCalendar(day),
-                  disabledBuilder: (context, day, focusedDay) =>
-                      disableCalaneder(day),
-                  outsideBuilder: (context, day, focusedDay) =>
-                      disableCalaneder(day),
-                ),
+              const SizedBox(
+                height: 20,
               ),
-            ),
-          ],
+
+              // calendar goes here
+              calendar(),
+            ],
+          ),
         ),
       ),
     );
   }
+}
+
+Widget calendar() {
+  return SizedBox(
+    height: journalController.formatCalender.value == CalendarFormat.week
+        ? Get.height * 0.3
+        : Get.height * 0.7,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: TableCalendar(
+        shouldFillViewport: true,
+        rowHeight: Get.height * 0.11,
+        headerVisible: true,
+        availableCalendarFormats: const {
+          CalendarFormat.month: 'monthly / weekly',
+          CalendarFormat.week: 'monthly / weekly',
+        },
+        headerStyle: const HeaderStyle(
+          titleCentered: true,
+          formatButtonVisible: true,
+        ),
+        calendarFormat: journalController.formatCalender.value,
+        onFormatChanged: (format) {
+          journalController.toggleCalendarFormat();
+        },
+        availableGestures: AvailableGestures.none,
+        formatAnimationCurve: Curves.easeInOut,
+        formatAnimationDuration: const Duration(milliseconds: 400),
+        weekNumbersVisible: true,
+        focusedDay: DateTime.now(),
+        firstDay: DateTime(DateTime.now().year - 1),
+        lastDay: DateTime(DateTime.now().year + 1),
+        calendarBuilders: CalendarBuilders(
+          defaultBuilder: (context, date, events) {
+            for (var element in journalController.journals) {
+              if (DateTime(element.date.day, element.date.month,
+                      element.date.year) ==
+                  DateTime(date.day, date.month, date.year)) {
+                return dataCalendar(date, element.content, element.emotion);
+              }
+            }
+            return defaultCalendar(date);
+          },
+          todayBuilder: (context, day, focusedDay) => defaultCalendar(day),
+          disabledBuilder: (context, day, focusedDay) => disableCalaneder(day),
+          outsideBuilder: (context, day, focusedDay) => disableCalaneder(day),
+        ),
+      ),
+    ),
+  );
 }
 
 Widget disableCalaneder(DateTime date) {
@@ -93,10 +104,11 @@ Widget disableCalaneder(DateTime date) {
           height: Get.width * 0.12,
         ),
         Center(
-            child: Text(
-          date.day.toString(),
-          style: const TextStyle(color: Colors.grey),
-        )),
+          child: Text(
+            date.day.toString(),
+            style: const TextStyle(color: Colors.grey),
+          ),
+        ),
       ],
     ),
   );

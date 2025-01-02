@@ -17,12 +17,6 @@ class HomePage extends GetView<HomeController> {
           () => IndexedStack(
             index: homeController.pageIndex.value,
             children: [
-              // Center(
-              //   child: RadioEmojiSelection(
-              //     selectedEmoji: AnimatedEmojis.neutralFace,
-              //     onEmojiSelected: (value) {},
-              //   ),
-              // ),
               CalendarPage(),
               const FriendsPage(),
               const Center(
