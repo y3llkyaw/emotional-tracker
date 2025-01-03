@@ -1,7 +1,6 @@
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
-import 'package:emotion_tracker/app/ui/global_widgets/user_card.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -39,14 +38,14 @@ class CalendarPage extends GetView<HomeController> {
                 spacing: 40,
                 runSpacing: 20,
                 children: [
-                  UserCard(),
-                  UserCard(),
-                  UserCard(),
-                  UserCard(),
-                  UserCard(),
-                  UserCard(),
-                  UserCard(),
-                  UserCard(),
+                  // UserCard(),
+                  // UserCard(),
+                  // UserCard(),
+                  // UserCard(),
+                  // UserCard(),
+                  // UserCard(),
+                  // UserCard(),
+                  // UserCard(),
                 ],
               ),
             ),

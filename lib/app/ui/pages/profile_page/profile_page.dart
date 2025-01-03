@@ -186,7 +186,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         borderRadius: BorderRadius.circular(80),
                                         onTap: _onAvatarTap,
                                         child: AvatarPlus(
-                                          "${FirebaseAuth.instance.currentUser!.uid.toString()} ${FirebaseAuth.instance.currentUser!.email.toString()} ${profilePageController.userProfile.value!.name}",
+                                          "${FirebaseAuth.instance.currentUser!.uid.toString()}${profilePageController.userProfile.value!.name}",
                                         ),
                                       )
                                     : InkWell(

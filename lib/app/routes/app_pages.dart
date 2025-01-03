@@ -1,3 +1,4 @@
+import 'package:emotion_tracker/app/bindings/add_friends_binding.dart';
 import 'package:emotion_tracker/app/bindings/calendar_page_binding.dart';
 import 'package:emotion_tracker/app/bindings/local_auth_binding.dart';
 import 'package:emotion_tracker/app/bindings/login_binding.dart';
@@ -126,7 +127,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.ADD_FRIENDS,
       page: () => const FriendsAddPage(),
-      binding: LocalAuthBinding(),
+      binding: AddFriendsBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: defaultTransitionDuration,
     ),

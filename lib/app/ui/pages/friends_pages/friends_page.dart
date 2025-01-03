@@ -1,11 +1,13 @@
+import 'package:emotion_tracker/app/controllers/add_friends_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/search_widget.dart';
-import 'package:emotion_tracker/app/ui/global_widgets/user_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class FriendsPage extends StatelessWidget {
-  const FriendsPage({Key? key}) : super(key: key);
+  FriendsPage({Key? key}) : super(key: key);
 
+  final AddFriendsController addFriendsController =
+      Get.put(AddFriendsController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,6 +34,9 @@ class FriendsPage extends StatelessWidget {
                   SizedBox(
                     width: Get.width * 0.75,
                     child: SearchWidget(
+                      onSearch: (value) async {
+                        addFriendsController.searchFriends(value);
+                      },
                       controller: TextEditingController(),
                       hintText: "Search for friends",
                     ),
@@ -51,16 +56,7 @@ class FriendsPage extends StatelessWidget {
                 child: Wrap(
                   spacing: Get.width * 0.08,
                   runSpacing: Get.width * 0.08,
-                  children: const [
-                    UserCard(),
-                    UserCard(),
-                    UserCard(),
-                    UserCard(),
-                    UserCard(),
-                    UserCard(),
-                    UserCard(),
-                    UserCard(),
-                  ],
+                  children: const [],
                 ),
               ),
             ],

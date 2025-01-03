@@ -1,10 +1,12 @@
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:avatar_plus/avatar_plus.dart';
+import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class UserCard extends StatelessWidget {
-  const UserCard({Key? key}) : super(key: key);
+  const UserCard({Key? key, required this.profile}) : super(key: key);
+  final Profile? profile;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -37,7 +39,9 @@ class UserCard extends StatelessWidget {
             children: [
               SizedBox(
                 height: Get.width * 0.2,
-                child: AvatarPlus("hello"),
+                child: AvatarPlus(
+                  "${profile!.uid.toString()}${profile!.name}",
+                ),
               ),
               Transform(
                 transform: Matrix4.translationValues(40, -60, 0),
@@ -52,7 +56,7 @@ class UserCard extends StatelessWidget {
             height: Get.width * 0.03,
           ),
           Text(
-            'Eaint Thet Paing Hmue Khin',
+            profile!.name,
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.black,

@@ -18,7 +18,7 @@ class HomePage extends GetView<HomeController> {
             index: homeController.pageIndex.value,
             children: [
               CalendarPage(),
-              const FriendsPage(),
+              FriendsPage(),
               const Center(
                 child: Text('Notification Page'),
               ),
