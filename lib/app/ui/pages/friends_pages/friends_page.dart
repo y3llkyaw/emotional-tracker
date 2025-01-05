@@ -35,7 +35,7 @@ class FriendsPage extends StatelessWidget {
                     width: Get.width * 0.75,
                     child: SearchWidget(
                       onSearch: (value) async {
-                        addFriendsController.searchFriends(value);
+                        // addFriendsController.searchFriends(value);
                       },
                       controller: TextEditingController(),
                       hintText: "Search for friends",
