@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 
 class NotiController extends GetxController {
   final NotificationService ns = NotificationService();
-  var notifications = <Map>[].obs;
+  var notifications = const Stream<List<Map<String, dynamic>>>.empty().obs;
 
   @override
   onInit() {
@@ -14,7 +14,7 @@ class NotiController extends GetxController {
   }
 
   Future<void> getNotification() async {
-    notifications.value = await ns.getNoti();
+    notifications.value = streamNoti();
   }
 
   Stream<List<Map<String, dynamic>>> streamNoti() {

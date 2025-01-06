@@ -42,38 +42,46 @@ class _NotificationPageState extends State<NotificationPage> {
       body: Padding(
         padding: EdgeInsets.all(Get.width * 0.05),
         child: Obx(() {
-          List<String> fr = [];
-          var frAccept = [];
-          var other = [];
-          for (var element in nc.notifications) {
-            switch (element['type']) {
-              case "fr":
-                fr.add(element['uid']);
-                break;
-              case "fr-accept":
-                frAccept.add(element['uid']);
-                break;
-              case "other":
-                other.add(element['uid']);
-                break;
-            }
-          }
-          return Column(
-            children: [
-              _buildExpansionTile(
-                icon: CupertinoIcons.person_3_fill,
-                title: "Friends Requests",
-                children: [
-                  ..._buildFriendRequests(fr),
-                  ..._buildFriendAccepts(frAccept.cast<String>()),
-                ],
-              ),
-              _buildExpansionTile(
-                icon: Icons.more_horiz,
-                title: "Others",
-                children: _buildOtherNotifications(other.cast<String>()),
-              ),
-            ],
+          return StreamBuilder<List<Map<String, dynamic>>>(
+            stream: nc.notifications.value,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                List<String> fr = [];
+                var frAccept = [];
+                var other = [];
+                for (var element in snapshot.data!) {
+                  switch (element['type']) {
+                    case "fr":
+                      fr.add(element['uid']);
+                      break;
+                    case "fr-accept":
+                      frAccept.add(element['uid']);
+                      break;
+                    case "other":
+                      other.add(element['uid']);
+                      break;
+                  }
+                }
+                return Column(
+                  children: [
+                    _buildExpansionTile(
+                      icon: CupertinoIcons.person_3_fill,
+                      title: "Friends Requests",
+                      children: [
+                        ..._buildFriendRequests(fr),
+                        ..._buildFriendAccepts(frAccept.cast<String>()),
+                      ],
+                    ),
+                    _buildExpansionTile(
+                      icon: Icons.more_horiz,
+                      title: "Others",
+                      children: _buildOtherNotifications(other.cast<String>()),
+                    ),
+                  ],
+                );
+              }
+              return const Center(child: CircularProgressIndicator());
+            },
           );
         }),
       ),

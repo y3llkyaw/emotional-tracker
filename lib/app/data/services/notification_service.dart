@@ -5,18 +5,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 class NotificationService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final _cuid = FirebaseAuth.instance.currentUser!.uid;
-  Future<List<Map>> getNoti() async {
-    final noti = await _firestore
+  Stream<List<Map<String, dynamic>>> getNoti() {
+    return _firestore
         .collection('profile')
         .doc(_cuid)
         .collection('notifications')
-        .get();
-
-    List<Map> notifications = [];
-    for (var element in noti.docs) {
-      notifications.add(element.data());
-    }
-    return notifications;
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) => doc.data()).toList();
+    });
   }
 
   Future<void> sendFriendRequstNoti(Profile profile) async {
