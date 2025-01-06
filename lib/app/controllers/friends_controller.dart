@@ -42,16 +42,15 @@ class FriendsController extends GetxController {
   }
 
   Future<void> confirmFriendRequest(Profile profile) async {
-    // check friend status
+    isLoading.value = true;
     await _friendService.confirmFriendRequest(profile).then((value) async {
       await notificationController.getNotification();
     });
+    isLoading.value = false;
   }
 
   Future<void> getFriends() async {
-    isLoading.value = true;
     final result = await _friendService.getFriends();
     friends.value = result;
-    isLoading.value = false;
   }
 }
