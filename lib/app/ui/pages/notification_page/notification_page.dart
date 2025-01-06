@@ -133,8 +133,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                   var profile = snapshot.data as Profile?;
                                   return Padding(
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: Get.width * 0.04,
-                                        vertical: Get.width * 0.04),
+                                        vertical: Get.width * 0.002),
                                     child: ListTile(
                                       leading: CircleAvatar(
                                         child:

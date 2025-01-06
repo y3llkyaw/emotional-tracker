@@ -86,9 +86,14 @@ class FriendsPage extends StatelessWidget {
 
   Widget addFrinedCard() {
     return InkWell(
+      customBorder: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
       radius: 2000,
-      splashColor: Colors.grey.shade300.withOpacity(0.5),
-      onTap: () {},
+      splashColor: Colors.grey.shade400.withOpacity(0.5),
+      onTap: () {
+        Get.toNamed('/add-friends');
+      },
       child: Container(
         width: Get.width * 0.35,
         height: Get.width * 0.5,
@@ -102,8 +107,8 @@ class FriendsPage extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: Colors.grey.shade300.withOpacity(0.5), // Shadow color
-              spreadRadius: 2, // Spread radius
-              blurRadius: 5, // Blur radius
+              spreadRadius: 5, // Spread radius
+              blurRadius: 7, // Blur radius
               offset: const Offset(0, 0), // Offset
             ),
           ],
@@ -125,6 +130,7 @@ class FriendsPage extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            const SizedBox(),
           ],
         ),
       ),

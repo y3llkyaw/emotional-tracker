@@ -1,3 +1,4 @@
+import 'package:emotion_tracker/app/controllers/noti_controller.dart';
 import 'package:emotion_tracker/app/ui/pages/calendar_page/calendar_page.dart';
 import 'package:emotion_tracker/app/ui/pages/friends_pages/friends_page.dart';
 import 'package:emotion_tracker/app/ui/pages/notification_page/notification_page.dart';
@@ -10,6 +11,7 @@ import '../../../controllers/home_controller.dart';
 class HomePage extends GetView<HomeController> {
   HomePage({Key? key}) : super(key: key);
   final HomeController homeController = Get.find();
+  final noti = NotiController();
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class HomePage extends GetView<HomeController> {
             children: [
               CalendarPage(),
               FriendsPage(),
-              NotificationPage(),
+              const NotificationPage(),
               const ProfilePage(),
             ],
           ),
@@ -44,15 +46,15 @@ class HomePage extends GetView<HomeController> {
             backgroundColor: Get.isDarkMode ? Colors.black : Colors.grey[200],
             showSelectedLabels: false,
             showUnselectedLabels: false,
-            items: const [
-              BottomNavigationBarItem(
+            items: [
+              const BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.only(top: 10.0),
                   child: Icon(CupertinoIcons.home),
                 ),
                 label: 'Home',
               ),
-              BottomNavigationBarItem(
+              const BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.only(top: 10.0),
                   child: Icon(CupertinoIcons.person_2),
@@ -61,12 +63,29 @@ class HomePage extends GetView<HomeController> {
               ),
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: EdgeInsets.only(top: 10.0),
-                  child: Icon(CupertinoIcons.bell),
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Stack(
+                    children: [
+                      const Icon(CupertinoIcons.bell),
+                      StreamBuilder(
+                        stream: noti.streamNoti(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData && snapshot.data is List) {
+                            if ((snapshot.data as List).isEmpty) {
+                              return const SizedBox();
+                            }
+                            return _redMark((snapshot.data as List).length);
+                          } else {
+                            return const SizedBox();
+                          }
+                        },
+                      )
+                    ],
+                  ),
                 ),
                 label: 'Notification',
               ),
-              BottomNavigationBarItem(
+              const BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.only(top: 10.0),
                   child: Icon(CupertinoIcons.settings),
@@ -75,6 +94,31 @@ class HomePage extends GetView<HomeController> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _redMark(int count) {
+    return Positioned(
+      right: 0,
+      child: Container(
+        padding: const EdgeInsets.all(2),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(6),
+        ),
+        constraints: const BoxConstraints(
+          minWidth: 12,
+          minHeight: 12,
+        ),
+        child: Text(
+          count.toString(),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: Get.width * 0.02,
+          ),
+          textAlign: TextAlign.center,
         ),
       ),
     );

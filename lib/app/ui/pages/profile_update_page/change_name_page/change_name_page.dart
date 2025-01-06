@@ -27,7 +27,7 @@ class _ChangeNamePageState extends State<ChangeNamePage> {
         child: Column(
           children: [
             AvatarPlus(
-              "${FirebaseAuth.instance.currentUser!.uid.toString()} ${FirebaseAuth.instance.currentUser!.email.toString()} ${name.trim() }",
+              "${FirebaseAuth.instance.currentUser!.uid.toString()}${name.trim()}",
               width: Get.width * 0.5,
               height: Get.width * 0.5,
             ),

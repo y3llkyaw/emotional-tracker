@@ -7,64 +7,69 @@ import 'package:get/get.dart';
 class UserCard extends StatelessWidget {
   const UserCard({Key? key, required this.profile}) : super(key: key);
   final Profile? profile;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: Get.width * 0.35,
-      height: Get.width * 0.5,
-      padding: EdgeInsets.symmetric(
-        vertical: Get.width * 0.03,
+    return InkWell(
+      onTap: () {},
+      customBorder: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
       ),
-      decoration: BoxDecoration(
-        color: Colors.white70,
-        // color: Get.theme.canvasColor, // Background color
-        borderRadius: BorderRadius.circular(24.0), // Rounded corners
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade300.withOpacity(0.5), // Shadow color
-            spreadRadius: 2, // Spread radius
-            blurRadius: 5, // Blur radius
-            offset: const Offset(0, 0), // Offset
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: Get.width * 0.07,
-          ),
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              SizedBox(
-                height: Get.width * 0.2,
-                child: AvatarPlus(
-                  "${profile!.uid.toString()}${profile!.name}",
-                ),
-              ),
-              Transform(
-                transform: Matrix4.translationValues(40, -60, 0),
-                child: CircleAvatar(
-                  backgroundColor: Colors.grey.shade300,
-                  child: const AnimatedEmoji(AnimatedEmojis.airplaneArrival),
-                ),
-              )
-            ],
-          ),
-          SizedBox(
-            height: Get.width * 0.03,
-          ),
-          Text(
-            profile!.name,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: Get.width * 0.03,
-              fontWeight: FontWeight.bold,
+      child: Container(
+        width: Get.width * 0.35,
+        height: Get.width * 0.5,
+        padding: EdgeInsets.symmetric(
+          vertical: Get.width * 0.03,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white70,
+          // color: Get.theme.canvasColor, // Background color
+          borderRadius: BorderRadius.circular(24.0), // Rounded corners
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5), // Shadow color
+              spreadRadius: 4, // Spread radius
+              blurRadius: 8, // Blur radius
+              offset: const Offset(0, 0), // Offset
             ),
-          ),
-        ],
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              height: Get.width * 0.07,
+            ),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  height: Get.width * 0.2,
+                  child: AvatarPlus(
+                    "${profile!.uid.toString()}${profile!.name}",
+                  ),
+                ),
+                Transform(
+                  transform: Matrix4.translationValues(40, -60, 0),
+                  child: CircleAvatar(
+                    backgroundColor: Colors.grey.shade300,
+                    child: const AnimatedEmoji(AnimatedEmojis.airplaneArrival),
+                  ),
+                )
+              ],
+            ),
+            Text(
+              profile!.name,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: Get.width * 0.03,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(),
+          ],
+        ),
       ),
     );
   }
