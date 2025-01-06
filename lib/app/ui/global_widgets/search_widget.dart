@@ -18,6 +18,8 @@ class SearchWidget extends StatefulWidget {
 
 class _SearchWidgetState extends State<SearchWidget> {
   @override
+ 
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -34,7 +36,7 @@ class _SearchWidgetState extends State<SearchWidget> {
               Icons.search,
               color: Colors.grey,
             ), // Search icon
-            hintText: 'Search', // Placeholder text
+            hintText: widget.hintText, // Placeholder text
             hintStyle: const TextStyle(
               color: Colors.grey,
             ), // Placeholder text style

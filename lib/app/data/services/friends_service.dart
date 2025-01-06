@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/data/services/notification_service.dart';
 import 'package:emotion_tracker/app/sources/enums.dart';
@@ -9,7 +10,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 class FriendService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final _cuid = FirebaseAuth.instance.currentUser!.uid;
-  final ns = NotificationService();
+  final _ns = NotificationService();
+  final profilePageController = ProfilePageController();
+
   Future<List> searchFriendsWithName(String query) async {
     // search for friends
     var searchResults = [];
@@ -52,7 +55,7 @@ class FriendService {
         'isSend': true,
       });
     });
-    ns.sendFriendRequstNoti(profile);
+    _ns.sendFriendRequstNoti(profile);
   }
 
   Future<void> removeFriendRequest(Profile profile) async {
@@ -101,7 +104,7 @@ class FriendService {
         .collection("friends_request")
         .doc(profile.uid)
         .delete();
-    await ns.deleteFriendRequestNotification(profile.uid);
+    await _ns.deleteFriendRequestNotification(profile.uid);
     await _firestore
         .collection("profile")
         .doc(_cuid)
@@ -114,7 +117,28 @@ class FriendService {
         .collection("friends")
         .doc(_cuid)
         .set({"uid": _cuid, "timestamp": Timestamp.now()});
-    ns.sendFriendAcceptNoti(profile);
+    _ns.sendFriendAcceptNoti(profile);
     log("finished", name: "friends-services");
+  }
+
+  Future<List<Profile>> getFriends() async {
+    log("getting friends", name: "friends-services");
+    var friends = <Profile>[];
+    await _firestore
+        .collection("profile")
+        .doc(_cuid)
+        .collection('friends')
+        .get()
+        .then((value) async {
+      for (var element in value.docs) {
+        final friend =
+            await profilePageController.getProfileByUid(element.data()["uid"]);
+        friends.add(friend);
+      }
+      return friends;
+    }).onError((error, stackTrace) {
+      return friends;
+    });
+    return friends;
   }
 }

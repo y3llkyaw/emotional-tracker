@@ -127,7 +127,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.ADD_FRIENDS,
       page: () => const FriendsAddPage(),
-      binding: AddFriendsBinding(),
+      binding: FriendsBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: defaultTransitionDuration,
     ),

@@ -1,5 +1,5 @@
 import 'package:avatar_plus/avatar_plus.dart';
-import 'package:emotion_tracker/app/controllers/add_friends_controller.dart';
+import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/controllers/noti_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,7 +18,7 @@ class NotificationPage extends StatefulWidget {
 class _NotificationPageState extends State<NotificationPage> {
   final NotiController nc = Get.put(NotiController());
   final ProfilePageController pc = Get.put(ProfilePageController());
-  final AddFriendsController afc = Get.put(AddFriendsController());
+  final FriendsController afc = Get.put(FriendsController());
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +63,6 @@ class _NotificationPageState extends State<NotificationPage> {
             return Column(
               children: [
                 ExpansionTile(
-                  initiallyExpanded: true,
                   iconColor: Colors.black,
                   leading: const Icon(CupertinoIcons.person_3_fill),
                   title: const Text("Friends Requests"),

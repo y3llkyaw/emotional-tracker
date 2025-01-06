@@ -1,5 +1,5 @@
 import 'package:avatar_plus/avatar_plus.dart';
-import 'package:emotion_tracker/app/controllers/add_friends_controller.dart';
+import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/search_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +13,14 @@ class FriendsAddPage extends StatefulWidget {
 }
 
 class _FriendsAddPageState extends State<FriendsAddPage> {
-  final AddFriendsController addFriendsController = Get.find();
+  final FriendsController addFriendsController = Get.find();
+  final textController = TextEditingController();
+  @override
+  void dispose() {
+    textController.dispose();
+    addFriendsController.searchFriendsWithName("");
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,26 +32,23 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: Get.width * 0.04),
-              child: SearchWidget(
-                controller: TextEditingController(),
-                onSearch: (value) async {
-                  addFriendsController.searchFriendsWithName(value);
-                },
-                hintText: 'Search for friends',
-              ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: Get.width * 0.04),
+            child: SearchWidget(
+              controller: textController,
+              onSearch: (value) async {
+                addFriendsController.searchFriendsWithName(value);
+              },
+              hintText: 'Search for New friends',
             ),
-            SizedBox(height: Get.height * 0.02),
-            Obx(() => _buildSearchResults()),
-          ],
-        ),
+          ),
+          SizedBox(height: Get.height * 0.02),
+          Obx(() => _buildSearchResults()),
+        ],
       ),
     );
   }

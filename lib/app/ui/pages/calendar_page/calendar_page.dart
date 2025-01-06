@@ -1,7 +1,7 @@
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -12,22 +12,34 @@ class CalendarPage extends GetView<HomeController> {
   final JournalController journalController = Get.put(JournalController());
   @override
   Widget build(BuildContext context) {
-    FirebaseAuth.instance.currentUser!.reload().then((value) {
-      journalController.fetchJournals();
-    });
+    journalController.fetchJournals();
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Obx(
           () => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             // title goes here
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: Get.width * 0.08),
-              child: Text(
-                journalController.journals.isEmpty ? 'No Journals' : 'Journals',
-                style: TextStyle(
-                  fontSize: Get.width * 0.05,
-                  fontWeight: FontWeight.bold,
-                ),
+              padding: EdgeInsets.symmetric(
+                horizontal: Get.width * 0.08,
+                vertical: Get.width * 0.04,
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    journalController.journals.isEmpty
+                        ? 'No Journals'
+                        : 'Journals',
+                    style: TextStyle(
+                      fontSize: Get.width * 0.046,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(
+                    width: Get.width * 0.02,
+                  ),
+                  const Icon(CupertinoIcons.news_solid),
+                ],
               ),
             ),
             SizedBox(

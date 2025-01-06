@@ -1,5 +1,6 @@
-import 'package:emotion_tracker/app/controllers/add_friends_controller.dart';
+import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/search_widget.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/user_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,10 +8,10 @@ import 'package:get/get.dart';
 class FriendsPage extends StatelessWidget {
   FriendsPage({Key? key}) : super(key: key);
 
-  final AddFriendsController addFriendsController =
-      Get.put(AddFriendsController());
+  final FriendsController friendsController = Get.put(FriendsController());
   @override
   Widget build(BuildContext context) {
+    friendsController.getFriends();
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -60,14 +61,71 @@ class FriendsPage extends StatelessWidget {
                 height: Get.height * 0.025,
               ),
               Center(
-                child: Wrap(
-                  spacing: Get.width * 0.08,
-                  runSpacing: Get.width * 0.08,
-                  children: const [],
+                child: Obx(
+                  () {
+                    return SizedBox(
+                      width: Get.width * 0.8,
+                      child: Wrap(
+                        spacing: Get.width * 0.08,
+                        runSpacing: Get.width * 0.08,
+                        children: <Widget>[addFrinedCard()] +
+                            friendsController.friends.map<Widget>((friend) {
+                              return UserCard(profile: friend);
+                            }).toList(),
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget addFrinedCard() {
+    return InkWell(
+      radius: 2000,
+      splashColor: Colors.grey.shade300.withOpacity(0.5),
+      onTap: () {},
+      child: Container(
+        width: Get.width * 0.35,
+        height: Get.width * 0.5,
+        padding: EdgeInsets.symmetric(
+          vertical: Get.width * 0.03,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade300,
+          // color: Get.theme.canvasColor, // Background color
+          borderRadius: BorderRadius.circular(24.0), // Rounded corners
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade300.withOpacity(0.5), // Shadow color
+              spreadRadius: 2, // Spread radius
+              blurRadius: 5, // Blur radius
+              offset: const Offset(0, 0), // Offset
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            SizedBox(
+              height: Get.width * 0.2,
+              child: const CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Icon(Icons.add),
+              ),
+            ),
+            const Text(
+              "Add New Friends",
+              style: TextStyle(
+                color: Colors.black45,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ),
     );

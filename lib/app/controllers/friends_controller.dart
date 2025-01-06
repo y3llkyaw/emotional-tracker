@@ -1,14 +1,25 @@
 import 'package:emotion_tracker/app/controllers/noti_controller.dart';
+import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/data/services/friends_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
-class AddFriendsController extends GetxController {
+class FriendsController extends GetxController {
   var searchResults = [].obs;
   final cuid = FirebaseAuth.instance.currentUser!.uid;
   final _friendService = FriendService();
   final notificationController = NotiController();
+  final profilePageController = ProfilePageController();
+
+  var friends = [].obs;
+
+  @override
+  onInit() {
+    getFriends();
+    super.onInit();
+  }
+
   Future<void> searchFriendsWithName(String query) async {
     searchResults.value = await _friendService.searchFriendsWithName(query);
   }
@@ -34,5 +45,10 @@ class AddFriendsController extends GetxController {
     await _friendService.confirmFriendRequest(profile).then((value) async {
       await notificationController.getNotification();
     });
+  }
+
+  Future<void> getFriends() async {
+    final result = await _friendService.getFriends();
+    friends.value = result;
   }
 }
