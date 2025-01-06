@@ -1,6 +1,7 @@
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -11,42 +12,34 @@ class CalendarPage extends GetView<HomeController> {
   final JournalController journalController = Get.put(JournalController());
   @override
   Widget build(BuildContext context) {
-    journalController.fetchJournals();
+    FirebaseAuth.instance.currentUser!.reload().then((value) {
+      journalController.fetchJournals();
+    });
     return Scaffold(
       body: SingleChildScrollView(
         child: Obx(
           () => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             // title goes here
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: Get.width * 0.08),
               child: Text(
                 journalController.journals.isEmpty ? 'No Journals' : 'Journals',
                 style: TextStyle(
-                  fontSize: Get.width * 0.06,
+                  fontSize: Get.width * 0.05,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            const SizedBox(
-              height: 20,
+            SizedBox(
+              height: Get.width * 0.03,
             ),
-
             // calendar goes here
             calendar(),
             const Center(
               child: Wrap(
                 spacing: 40,
                 runSpacing: 20,
-                children: [
-                  // UserCard(),
-                  // UserCard(),
-                  // UserCard(),
-                  // UserCard(),
-                  // UserCard(),
-                  // UserCard(),
-                  // UserCard(),
-                  // UserCard(),
-                ],
+                children: [],
               ),
             ),
           ]),
@@ -71,15 +64,21 @@ Widget calendar() {
           CalendarFormat.month: 'monthly / weekly',
           CalendarFormat.week: 'monthly / weekly',
         },
-        headerStyle: const HeaderStyle(
-          titleCentered: true,
-          formatButtonVisible: true,
+        headerStyle: HeaderStyle(
+          titleTextStyle: TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: Get.width * 0.04,
+          ),
+          titleCentered: false,
+          formatButtonVisible: false,
+          leftChevronVisible: false,
+          rightChevronVisible: false,
+          headerPadding: EdgeInsets.all(Get.width * 0.06),
         ),
         calendarFormat: journalController.formatCalender.value,
         onFormatChanged: (format) {
           journalController.toggleCalendarFormat();
         },
-        availableGestures: AvailableGestures.none,
         formatAnimationCurve: Curves.easeInOut,
         formatAnimationDuration: const Duration(milliseconds: 400),
         weekNumbersVisible: true,
@@ -97,8 +96,17 @@ Widget calendar() {
             }
             return defaultCalendar(date);
           },
-          todayBuilder: (context, day, focusedDay) => defaultCalendar(day),
           disabledBuilder: (context, day, focusedDay) => disableCalaneder(day),
+          todayBuilder: (context, date, events) {
+            for (var element in journalController.journals) {
+              if (DateTime(element.date.day, element.date.month,
+                      element.date.year) ==
+                  DateTime(date.day, date.month, date.year)) {
+                return dataCalendar(date, element.content, element.emotion);
+              }
+            }
+            return defaultCalendar(date);
+          },
           outsideBuilder: (context, day, focusedDay) => disableCalaneder(day),
         ),
       ),
@@ -117,7 +125,9 @@ Widget disableCalaneder(DateTime date) {
         Center(
           child: Text(
             date.day.toString(),
-            style: const TextStyle(color: Colors.grey),
+            style: const TextStyle(
+              color: Colors.grey,
+            ),
           ),
         ),
       ],

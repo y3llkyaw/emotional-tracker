@@ -1,5 +1,6 @@
 import 'package:emotion_tracker/app/ui/pages/calendar_page/calendar_page.dart';
 import 'package:emotion_tracker/app/ui/pages/friends_pages/friends_page.dart';
+import 'package:emotion_tracker/app/ui/pages/notification_page/notification_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/profile_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,9 +20,7 @@ class HomePage extends GetView<HomeController> {
             children: [
               CalendarPage(),
               FriendsPage(),
-              const Center(
-                child: Text('Notification Page'),
-              ),
+              NotificationPage(),
               const ProfilePage(),
             ],
           ),

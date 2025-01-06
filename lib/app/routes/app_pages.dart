@@ -28,7 +28,7 @@ import '../ui/pages/unknown_route_page/unknown_route_page.dart';
 import 'app_routes.dart';
 
 const _defaultTransition = Transition.size;
-const defaultTransitionDuration = Duration(milliseconds: 400);
+const defaultTransitionDuration = Duration(milliseconds: 300);
 
 class AppPages {
   static final unknownRoutePage = GetPage(

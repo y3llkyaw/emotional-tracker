@@ -6,6 +6,7 @@ import 'package:avatar_plus/avatar_plus.dart';
 import 'package:chat_bubbles/bubbles/bubble_special_three.dart';
 import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
 import 'package:day_night_time_picker/lib/state/time.dart';
+import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -29,6 +30,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _showBubble = false;
 
   final ProfilePageController profilePageController = Get.find();
+  final JournalController journalController = Get.find();
   Time selectedTime = Time(hour: 21, minute: 0, second: 0);
 
   @override
@@ -151,7 +153,26 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     profilePageController.onInit();
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        centerTitle: false,
+        title: Padding(
+          padding: EdgeInsets.symmetric(horizontal: Get.width * 0.04),
+          child: const Text(
+            "Profile",
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: IconButton(
+              tooltip: "profile setting",
+              onPressed: () {},
+              icon: const Icon(Icons.settings),
+            ),
+          )
+        ],
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -159,13 +180,6 @@ class _ProfilePageState extends State<ProfilePage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "Profile",
-                style: TextStyle(
-                  fontSize: Get.width * 0.06,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
               SizedBox(
                 height: Get.height * 0.05,
               ),
@@ -467,6 +481,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             TextButton(
                               onPressed: () async {
                                 await FirebaseAuth.instance.signOut();
+                                journalController.journals.clear();
                                 Get.offAllNamed("/home");
                               },
                               child: const Text("Log out"),

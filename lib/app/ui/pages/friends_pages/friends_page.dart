@@ -1,5 +1,6 @@
 import 'package:emotion_tracker/app/controllers/add_friends_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/search_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,6 +12,22 @@ class FriendsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: false,
+        title: Padding(
+          padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
+          child: Row(
+            children: [
+              const Text(
+                "Friends",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              SizedBox(width: Get.width * 0.03),
+              const Icon(CupertinoIcons.person_3_fill)
+            ],
+          ),
+        ),
+      ),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: SingleChildScrollView(
@@ -18,16 +35,6 @@ class FriendsPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Friends',
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: Get.width * 0.05,
-                    fontWeight: FontWeight.bold),
-              ),
-              SizedBox(
-                height: Get.height * 0.025,
-              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
+import 'package:emotion_tracker/app/sources/enums.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
@@ -13,6 +14,26 @@ class ProfilePageController extends GetxController {
   void onInit() async {
     super.onInit();
     await getCurrentUserProfile();
+  }
+
+  Future<Profile> getProfileByUid(String uid) async {
+    try {
+      final doc =
+          await FirebaseFirestore.instance.collection("profile").doc(uid).get();
+      if (doc.exists) {
+        final profile = doc.data() as Map<String, dynamic>;
+        return Profile.fromDocument(profile);
+      } else {
+        return Profile(
+            uid: "",
+            name: "",
+            gender: Gender.Others,
+            dateOfBirth: Timestamp.now());
+      }
+    } catch (e) {
+      log("Error fetching profile: $e", name: "profile-page-controller");
+      rethrow;
+    }
   }
 
   Future<void> getCurrentUserProfile() async {

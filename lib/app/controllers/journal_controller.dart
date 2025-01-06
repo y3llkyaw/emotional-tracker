@@ -10,9 +10,9 @@ import 'package:table_calendar/table_calendar.dart';
 class JournalController extends GetxController {
   var isLoading = false.obs;
   var journals = <Journal>[].obs;
-  var formatCalender = CalendarFormat.week.obs;
+  var formatCalender = CalendarFormat.month.obs;
   // Data for the journal
-  final uid = FirebaseAuth.instance.currentUser!.uid;
+
   var content = ''.obs;
   var date = DateTime.now().obs;
   Rx<AnimatedEmojiData> emotion = AnimatedEmojis.airplaneArrival.obs;
@@ -23,11 +23,11 @@ class JournalController extends GetxController {
     try {
       await FirebaseFirestore.instance
           .collection("profile")
-          .doc(uid)
+          .doc(FirebaseAuth.instance.currentUser!.uid)
           .collection("journals")
           .doc("journal_${date.value}")
           .set({
-        "uid": uid,
+        "uid": FirebaseAuth.instance.currentUser!.uid,
         "date": date.value,
         "content": content.value,
         "emotion": emotion.value.id.toString(),
@@ -51,10 +51,11 @@ class JournalController extends GetxController {
 
   Future<void> getJournal(DateTime date) async {
     // Fetch journal from Firestore
+
     try {
       final journal = await FirebaseFirestore.instance
           .collection("profile")
-          .doc(uid)
+          .doc(FirebaseAuth.instance.currentUser!.uid)
           .collection("journals")
           .doc("journal_${date.toString()}")
           .get();
@@ -75,26 +76,29 @@ class JournalController extends GetxController {
   }
 
   Future<void> fetchJournals() async {
+    log("fetch-journal", name: "journal-controller");
     try {
       final journalCollection = await FirebaseFirestore.instance
           .collection("profile")
-          .doc(uid)
+          .doc(FirebaseAuth.instance.currentUser!.uid)
           .collection("journals")
           .get();
 
       journals.value = journalCollection.docs
           .map((journal) => Journal.fromDocument(journal.data()))
           .toList();
+      log(journals.value.toString(), name: "journal-controller");
     } catch (e) {
       Get.snackbar("Error", e.toString());
     }
+    update();
   }
 
   Future<void> deleteJournal(String journalId) async {
     try {
       await FirebaseFirestore.instance
           .collection("profile")
-          .doc(uid)
+          .doc(FirebaseAuth.instance.currentUser!.uid)
           .collection("journals")
           .doc(journalId)
           .delete();

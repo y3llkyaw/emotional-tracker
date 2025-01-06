@@ -19,7 +19,11 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Friends'),
+        centerTitle: true,
+        title: const Text(
+          'Add Friends',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20),
