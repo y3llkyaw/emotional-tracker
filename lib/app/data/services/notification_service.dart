@@ -28,6 +28,7 @@ class NotificationService {
         .set({
       "type": "fr",
       "uid": _cuid,
+      "read": false,
     });
   }
 
@@ -37,6 +38,12 @@ class NotificationService {
         .doc(_cuid)
         .collection('notifications')
         .doc(uid)
+        .delete();
+    await _firestore
+        .collection('profile')
+        .doc(uid)
+        .collection('notifications')
+        .doc(_cuid)
         .delete();
   }
 
@@ -49,6 +56,7 @@ class NotificationService {
         .set({
       "type": "fr-accept",
       "uid": _cuid,
+      "read": false,
     });
   }
 }

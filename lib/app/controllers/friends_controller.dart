@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
 class FriendsController extends GetxController {
+  RxBool isLoading = false.obs;
   var searchResults = [].obs;
   final cuid = FirebaseAuth.instance.currentUser!.uid;
   final _friendService = FriendService();
@@ -48,7 +49,9 @@ class FriendsController extends GetxController {
   }
 
   Future<void> getFriends() async {
+    isLoading.value = true;
     final result = await _friendService.getFriends();
     friends.value = result;
+    isLoading.value = false;
   }
 }
