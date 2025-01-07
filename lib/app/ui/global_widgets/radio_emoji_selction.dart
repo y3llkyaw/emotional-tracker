@@ -4,11 +4,13 @@ import 'package:animated_emoji/animated_emoji.dart';
 class RadioEmojiSelection extends StatefulWidget {
   final AnimatedEmojiData selectedEmoji;
   final Function(AnimatedEmojiData) onEmojiSelected;
+  final bool? isVertical; // Flag for vertical display
 
   const RadioEmojiSelection({
     Key? key,
     required this.selectedEmoji,
     required this.onEmojiSelected,
+    this.isVertical = false, // Default is horizontal
   }) : super(key: key);
 
   @override
@@ -17,11 +19,14 @@ class RadioEmojiSelection extends StatefulWidget {
 
 class _RadioEmojiSelectionState extends State<RadioEmojiSelection> {
   late AnimatedEmojiData _currentSelection;
-  final int _emojisPerPage = 10; // Number of emojis to load per page
+  final int _emojisPerPage = 40; // Number of emojis to load per page
   int _currentPage = 0; // Current page index
   List<AnimatedEmojiData> _visibleEmojis = []; // Emojis to display
   final ScrollController _scrollController =
       ScrollController(); // Scroll controller
+
+  // Static cache for all emojis
+  static List<AnimatedEmojiData>? _allEmojisCache;
 
   final List<AnimatedEmojiData> _baseEmojis = [
     AnimatedEmojis.angry,
@@ -35,12 +40,16 @@ class _RadioEmojiSelectionState extends State<RadioEmojiSelection> {
   void initState() {
     super.initState();
     _currentSelection = widget.selectedEmoji;
+
+    // Initialize cache if not already cached
+    _allEmojisCache ??= AnimatedEmojis.values;
+
     _loadNextPage();
 
     // Listen to scroll events
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent - 50) {
+          _scrollController.position.maxScrollExtent - 10) {
         _loadNextPage();
       }
     });
@@ -52,15 +61,16 @@ class _RadioEmojiSelectionState extends State<RadioEmojiSelection> {
   }
 
   void _loadNextPage() {
-    const allEmojis = AnimatedEmojis.values; // Get all emojis
+    if (_allEmojisCache == null) return;
+
     final startIndex = _currentPage * _emojisPerPage;
-    final endIndex = (_currentPage + 1) * _emojisPerPage > allEmojis.length
-        ? allEmojis.length
+    final endIndex = (_currentPage + 1) * _emojisPerPage > _allEmojisCache!.length
+        ? _allEmojisCache!.length
         : (_currentPage + 1) * _emojisPerPage;
 
-    if (startIndex < allEmojis.length) {
+    if (startIndex < _allEmojisCache!.length) {
       setState(() {
-        _visibleEmojis.addAll(allEmojis.sublist(startIndex, endIndex));
+        _visibleEmojis.addAll(_allEmojisCache!.sublist(startIndex, endIndex));
         _currentPage++;
       });
     }
@@ -68,24 +78,41 @@ class _RadioEmojiSelectionState extends State<RadioEmojiSelection> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      controller: _scrollController,
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          // Base Emojis
-          ..._baseEmojis.map(
-            (emoji) => _buildEmojiButton(emoji, Colors.grey, null),
-          ),
-          // Visible Emojis
-          ..._visibleEmojis.map(
-            (emoji) => !_baseEmojis.contains(emoji)
-                ? _buildEmojiButton(emoji, Colors.grey, null)
-                : Container(),
-          ),
-        ],
+    return Center(
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        scrollDirection: widget.isVertical! ? Axis.vertical : Axis.horizontal,
+        child: widget.isVertical!
+            ? Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 10,
+                direction: Axis.horizontal, // Use vertical layout for Wrap
+                children: [
+                  ..._buildEmojiButtons(),
+                ],
+              )
+            : Row(
+                children: [
+                  ..._buildEmojiButtons(),
+                ],
+              ),
       ),
     );
+  }
+
+  List<Widget> _buildEmojiButtons() {
+    return [
+      // Base Emojis
+      ..._baseEmojis.map(
+        (emoji) => _buildEmojiButton(emoji, Colors.grey, null),
+      ),
+      // Visible Emojis
+      ..._visibleEmojis.map(
+        (emoji) => !_baseEmojis.contains(emoji)
+            ? _buildEmojiButton(emoji, Colors.grey, null)
+            : Container(),
+      ),
+    ];
   }
 
   Widget _buildEmojiButton(

@@ -14,6 +14,7 @@ class FriendsPage extends StatelessWidget {
     friendsController.getFriends();
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         centerTitle: false,
         title: Padding(
           padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),

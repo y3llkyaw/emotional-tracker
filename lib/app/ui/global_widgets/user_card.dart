@@ -53,7 +53,9 @@ class UserCard extends StatelessWidget {
                   transform: Matrix4.translationValues(40, -60, 0),
                   child: CircleAvatar(
                     backgroundColor: Colors.grey.shade300,
-                    child: const AnimatedEmoji(AnimatedEmojis.airplaneArrival),
+                    child: profile!.emoji != null
+                        ? AnimatedEmoji(profile!.emoji!)
+                        : const Text(""),
                   ),
                 )
               ],

@@ -8,6 +8,7 @@ import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
 import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -152,6 +153,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     profilePageController.onInit();
+    profilePageController.getCurrentUserProfile();
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -219,13 +221,45 @@ class _ProfilePageState extends State<ProfilePage> {
                           -Get.height * 0.08,
                           0,
                         ),
-                        child: const CircleAvatar(
-                          backgroundColor: Colors.black38,
-                          child: AnimatedEmoji(
-                            AnimatedEmojis.dizzy,
-                            errorWidget: Text(
-                              '💫',
-                            ),
+                        child: InkWell(
+                          customBorder: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                          onTap: () {
+                            showProfileStatusBottomSheet(
+                                AnimatedEmojis.neutralFace);
+                          },
+                          child: Obx(
+                            () => profilePageController
+                                        .userProfile.value?.emoji !=
+                                    null
+                                ? InkWell(
+                                    onTap: () {
+                                      showProfileStatusBottomSheet(
+                                          AnimatedEmojis.neutralFace);
+                                    },
+                                    child: const CircleAvatar(
+                                      backgroundColor: Colors.black38,
+                                      child: AnimatedEmoji(
+                                        AnimatedEmojis.dizzy,
+                                        errorWidget: Text(
+                                          '💫',
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : InkWell(
+                                    onTap: () {
+                                      showProfileStatusBottomSheet(
+                                          AnimatedEmojis.neutralFace);
+                                    },
+                                    child: const CircleAvatar(
+                                      backgroundColor: Colors.black38,
+                                      child: Icon(
+                                        CupertinoIcons.add,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
                           ),
                         ),
                       ),
