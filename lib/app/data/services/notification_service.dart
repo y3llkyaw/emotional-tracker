@@ -32,9 +32,9 @@ class NotificationService {
   Future<void> deleteFriendRequestNotification(String uid) async {
     await _firestore
         .collection('profile')
-        .doc(uid)
-        .collection('notifications')
         .doc(_cuid)
+        .collection('notifications')
+        .doc(uid)
         .delete();
   }
 

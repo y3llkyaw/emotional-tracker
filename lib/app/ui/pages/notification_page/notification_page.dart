@@ -93,11 +93,13 @@ class _NotificationPageState extends State<NotificationPage> {
       return FutureBuilder(
         future: pc.getProfileByUid(uid),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return _skeletonTile();
+          } else if (snapshot.hasData) {
             var profile = snapshot.data as Profile?;
             return _buildFriendRequestTile(profile, uid);
           }
-          return ListTile(title: Text(uid));
+          return _skeletonTile();
         },
       );
     }).toList();
@@ -124,43 +126,37 @@ class _NotificationPageState extends State<NotificationPage> {
   }
 
   Widget _buildFriendRequestTile(Profile? profile, String uid) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: Get.width * 0.04,
-        vertical: Get.width * 0.04,
+    return ListTile(
+      leading: CircleAvatar(child: AvatarPlus("$uid${profile?.name}")),
+      title: Text(
+        profile?.name ?? 'Unknown',
+        style: const TextStyle(fontWeight: FontWeight.w500),
       ),
-      child: ListTile(
-        leading: CircleAvatar(child: AvatarPlus("$uid${profile?.name}")),
-        title: Text(
-          profile?.name ?? 'Unknown',
-          style: const TextStyle(fontWeight: FontWeight.w500),
-        ),
-        subtitle: Padding(
-          padding: EdgeInsets.only(top: Get.width * 0.01),
-          child: Row(
-            children: [
-              InkWell(
-                onTap: () async {
-                  await afc.confirmFriendRequest(profile!);
-                  setState(() {});
-                },
-                child: afc.isLoading.value
-                    ? const CircularProgressIndicator()
-                    : const Text(
-                        "Accept",
-                        style: TextStyle(color: Colors.blueAccent),
-                      ),
+      subtitle: Padding(
+        padding: EdgeInsets.only(top: Get.width * 0.01),
+        child: Row(
+          children: [
+            InkWell(
+              onTap: () async {
+                await afc.confirmFriendRequest(profile!);
+                setState(() {});
+              },
+              child: afc.isLoading.value
+                  ? const CircularProgressIndicator()
+                  : const Text(
+                      "Accept",
+                      style: TextStyle(color: Colors.blueAccent),
+                    ),
+            ),
+            SizedBox(width: Get.width * 0.05),
+            InkWell(
+              onTap: () {},
+              child: const Text(
+                "Decline",
+                style: TextStyle(color: Colors.redAccent),
               ),
-              SizedBox(width: Get.width * 0.05),
-              InkWell(
-                onTap: () {},
-                child: const Text(
-                  "Decline",
-                  style: TextStyle(color: Colors.redAccent),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -203,6 +199,24 @@ class _NotificationPageState extends State<NotificationPage> {
       leading: Icon(icon),
       title: Text(title),
       children: children,
+    );
+  }
+
+  Widget _skeletonTile() {
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundColor: Colors.grey.shade300,
+      ),
+      title: Container(
+        width: 100,
+        height: 10,
+        color: Colors.grey.shade300,
+      ),
+      subtitle: Container(
+        width: 150,
+        height: 10,
+        color: Colors.grey.shade300,
+      ),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:animated_emoji/animated_emoji.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/sources/enums.dart';
 
@@ -6,6 +7,7 @@ class Profile {
   final String name;
   final Gender gender;
   final Timestamp dateOfBirth;
+  final AnimatedEmojiData? emoji;
   final String? avatar;
 
   Profile({
@@ -13,6 +15,7 @@ class Profile {
     required this.name,
     required this.gender,
     required this.dateOfBirth,
+    this.emoji,
     this.avatar,
   });
 
@@ -22,6 +25,7 @@ class Profile {
       "name": name,
       "gender": gender.toString(),
       "dateOfBirth": dateOfBirth.toString(),
+      "emoji": emoji?.toUnicodeEmoji() ?? "",
       "avatar": dateOfBirth.toString(),
     };
   }
@@ -33,7 +37,17 @@ class Profile {
       gender: Gender.values
           .firstWhere((element) => element.toString() == json['gender']),
       dateOfBirth: json['dob'],
+      emoji: _getEmojiFromJson(json),
       avatar: json['avatar'],
     );
+  }
+  static AnimatedEmojiData? _getEmojiFromJson(Map<String, dynamic> json) {
+    try {
+      return json['emotion'] != null
+          ? AnimatedEmojis.fromId(json['emotion'].toString())
+          : null; // Return null if 'emotion' is null
+    } catch (e) {
+      return null; // If any error occurs, return null
+    }
   }
 }

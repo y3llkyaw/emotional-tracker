@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/data/services/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,6 +20,7 @@ class NotiController extends GetxController {
   }
 
   Stream<List<Map<String, dynamic>>> streamNoti() {
+    log("stream worked");
     return FirebaseFirestore.instance
         .collection("profile")
         .doc(FirebaseAuth.instance.currentUser!.uid)

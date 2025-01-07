@@ -72,6 +72,7 @@ class FriendService {
         .collection('friends_request')
         .doc(profile.uid)
         .delete();
+    _ns.deleteFriendRequestNotification(profile.uid);
   }
 
   Future<String?> checkFriendStatus(Profile profile) async {
@@ -118,6 +119,7 @@ class FriendService {
         .doc(_cuid)
         .set({"uid": _cuid, "timestamp": Timestamp.now()});
     _ns.sendFriendAcceptNoti(profile);
+
     log("finished", name: "friends-services");
   }
 
