@@ -31,8 +31,11 @@ class JournalController extends GetxController {
         "date": date.value,
         "content": content.value,
         "emotion": emotion.value.id.toString(),
+      }).then((value) {
+        Get.snackbar("Error", "Journal Created Successfully..");
       });
       isLoading.value = false;
+
       fetchJournals();
       return "journal_${date.value}";
       // Get.back();

@@ -1,75 +1,79 @@
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
-import 'package:emotion_tracker/app/ui/pages/calendar_page/calendar_detail_page.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/data_journal.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/new_journal.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../../../controllers/home_controller.dart';
 
-class CalendarPage extends GetView<HomeController> {
-  CalendarPage({Key? key}) : super(key: key);
+class CalendarDetailPage extends StatefulWidget {
+  const CalendarDetailPage({Key? key}) : super(key: key);
+
+  @override
+  State<CalendarDetailPage> createState() => _CalendarDetailPageState();
+}
+
+class _CalendarDetailPageState extends State<CalendarDetailPage> {
   final JournalController journalController = Get.put(JournalController());
   @override
   Widget build(BuildContext context) {
-    journalController.fetchJournals();
-
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Obx(
-          () => Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // title goes here
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: Get.width * 0.08,
-                  vertical: Get.width * 0.04,
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      journalController.journals.isEmpty
-                          ? 'No Journals'
-                          : 'Journals',
-                      style: TextStyle(
-                        fontSize: Get.width * 0.046,
-                        fontWeight: FontWeight.bold,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: Get.width * 0.04),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: Get.width * 0.08, right: Get.width * 0.03),
+                        child: Text(
+                          "FULL CALENDAR",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: Get.width * 0.04,
+                          ),
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      width: Get.width * 0.02,
-                    ),
-                    const Icon(CupertinoIcons.news_solid),
-                  ],
+                      const Icon(Icons.calendar_month),
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: Get.width * 0.03,
-              ),
-              // calendar goes here
-              calendar(),
-              const Center(
-                child: Wrap(
-                  spacing: 40,
-                  runSpacing: 20,
-                  children: [],
+                const Spacer(),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: Get.width * 0.04),
+                  child: IconButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    icon: const Icon(
+                      CupertinoIcons.xmark,
+                    ),
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: Get.width * 0.04),
+              child: _calendar(),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-Widget calendar() {
+Widget _calendar() {
   return SizedBox(
-    height: Get.height * 0.22,
+    height: Get.height * 0.75,
     child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: TableCalendar(
@@ -102,7 +106,7 @@ Widget calendar() {
             fontSize: 15,
           ),
         ),
-        calendarFormat: CalendarFormat.week,
+        calendarFormat: CalendarFormat.month,
         onFormatChanged: (format) {
           // journalController.toggleCalendarFormat();
           Get.to(const CalendarDetailPage(), transition: Transition.downToUp);

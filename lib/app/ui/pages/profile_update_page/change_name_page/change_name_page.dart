@@ -63,7 +63,7 @@ class _ChangeNamePageState extends State<ChangeNamePage> {
               () => CustomButton(
                 isDisabled: profilePageController.isLoading.value,
                 isLoading: profilePageController.isLoading.value,
-                text: "Upate Name",
+                text: "Update Name",
                 onPressed: () {
                   profilePageController.updateDisplayName(name);
                 },

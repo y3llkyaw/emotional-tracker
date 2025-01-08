@@ -53,10 +53,10 @@ class _NewJournalPageState extends State<NewJournalPage> {
                     Center(
                       child: Title(
                         color: Colors.black,
-                        child: const Text(
+                        child: Text(
                           "WHAT'S YOUR MOOD TODAY?",
                           style: TextStyle(
-                            fontSize: 22,
+                            fontSize: Get.width * 0.05,
                             fontWeight: FontWeight.bold,
                             wordSpacing: 0,
                           ),
@@ -68,8 +68,8 @@ class _NewJournalPageState extends State<NewJournalPage> {
                         color: Colors.black,
                         child: Text(
                           DateFormat('EEEE, MMMM d, y').format(widget.date),
-                          style: const TextStyle(
-                            fontSize: 18,
+                          style: TextStyle(
+                            fontSize: Get.width * 0.04,
                             fontWeight: FontWeight.w500,
                             wordSpacing: 0,
                           ),
@@ -90,10 +90,10 @@ class _NewJournalPageState extends State<NewJournalPage> {
                               horizontal: Get.width * 0.02),
                           child: Title(
                             color: Colors.black,
-                            child: const Text(
+                            child: Text(
                               "TEll ME HOW YOU FEEL",
                               style: TextStyle(
-                                fontSize: 17,
+                                fontSize: Get.width * 0.04,
                                 fontWeight: FontWeight.w700,
                                 wordSpacing: 0,
                               ),
