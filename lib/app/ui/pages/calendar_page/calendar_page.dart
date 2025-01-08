@@ -1,6 +1,8 @@
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
+import 'package:emotion_tracker/app/ui/pages/journal_page/data_journal.dart';
+import 'package:emotion_tracker/app/ui/pages/journal_page/new_journal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -154,7 +156,10 @@ Widget defaultCalendar(DateTime date) {
       // splashColor: Colors.orangeAccent,
       borderRadius: BorderRadius.circular(40),
       onTap: date.isBefore(DateTime.now())
-          ? () => showEmojiBottomSheet(date)
+          ? () => Get.to(
+                () => NewJournalPage(date: date),
+                transition: Transition.downToUp,
+              )
           : null,
       child: Column(
         children: [
@@ -184,7 +189,14 @@ Widget dataCalendar(DateTime day, String content, AnimatedEmojiData emojiData) {
     padding: const EdgeInsets.only(top: 15),
     child: GestureDetector(
       onTap: () {
-        showDataBottomSheet(day, content, emojiData);
+        Get.to(
+          () => DataJournalPage(
+            date: day,
+            content: content,
+            emoji: emojiData,
+          ),
+          transition: Transition.downToUp,
+        );
       },
       child: Center(
         child: Column(
