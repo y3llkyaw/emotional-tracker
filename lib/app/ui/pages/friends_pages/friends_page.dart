@@ -14,8 +14,12 @@ class FriendsPage extends StatelessWidget {
     friendsController.getFriends();
     return Scaffold(
       appBar: AppBar(
+        shadowColor: Colors.grey,
+        elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
+        backgroundColor: Theme.of(context)
+            .scaffoldBackgroundColor, // Ensure the background color remains the same
         title: Padding(
           padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
           child: Row(
@@ -78,6 +82,9 @@ class FriendsPage extends StatelessWidget {
                   },
                 ),
               ),
+              SizedBox(
+                height: Get.width * 0.04,
+              )
             ],
           ),
         ),

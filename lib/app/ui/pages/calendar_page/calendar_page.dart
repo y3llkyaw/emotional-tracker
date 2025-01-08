@@ -19,44 +19,47 @@ class CalendarPage extends GetView<HomeController> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Obx(
-          () => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            // title goes here
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: Get.width * 0.08,
-                vertical: Get.width * 0.04,
-              ),
-              child: Row(
-                children: [
-                  Text(
-                    journalController.journals.isEmpty
-                        ? 'No Journals'
-                        : 'Journals',
-                    style: TextStyle(
-                      fontSize: Get.width * 0.046,
-                      fontWeight: FontWeight.bold,
+          () => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // title goes here
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: Get.width * 0.08,
+                  vertical: Get.width * 0.04,
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      journalController.journals.isEmpty
+                          ? 'No Journals'
+                          : 'Journals',
+                      style: TextStyle(
+                        fontSize: Get.width * 0.046,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    width: Get.width * 0.02,
-                  ),
-                  const Icon(CupertinoIcons.news_solid),
-                ],
+                    SizedBox(
+                      width: Get.width * 0.02,
+                    ),
+                    const Icon(CupertinoIcons.news_solid),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(
-              height: Get.width * 0.03,
-            ),
-            // calendar goes here
-            calendar(),
-            const Center(
-              child: Wrap(
-                spacing: 40,
-                runSpacing: 20,
-                children: [],
+              SizedBox(
+                height: Get.width * 0.03,
               ),
-            ),
-          ]),
+              // calendar goes here
+              calendar(),
+              const Center(
+                child: Wrap(
+                  spacing: 40,
+                  runSpacing: 20,
+                  children: [],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -209,7 +212,7 @@ Widget dataCalendar(DateTime day, String content, AnimatedEmojiData emojiData) {
                 child: Text(
                   emojiData.toUnicodeEmoji(),
                   style: TextStyle(
-                    fontSize: Get.width * 0.1,
+                    fontSize: Get.width * 0.08,
                   ),
                 ),
               ),

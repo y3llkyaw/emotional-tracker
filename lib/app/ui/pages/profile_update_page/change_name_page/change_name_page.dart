@@ -50,6 +50,7 @@ class _ChangeNamePageState extends State<ChangeNamePage> {
                   labelText: "Name",
                   border: OutlineInputBorder(),
                 ),
+                maxLength: 70,
                 onChanged: (value) {
                   setState(() {
                     name = value;

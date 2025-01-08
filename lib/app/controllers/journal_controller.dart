@@ -15,7 +15,7 @@ class JournalController extends GetxController {
 
   var content = ''.obs;
   var date = DateTime.now().obs;
-  Rx<AnimatedEmojiData> emotion = AnimatedEmojis.airplaneArrival.obs;
+  Rx<AnimatedEmojiData> emotion = AnimatedEmojis.neutralFace.obs;
 
   Future<String?> createJournal() async {
     isLoading.value = true;
@@ -87,7 +87,6 @@ class JournalController extends GetxController {
       journals.value = journalCollection.docs
           .map((journal) => Journal.fromDocument(journal.data()))
           .toList();
-      log(journals.value.toString(), name: "journal-controller");
     } catch (e) {
       Get.snackbar("Error", e.toString());
     }

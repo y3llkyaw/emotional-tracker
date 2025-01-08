@@ -54,7 +54,13 @@ class ProfilePageController extends GetxController {
   Future<void> updateDisplayName(String name) async {
     log("updateDisplayName called", name: "profile-page-controller");
     isLoading.value = true;
-    await FirebaseAuth.instance.currentUser!.updateDisplayName(name.trim());
+    await FirebaseAuth.instance.currentUser!
+        .updateDisplayName(name.trim())
+        .onError((e, s) {
+      isLoading.value = false;
+      Get.back();
+      Get.snackbar("Error", e.toString());
+    });
     final user = FirebaseAuth.instance.currentUser;
 
     await FirebaseFirestore.instance

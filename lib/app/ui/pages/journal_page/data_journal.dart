@@ -24,7 +24,7 @@ class _DataJournalPageState extends State<DataJournalPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.withOpacity(0.2),
+      // backgroundColor: Colors.grey.withOpacity(0.2),
       body: SafeArea(
         child: Column(
           children: [
@@ -55,6 +55,11 @@ class _DataJournalPageState extends State<DataJournalPage> {
                     Center(
                       child: AnimatedEmoji(
                         widget.emoji,
+                        errorWidget: Text(
+                          widget.emoji.toUnicodeEmoji(),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 100),
+                        ),
                         size: 150,
                       ),
                     ),

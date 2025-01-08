@@ -1,4 +1,5 @@
 import 'package:animated_emoji/animated_emoji.dart';
+import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/radio_emoji_selction.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,7 +16,10 @@ class NewJournalPage extends StatefulWidget {
 }
 
 class _NewJournalPageState extends State<NewJournalPage> {
+  final JournalController journalController = Get.put(JournalController());
   final TextEditingController textEditingController = TextEditingController();
+
+  AnimatedEmojiData selectedEmoji = AnimatedEmojis.neutralFace;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,8 +77,10 @@ class _NewJournalPageState extends State<NewJournalPage> {
                       ),
                     ),
                     RadioEmojiSelection(
-                      selectedEmoji: AnimatedEmojis.airplaneArrival,
-                      onEmojiSelected: (selectedEmoji) {},
+                      selectedEmoji: journalController.emotion.value,
+                      onEmojiSelected: (value) {
+                        journalController.emotion.value = value;
+                      },
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,9 +134,21 @@ class _NewJournalPageState extends State<NewJournalPage> {
                         ),
                       ],
                     ),
-                    CustomButton(
-                      text: "Confirm",
-                      onPressed: () {},
+                    Obx(
+                      () => CustomButton(
+                        isLoading: journalController.isLoading.value,
+                        text: "Confirm",
+                        onPressed: () {
+                          journalController.content.value =
+                              textEditingController.text;
+                          journalController.date.value = widget.date;
+                          journalController.createJournal().then((value) {
+                            journalController.emotion.value =
+                                AnimatedEmojis.neutralFace;
+                            Get.back();
+                          });
+                        },
+                      ),
                     )
                   ],
                 ),
