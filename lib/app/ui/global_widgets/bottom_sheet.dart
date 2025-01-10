@@ -238,43 +238,43 @@ void showDataBottomSheet(
   );
 }
 
-// void showProfileStatusBottomSheet(selectedEmoji) {
-//   Get.bottomSheet(
-//     StatefulBuilder(
-//       builder: (context, setState) {
-//         return Column(
-//           children: [
-//             ListTile(
-//               leading: Padding(
-//                 padding: const EdgeInsets.only(top: 20),
-//                 child: AnimatedEmoji(
-//                   selectedEmoji,
-//                   size: 50,
-//                 ),
-//               ),
-//               title: const Text(
-//                 "Select Emoji",
-//                 style: TextStyle(
-//                   fontWeight: FontWeight.bold,
-//                   color: Colors.white,
-//                 ),
-//               ),
-//             ),
-//             Expanded(
-//               child: RadioEmojiSelection(
-//                 selectedEmoji: selectedEmoji,
-//                 onEmojiSelected: (emoji) {
-//                   setState(() => selectedEmoji = emoji);
-//                 },
-//                 isVertical: true, // Display emojis vertically
-//               ),
-//             ),
-//           ],
-//         );
-//       },
-//     ),
-//     elevation: 1,
-//     backgroundColor: Colors.black54,
-//     enableDrag: true,
-//   );
-// }
+void showProfileStatusBottomSheet(selectedEmoji) {
+  Get.bottomSheet(
+    StatefulBuilder(
+      builder: (context, setState) {
+        return Column(
+          children: [
+            ListTile(
+              leading: Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: AnimatedEmoji(
+                  selectedEmoji,
+                  size: 50,
+                ),
+              ),
+              title: const Text(
+                "Select Emoji",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            Expanded(
+              child: RadioEmojiSelection(
+                selectedEmoji: selectedEmoji,
+                onEmojiSelected: (emoji) {
+                  setState(() => selectedEmoji = emoji);
+                },
+                isVertical: true, // Display emojis vertically
+              ),
+            ),
+          ],
+        );
+      },
+    ),
+    elevation: 1,
+    backgroundColor: Colors.black54,
+    enableDrag: true,
+  );
+}

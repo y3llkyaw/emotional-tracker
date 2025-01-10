@@ -64,9 +64,10 @@ class _RadioEmojiSelectionState extends State<RadioEmojiSelection> {
     if (_allEmojisCache == null) return;
 
     final startIndex = _currentPage * _emojisPerPage;
-    final endIndex = (_currentPage + 1) * _emojisPerPage > _allEmojisCache!.length
-        ? _allEmojisCache!.length
-        : (_currentPage + 1) * _emojisPerPage;
+    final endIndex =
+        (_currentPage + 1) * _emojisPerPage > _allEmojisCache!.length
+            ? _allEmojisCache!.length
+            : (_currentPage + 1) * _emojisPerPage;
 
     if (startIndex < _allEmojisCache!.length) {
       setState(() {
@@ -139,6 +140,7 @@ class _RadioEmojiSelectionState extends State<RadioEmojiSelection> {
               ),
             ),
           ),
+          source: AnimatedEmojiSource.asset,
         ),
       ),
     );

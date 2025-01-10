@@ -1,7 +1,8 @@
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
+import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
-import 'package:emotion_tracker/app/ui/global_widgets/radio_emoji_selction.dart';
+import 'package:emotion_tracker/app/ui/pages/journal_page/journal_emoji.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,22 +10,46 @@ import 'package:intl/intl.dart';
 
 class NewJournalPage extends StatefulWidget {
   final DateTime date;
-
-  const NewJournalPage({Key? key, required this.date}) : super(key: key);
+  final String? editContent;
+  final AnimatedEmojiData? editEmoji;
+  const NewJournalPage(
+      {Key? key, required this.date, this.editContent, this.editEmoji})
+      : super(key: key);
   @override
   State<NewJournalPage> createState() => _NewJournalPageState();
 }
 
 class _NewJournalPageState extends State<NewJournalPage> {
   final JournalController journalController = Get.put(JournalController());
+  final ProfilePageController profilePageController =
+      Get.put(ProfilePageController());
+
   final TextEditingController textEditingController = TextEditingController();
 
   AnimatedEmojiData selectedEmoji = AnimatedEmojis.neutralFace;
+
+  @override
+  void initState() {
+    profilePageController.getCurrentUserProfile();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    journalController.content.value = widget.editContent ?? "";
+    textEditingController.text = widget.editContent ?? "";
+    selectedEmoji = widget.editEmoji ?? AnimatedEmojis.neutralFace;
+    final basicEmojis = [
+      AnimatedEmojis.angry,
+      AnimatedEmojis.sad,
+      AnimatedEmojis.neutralFace,
+      AnimatedEmojis.smile,
+      AnimatedEmojis.joy,
+    ];
     return Scaffold(
       body: SafeArea(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -42,67 +67,63 @@ class _NewJournalPageState extends State<NewJournalPage> {
                 ),
               ],
             ),
+            Obx(
+              () => Center(
+                child: AnimatedEmoji(
+                  journalController.emotion.value,
+                  size: 100,
+                ),
+              ),
+            ),
             SizedBox(
-              height: Get.height * 0.8,
+              height: Get.height * 0.7,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(
-                      child: Title(
-                        color: Colors.black,
-                        child: Text(
-                          "WHAT'S YOUR MOOD TODAY?",
-                          style: TextStyle(
-                            fontSize: Get.width * 0.05,
-                            fontWeight: FontWeight.bold,
-                            wordSpacing: 0,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Center(
-                      child: Title(
-                        color: Colors.black,
-                        child: Text(
-                          DateFormat('EEEE, MMMM d, y').format(widget.date),
-                          style: TextStyle(
-                            fontSize: Get.width * 0.04,
-                            fontWeight: FontWeight.w500,
-                            wordSpacing: 0,
-                          ),
-                        ),
-                      ),
-                    ),
-                    RadioEmojiSelection(
-                      selectedEmoji: journalController.emotion.value,
-                      onEmojiSelected: (value) {
-                        journalController.emotion.value = value;
-                      },
-                    ),
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: Get.width * 0.02),
+                        Center(
                           child: Title(
                             color: Colors.black,
                             child: Text(
-                              "TEll ME HOW YOU FEEL",
+                              "WHAT'S YOUR MOOD TODAY?",
                               style: TextStyle(
-                                fontSize: Get.width * 0.04,
-                                fontWeight: FontWeight.w700,
+                                fontSize: Get.width * 0.05,
+                                fontWeight: FontWeight.bold,
                                 wordSpacing: 0,
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: Get.height * 0.03,
+                        Center(
+                          child: Title(
+                            color: Colors.black,
+                            child: Text(
+                              DateFormat('EEEE, MMMM d, y').format(widget.date),
+                              style: TextStyle(
+                                fontSize: Get.width * 0.04,
+                                fontWeight: FontWeight.w500,
+                                wordSpacing: 0,
+                              ),
+                            ),
+                          ),
                         ),
+                      ],
+                    ),
+                    Obx(() => JournalEmojiWidget(
+                        emojis: profilePageController
+                                .userProfile.value!.recentEmojis.isEmpty
+                            ? basicEmojis
+                            : basicEmojis,
+                        onClick: (emoji) {
+                          journalController.emotion.value = emoji;
+                        })),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Container(
                           padding: EdgeInsets.all(Get.width * 0.04),
                           decoration: BoxDecoration(
@@ -138,14 +159,13 @@ class _NewJournalPageState extends State<NewJournalPage> {
                       () => CustomButton(
                         isLoading: journalController.isLoading.value,
                         text: "Confirm",
-                        onPressed: () {
+                        onPressed: () async {
                           journalController.content.value =
                               textEditingController.text;
                           journalController.date.value = widget.date;
                           journalController.createJournal().then((value) {
                             journalController.emotion.value =
                                 AnimatedEmojis.neutralFace;
-                            Get.back();
                           });
                         },
                       ),

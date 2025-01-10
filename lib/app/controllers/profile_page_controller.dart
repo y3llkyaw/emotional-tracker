@@ -25,10 +25,12 @@ class ProfilePageController extends GetxController {
         return Profile.fromDocument(profile);
       } else {
         return Profile(
-            uid: "",
-            name: "",
-            gender: Gender.Others,
-            dateOfBirth: Timestamp.now());
+          uid: "",
+          name: "",
+          gender: Gender.Others,
+          dateOfBirth: Timestamp.now(),
+          recentEmojis: [],
+        );
       }
     } catch (e) {
       log("Error fetching profile: $e", name: "profile-page-controller");

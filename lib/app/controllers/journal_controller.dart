@@ -32,13 +32,12 @@ class JournalController extends GetxController {
         "content": content.value,
         "emotion": emotion.value.id.toString(),
       }).then((value) {
-        Get.snackbar("Error", "Journal Created Successfully..");
+        Get.back();
+        Get.snackbar("Success", "Journal Created Successfully..");
       });
       isLoading.value = false;
-
       fetchJournals();
       return "journal_${date.value}";
-      // Get.back();
     } catch (e) {
       Get.snackbar("Error", e.toString());
       isLoading.value = false;
@@ -98,13 +97,18 @@ class JournalController extends GetxController {
 
   Future<void> deleteJournal(String journalId) async {
     try {
+      // print(journalId);
       await FirebaseFirestore.instance
           .collection("profile")
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .collection("journals")
-          .doc(journalId)
-          .delete();
-      Get.snackbar("Success", "Journal deleted successfully!");
+          .doc("journal_$journalId")
+          .delete()
+          .then((v) {
+        Get.back();
+        Get.snackbar("Success", "Journal deleted successfully!");
+      });
+      fetchJournals();
     } catch (e) {
       Get.snackbar("Error", e.toString());
     }

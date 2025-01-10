@@ -1,7 +1,7 @@
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
-import 'package:emotion_tracker/app/ui/pages/calendar_page/calendar_detail_page.dart';
+import 'package:emotion_tracker/app/ui/pages/calendar_page/full_calendar_page.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/data_journal.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/new_journal.dart';
 import 'package:flutter/cupertino.dart';
@@ -77,8 +77,8 @@ Widget calendar() {
         rowHeight: Get.height * 0.11,
         headerVisible: true,
         availableCalendarFormats: const {
-          CalendarFormat.month: 'calendar',
-          CalendarFormat.week: 'calendar',
+          CalendarFormat.month: 'full-calendar',
+          CalendarFormat.week: 'full-calendar',
         },
         availableGestures: AvailableGestures.horizontalSwipe,
         headerStyle: HeaderStyle(
@@ -105,7 +105,8 @@ Widget calendar() {
         calendarFormat: CalendarFormat.week,
         onFormatChanged: (format) {
           // journalController.toggleCalendarFormat();
-          Get.to(const CalendarDetailPage(), transition: Transition.downToUp);
+          Get.to(() => const FullCalendarPage(),
+              transition: Transition.downToUp);
         },
         formatAnimationCurve: Curves.easeInOut,
         formatAnimationDuration: const Duration(milliseconds: 400),
@@ -236,6 +237,7 @@ Widget dataCalendar(DateTime day, String content, AnimatedEmojiData emojiData) {
                   ),
                 ),
               ),
+              source: AnimatedEmojiSource.asset,
             ),
             SizedBox(
               height: Get.height * 0.01,

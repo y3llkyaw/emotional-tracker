@@ -8,14 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class CalendarDetailPage extends StatefulWidget {
-  const CalendarDetailPage({Key? key}) : super(key: key);
+class FullCalendarPage extends StatefulWidget {
+  const FullCalendarPage({Key? key}) : super(key: key);
 
   @override
-  State<CalendarDetailPage> createState() => _CalendarDetailPageState();
+  State<FullCalendarPage> createState() => _FullCalendarPageState();
 }
 
-class _CalendarDetailPageState extends State<CalendarDetailPage> {
+class _FullCalendarPageState extends State<FullCalendarPage> {
   final JournalController journalController = Get.put(JournalController());
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class _CalendarDetailPageState extends State<CalendarDetailPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: Get.width * 0.04),
+                  padding: EdgeInsets.symmetric(horizontal: Get.width * 0.005),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -61,7 +61,7 @@ class _CalendarDetailPageState extends State<CalendarDetailPage> {
               ],
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: Get.width * 0.04),
+              padding: EdgeInsets.symmetric(horizontal: Get.width * 0.005),
               child: _calendar(),
             ),
           ],
@@ -109,7 +109,7 @@ Widget _calendar() {
         calendarFormat: CalendarFormat.month,
         onFormatChanged: (format) {
           // journalController.toggleCalendarFormat();
-          Get.to(const CalendarDetailPage(), transition: Transition.downToUp);
+          // Get.to(const CalendarDetailPage(), transition: Transition.downToUp);
         },
         formatAnimationCurve: Curves.easeInOut,
         formatAnimationDuration: const Duration(milliseconds: 400),
@@ -240,6 +240,7 @@ Widget dataCalendar(DateTime day, String content, AnimatedEmojiData emojiData) {
                   ),
                 ),
               ),
+              source: AnimatedEmojiSource.asset,
             ),
             SizedBox(
               height: Get.height * 0.01,

@@ -8,6 +8,8 @@ class Profile {
   final Gender gender;
   final Timestamp dateOfBirth;
   final AnimatedEmojiData? emoji;
+  final List<AnimatedEmojiData?> recentEmojis;
+
   final String? avatar;
 
   Profile({
@@ -15,6 +17,7 @@ class Profile {
     required this.name,
     required this.gender,
     required this.dateOfBirth,
+    required this.recentEmojis,
     this.emoji,
     this.avatar,
   });
@@ -27,6 +30,7 @@ class Profile {
       "dateOfBirth": dateOfBirth.toString(),
       "emoji": emoji?.toUnicodeEmoji() ?? "",
       "avatar": dateOfBirth.toString(),
+      "recentEmojis": [],
     };
   }
 
@@ -39,8 +43,10 @@ class Profile {
       dateOfBirth: json['dob'],
       emoji: _getEmojiFromJson(json),
       avatar: json['avatar'],
+      recentEmojis: json['recentEmojis'] ?? [],
     );
   }
+  
   static AnimatedEmojiData? _getEmojiFromJson(Map<String, dynamic> json) {
     try {
       return json['emotion'] != null

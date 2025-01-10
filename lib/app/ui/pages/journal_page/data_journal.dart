@@ -1,4 +1,7 @@
 import 'package:animated_emoji/animated_emoji.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/emojis_sheet.dart';
+import 'package:emotion_tracker/app/ui/pages/journal_page/new_journal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,6 +10,7 @@ import 'package:intl/intl.dart';
 class DataJournalPage extends StatefulWidget {
   final DateTime date;
   final String content;
+
   final AnimatedEmojiData emoji;
 
   const DataJournalPage({
@@ -29,7 +33,7 @@ class _DataJournalPageState extends State<DataJournalPage> {
         child: Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: Get.width * 0.04),
@@ -40,6 +44,36 @@ class _DataJournalPageState extends State<DataJournalPage> {
                     icon: const Icon(
                       CupertinoIcons.xmark,
                     ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: Get.width * 0.04),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: () async {
+                          await journalController
+                              .deleteJournal(widget.date.toString());
+                        },
+                        icon: const Icon(
+                          CupertinoIcons.delete,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          Get.to(
+                            () => NewJournalPage(
+                              date: widget.date,
+                              editContent: widget.content,
+                              editEmoji: widget.emoji,
+                            ),
+                          );
+                        },
+                        icon: const Icon(
+                          CupertinoIcons.pen,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -61,6 +95,7 @@ class _DataJournalPageState extends State<DataJournalPage> {
                           style: const TextStyle(fontSize: 100),
                         ),
                         size: 150,
+                        source: AnimatedEmojiSource.asset,
                       ),
                     ),
                     Center(
@@ -68,7 +103,12 @@ class _DataJournalPageState extends State<DataJournalPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              showEmojiSheet(
+                                (v) {},
+                                journalController.emotion.value,
+                              );
+                            },
                             icon: const Icon(CupertinoIcons.left_chevron),
                           ),
                           Title(
