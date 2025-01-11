@@ -1,5 +1,6 @@
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
+import 'package:emotion_tracker/app/data/models/journal.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/new_journal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,10 +9,12 @@ import 'package:intl/intl.dart';
 
 class DataJournalPage extends StatefulWidget {
   final DateTime date;
+  final int? index;
 
   const DataJournalPage({
     Key? key,
     required this.date,
+    this.index,
   }) : super(key: key);
   @override
   State<DataJournalPage> createState() => _DataJournalPageState();
@@ -20,12 +23,29 @@ class DataJournalPage extends StatefulWidget {
 class _DataJournalPageState extends State<DataJournalPage> {
   final TextEditingController textEditingController = TextEditingController();
   final journalController = JournalController();
+  List<Journal> journals = [
+    Journal(
+        uid: "",
+        date: DateTime.now(),
+        content: "",
+        emotion: AnimatedEmojis.iceHockey)
+  ];
+  @override
+  void initState() {
+    journalController.fetchJournals().then((v) {
+      setState(() {
+        journals = journalController.journals.value;
+      });
+    });
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     journalController.getJournal(widget.date);
+    journalController.fetchJournals();
     return Scaffold(
-      // backgroundColor: Colors.grey.withOpacity(0.2),
       body: SafeArea(
         child: Column(
           children: [
@@ -84,7 +104,6 @@ class _DataJournalPageState extends State<DataJournalPage> {
             ),
             Obx(
               () {
-                print(journalController.singleJournal.value);
                 return journalController.singleJournal.value != null
                     ? SizedBox(
                         height: Get.height * 0.8,
@@ -116,7 +135,19 @@ class _DataJournalPageState extends State<DataJournalPage> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     IconButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        if (widget.index != 0 &&
+                                            widget.index != null) {
+                                          Get.back();
+                                          Get.to(
+                                            () => DataJournalPage(
+                                              date: journals[widget.index! - 1]
+                                                  .date,
+                                              index: widget.index! - 1,
+                                            ),
+                                          );
+                                        }
+                                      },
                                       icon: const Icon(
                                           CupertinoIcons.left_chevron),
                                     ),
@@ -135,7 +166,21 @@ class _DataJournalPageState extends State<DataJournalPage> {
                                       ),
                                     ),
                                     IconButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        if (widget.index !=
+                                                (journals.length - 1) &&
+                                            widget.index != null) {
+                                          Get.to(
+                                              () => DataJournalPage(
+                                                    date: journals[
+                                                            widget.index! + 1]
+                                                        .date,
+                                                    index: widget.index! + 1,
+                                                  ),
+                                              transition:
+                                                  Transition.circularReveal);
+                                        }
+                                      },
                                       icon: const Icon(
                                           CupertinoIcons.right_chevron),
                                     ),

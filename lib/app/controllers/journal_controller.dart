@@ -12,6 +12,7 @@ class JournalController extends GetxController {
   var journals = <Journal>[].obs;
   var formatCalender = CalendarFormat.month.obs;
   var singleJournal = Rxn<Journal>();
+  // var foucusDate = Rxn<Journal>();
 
   // Data for the journal
 
@@ -27,7 +28,7 @@ class JournalController extends GetxController {
           .collection("profile")
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .collection("journals")
-          .doc("journal_${date.value}")
+          .doc("journal_${date.value.toString().split(" ")[0]}")
           .set({
         "uid": FirebaseAuth.instance.currentUser!.uid,
         "date": date.value,
@@ -56,12 +57,13 @@ class JournalController extends GetxController {
   Future<void> getJournal(DateTime date) async {
     // Fetch journal from Firestore
     log("get journal");
+    print("date $date");
     try {
       final journal = await FirebaseFirestore.instance
           .collection("profile")
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .collection("journals")
-          .doc("journal_${date.toString()}")
+          .doc("journal_${date.toString().split(" ")[0]}")
           .get();
       if (journal.exists) {
         final journalData = journal.data()!;
@@ -105,7 +107,7 @@ class JournalController extends GetxController {
           .collection("profile")
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .collection("journals")
-          .doc("journal_$journalId")
+          .doc("journal_${journalId.toString().split(" ")[0]}")
           .delete()
           .then((v) {
         Get.back();

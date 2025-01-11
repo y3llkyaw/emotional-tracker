@@ -116,33 +116,42 @@ Widget calendar() {
         lastDay: DateTime(DateTime.now().year + 1),
         calendarBuilders: CalendarBuilders(
           defaultBuilder: (context, date, events) {
+            int index = 0;
             for (var element in journalController.journals) {
               if (DateTime(element.date.day, element.date.month,
                       element.date.year) ==
                   DateTime(date.day, date.month, date.year)) {
-                return dataCalendar(date, element.content, element.emotion);
+                return dataCalendar(
+                    date, element.content, element.emotion, index);
               }
+              index++;
             }
             return defaultCalendar(date);
           },
           todayBuilder: (context, date, events) {
+            int index = 0;
             for (var element in journalController.journals) {
               if (DateTime(element.date.day, element.date.month,
                       element.date.year) ==
                   DateTime(date.day, date.month, date.year)) {
-                return dataCalendar(date, element.content, element.emotion);
+                return dataCalendar(
+                    date, element.content, element.emotion, index);
               }
+              index++;
             }
             return defaultCalendar(date);
           },
           disabledBuilder: (context, day, focusedDay) => disableCalaneder(day),
           outsideBuilder: (context, date, events) {
+            int index = 0;
             for (var element in journalController.journals) {
               if (DateTime(element.date.day, element.date.month,
                       element.date.year) ==
                   DateTime(date.day, date.month, date.year)) {
-                return dataCalendar(date, element.content, element.emotion);
+                return dataCalendar(
+                    date, element.content, element.emotion, index);
               }
+              index++;
             }
             return defaultCalendar(date);
           },
@@ -195,9 +204,7 @@ Widget defaultCalendar(DateTime date) {
           ),
           CircleAvatar(
             radius: Get.width * 0.028,
-            backgroundColor: isToday 
-                ? Colors.blue 
-                : Colors.grey.shade200,
+            backgroundColor: isToday ? Colors.blue : Colors.grey.shade200,
             child: Text(
               date.day.toString(),
               style: TextStyle(
@@ -216,14 +223,17 @@ Widget defaultCalendar(DateTime date) {
   );
 }
 
-Widget dataCalendar(DateTime day, String content, AnimatedEmojiData emojiData) {
+Widget dataCalendar(
+    DateTime day, String content, AnimatedEmojiData emojiData, int index) {
   return Padding(
     padding: const EdgeInsets.only(top: 15),
     child: GestureDetector(
       onTap: () async {
         await Get.to(
           () => DataJournalPage(
+            
             date: day,
+            index: index,
           ),
           transition: Transition.downToUp,
         );
