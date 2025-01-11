@@ -24,7 +24,7 @@ class CalendarPage extends GetView<HomeController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // title goes here
-            Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: Get.width * 0.08,
                   vertical: Get.width * 0.04,
@@ -174,12 +174,15 @@ Widget disableCalaneder(DateTime date) {
 }
 
 Widget defaultCalendar(DateTime date) {
+  final bool isToday = DateTime.now().year == date.year &&
+      DateTime.now().month == date.month &&
+      DateTime.now().day == date.day;
+
   return Padding(
     padding: const EdgeInsets.only(top: 15),
     child: InkWell(
-      // splashColor: Colors.orangeAccent,
       borderRadius: BorderRadius.circular(40),
-      onTap: date.isBefore(DateTime.now())
+      onTap: date.isBefore(DateTime.now().add(const Duration(days: 1)))
           ? () => Get.to(
                 () => NewJournalPage(date: date),
                 transition: Transition.downToUp,
@@ -192,13 +195,18 @@ Widget defaultCalendar(DateTime date) {
           ),
           CircleAvatar(
             radius: Get.width * 0.028,
-            backgroundColor: Colors.grey.shade200,
+            backgroundColor: isToday 
+                ? Colors.blue 
+                : Colors.grey.shade200,
             child: Text(
               date.day.toString(),
               style: TextStyle(
                 fontSize: Get.width * 0.023,
-                color:
-                    date.isBefore(DateTime.now()) ? Colors.black : Colors.grey,
+                color: isToday
+                    ? Colors.white
+                    : date.isBefore(DateTime.now().add(const Duration(days: 1)))
+                        ? Colors.black
+                        : Colors.grey,
               ),
             ),
           ),

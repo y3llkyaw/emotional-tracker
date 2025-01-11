@@ -57,10 +57,6 @@ class ProfileSetupController extends GetxController {
 
   bool isProfileValid() {
     if (name.value.isEmpty) return false;
-    if (gender.value == null) return false;
-    if (day.value == null || day.value < 1 || day.value > 31) return false;
-    if (month.value == null || month.value < 1 || month.value > 12) return false;
-    if (year.value == null || year.value > DateTime.now().year) return false;
     return true;
   }
 }

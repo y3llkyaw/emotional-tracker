@@ -157,9 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: IconButton(
               tooltip: "profile setting",
-              onPressed: () {
-                showLicensePage(context: context,);
-              },
+              onPressed: () {},
               icon: const Icon(Icons.settings),
             ),
           )
