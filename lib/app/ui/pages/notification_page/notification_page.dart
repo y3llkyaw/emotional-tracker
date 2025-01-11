@@ -27,17 +27,26 @@ class _NotificationPageState extends State<NotificationPage> {
         centerTitle: false,
         title: Padding(
           padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
-          child: Row(
+          child: const Row(
             children: [
-              const Text(
+              Text(
                 "Notifications",
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
-              SizedBox(width: Get.width * 0.03),
-              const Icon(CupertinoIcons.bell_fill)
             ],
           ),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                CupertinoIcons.person_3_fill,
+              ),
+            ),
+          )
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.all(Get.width * 0.05),
@@ -63,21 +72,17 @@ class _NotificationPageState extends State<NotificationPage> {
                   }
                 }
                 return Column(
-                  children: [
-                    _buildExpansionTile(
-                      icon: CupertinoIcons.person_3_fill,
-                      title: "Friends Requests",
-                      children: [
-                        ..._buildFriendRequests(fr),
-                        ..._buildFriendAccepts(frAccept.cast<String>()),
-                      ],
-                    ),
-                    _buildExpansionTile(
-                      icon: Icons.more_horiz,
-                      title: "Others",
-                      children: _buildOtherNotifications(other.cast<String>()),
-                    ),
-                  ],
+                  children:
+                      // _buildExpansionTile(
+                      //   icon: CupertinoIcons.person_3_fill,
+                      //   title: "Friends Requests",
+                      //   children: [
+                      //     ..._buildFriendRequests(fr),
+                      //     ..._buildFriendAccepts(frAccept.cast<String>()),
+                      //   ],
+                      // ),
+
+                      _buildOtherNotifications(other.cast<String>()),
                 );
               }
               return const Center(child: CircularProgressIndicator());
@@ -122,7 +127,57 @@ class _NotificationPageState extends State<NotificationPage> {
 
   List<Widget> _buildOtherNotifications(List<String> otherNotifications) {
     // Implement this method to build other notifications
-    return [];
+    return otherNotifications.map((uid) {
+      return FutureBuilder(
+        future: pc.getProfileByUid(uid),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return _skeletonTile();
+          } else if (snapshot.hasData) {
+            var profile = snapshot.data as Profile?;
+            return _buildOtherNotificationsTile(profile, uid);
+          }
+          return _skeletonTile();
+        },
+      );
+    }).toList();
+  }
+
+  Widget _buildOtherNotificationsTile(Profile? profile, String uid) {
+    return ListTile(
+      leading: CircleAvatar(child: AvatarPlus("$uid${profile?.name}")),
+      title: Text(
+        profile?.name ?? 'Unknown',
+        style: const TextStyle(fontWeight: FontWeight.w500),
+      ),
+      subtitle: Padding(
+        padding: EdgeInsets.only(top: Get.width * 0.01),
+        child: Row(
+          children: [
+            InkWell(
+              onTap: () async {
+                await afc.confirmFriendRequest(profile!);
+                setState(() {});
+              },
+              child: afc.isLoading.value
+                  ? const CircularProgressIndicator()
+                  : const Text(
+                      "Accept",
+                      style: TextStyle(color: Colors.blueAccent),
+                    ),
+            ),
+            SizedBox(width: Get.width * 0.05),
+            InkWell(
+              onTap: () {},
+              child: const Text(
+                "Decline",
+                style: TextStyle(color: Colors.redAccent),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildFriendRequestTile(Profile? profile, String uid) {

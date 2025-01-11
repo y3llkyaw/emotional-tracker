@@ -219,8 +219,6 @@ Widget dataCalendar(DateTime day, String content, AnimatedEmojiData emojiData) {
         Get.to(
           () => DataJournalPage(
             date: day,
-            content: content,
-            emoji: emojiData,
           ),
           transition: Transition.downToUp,
         );

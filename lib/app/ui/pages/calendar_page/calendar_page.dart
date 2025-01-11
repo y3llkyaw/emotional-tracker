@@ -212,15 +212,14 @@ Widget dataCalendar(DateTime day, String content, AnimatedEmojiData emojiData) {
   return Padding(
     padding: const EdgeInsets.only(top: 15),
     child: GestureDetector(
-      onTap: () {
-        Get.to(
+      onTap: () async {
+        await Get.to(
           () => DataJournalPage(
             date: day,
-            content: content,
-            emoji: emojiData,
           ),
           transition: Transition.downToUp,
         );
+        journalController.fetchJournals();
       },
       child: Center(
         child: Column(

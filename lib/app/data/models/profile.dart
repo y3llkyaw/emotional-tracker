@@ -6,9 +6,9 @@ class Profile {
   final String uid;
   final String name;
   final Gender gender;
-  final Timestamp dateOfBirth;
+  final Timestamp dob;
   final AnimatedEmojiData? emoji;
-  final List<AnimatedEmojiData?> recentEmojis;
+  final List<AnimatedEmojiData> recentEmojis;
 
   final String? avatar;
 
@@ -16,7 +16,7 @@ class Profile {
     required this.uid,
     required this.name,
     required this.gender,
-    required this.dateOfBirth,
+    required this.dob,
     required this.recentEmojis,
     this.emoji,
     this.avatar,
@@ -27,10 +27,10 @@ class Profile {
       "uid": uid,
       "name": name,
       "gender": gender.toString(),
-      "dateOfBirth": dateOfBirth.toString(),
+      "dob": dob.toString(),
       "emoji": emoji?.toUnicodeEmoji() ?? "",
-      "avatar": dateOfBirth.toString(),
-      "recentEmojis": [],
+      "avatar": dob.toString(),
+      "recentEmojis": recentEmojis.map((e) => e.id).toList(),
     };
   }
 
@@ -40,13 +40,12 @@ class Profile {
       name: json['name'],
       gender: Gender.values
           .firstWhere((element) => element.toString() == json['gender']),
-      dateOfBirth: json['dob'],
+      dob: json['dob'],
       emoji: _getEmojiFromJson(json),
       avatar: json['avatar'],
-      recentEmojis: json['recentEmojis'] ?? [],
+      recentEmojis: _getEmojiList(json),
     );
   }
-  
   static AnimatedEmojiData? _getEmojiFromJson(Map<String, dynamic> json) {
     try {
       return json['emotion'] != null
@@ -54,6 +53,19 @@ class Profile {
           : null; // Return null if 'emotion' is null
     } catch (e) {
       return null; // If any error occurs, return null
+    }
+  }
+
+  static List<AnimatedEmojiData> _getEmojiList(Map<String, dynamic> json) {
+    try {
+      final List<dynamic> emojis =
+          json["recentEmojis"] ?? []; // Handle null safety
+      return emojis.map((e) {
+        // Convert each emoji ID to AnimatedEmojiData
+        return AnimatedEmojis.fromId(e.toString());
+      }).toList();
+    } catch (e) {
+      return []; // If there's an error, return an empty list
     }
   }
 }

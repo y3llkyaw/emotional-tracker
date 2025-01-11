@@ -16,6 +16,19 @@ class ProfilePageController extends GetxController {
     await getCurrentUserProfile();
   }
 
+  Future<void> updateRecentEmojis() async {
+    await FirebaseFirestore.instance
+        .collection("profile")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({
+      "recentEmojis": userProfile.value!.recentEmojis.map((e) => e.id).toList()
+    }).then(
+      (value) {
+        log("message");
+      },
+    );
+  }
+
   Future<Profile> getProfileByUid(String uid) async {
     try {
       final doc =
@@ -28,7 +41,7 @@ class ProfilePageController extends GetxController {
           uid: "",
           name: "",
           gender: Gender.Others,
-          dateOfBirth: Timestamp.now(),
+          dob: Timestamp.now(),
           recentEmojis: [],
         );
       }

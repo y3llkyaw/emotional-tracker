@@ -33,6 +33,7 @@ class FriendsPage extends StatelessWidget {
             ],
           ),
         ),
+       
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),

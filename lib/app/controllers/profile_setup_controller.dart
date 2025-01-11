@@ -1,3 +1,4 @@
+import 'package:animated_emoji/animated_emoji.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gender_picker/source/enums.dart';
@@ -30,6 +31,13 @@ class ProfileSetupController extends GetxController {
       "name": name.value,
       "gender": gender.value.toString(),
       "dob": dob.value,
+      "recentEmojis": [
+        AnimatedEmojis.angry,
+        AnimatedEmojis.sad,
+        AnimatedEmojis.neutralFace,
+        AnimatedEmojis.smile,
+        AnimatedEmojis.joy,
+      ]
     }).then((value) {
       Get.snackbar("Success", "Profile setup successfully!");
       Get.offAllNamed("/home");

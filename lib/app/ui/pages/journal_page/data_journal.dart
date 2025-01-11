@@ -1,6 +1,5 @@
 import 'package:animated_emoji/animated_emoji.dart';
-import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
-import 'package:emotion_tracker/app/ui/global_widgets/emojis_sheet.dart';
+import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/new_journal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,15 +8,10 @@ import 'package:intl/intl.dart';
 
 class DataJournalPage extends StatefulWidget {
   final DateTime date;
-  final String content;
-
-  final AnimatedEmojiData emoji;
 
   const DataJournalPage({
     Key? key,
     required this.date,
-    required this.content,
-    required this.emoji,
   }) : super(key: key);
   @override
   State<DataJournalPage> createState() => _DataJournalPageState();
@@ -25,8 +19,11 @@ class DataJournalPage extends StatefulWidget {
 
 class _DataJournalPageState extends State<DataJournalPage> {
   final TextEditingController textEditingController = TextEditingController();
+  final journalController = JournalController();
+
   @override
   Widget build(BuildContext context) {
+    journalController.getJournal(widget.date);
     return Scaffold(
       // backgroundColor: Colors.grey.withOpacity(0.2),
       body: SafeArea(
@@ -59,84 +56,114 @@ class _DataJournalPageState extends State<DataJournalPage> {
                           CupertinoIcons.delete,
                         ),
                       ),
-                      IconButton(
-                        onPressed: () {
-                          Get.to(
-                            () => NewJournalPage(
-                              date: widget.date,
-                              editContent: widget.content,
-                              editEmoji: widget.emoji,
-                            ),
-                          );
-                        },
-                        icon: const Icon(
-                          CupertinoIcons.pen,
-                        ),
+                      Obx(
+                        () => journalController.singleJournal.value != null
+                            ? IconButton(
+                                onPressed: () async {
+                                  await Get.to(
+                                    () => NewJournalPage(
+                                      date: widget.date,
+                                      editContent: journalController
+                                          .singleJournal.value!.content,
+                                      editEmoji: journalController
+                                          .singleJournal.value!.emotion,
+                                    ),
+                                  );
+                                  journalController.getJournal(widget.date);
+                                },
+                                icon: const Icon(
+                                  CupertinoIcons.pen,
+                                ),
+                              )
+                            : const SizedBox(),
                       ),
                     ],
                   ),
                 ),
               ],
             ),
-            SizedBox(
-              height: Get.height * 0.8,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: Get.width * 0.01),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: AnimatedEmoji(
-                        widget.emoji,
-                        errorWidget: Text(
-                          widget.emoji.toUnicodeEmoji(),
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 100),
-                        ),
-                        size: 150,
-                        source: AnimatedEmojiSource.asset,
-                      ),
-                    ),
-                    Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              showEmojiSheet(
-                                (v) {},
-                                journalController.emotion.value,
-                              );
-                            },
-                            icon: const Icon(CupertinoIcons.left_chevron),
-                          ),
-                          Title(
-                            color: Colors.black,
-                            child: Text(
-                              DateFormat('EEEE, MMMM d, y')
-                                  .format(widget.date)
-                                  .toUpperCase(),
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                wordSpacing: 0,
+            Obx(
+              () {
+                print(journalController.singleJournal.value);
+                return journalController.singleJournal.value != null
+                    ? SizedBox(
+                        height: Get.height * 0.8,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: Get.width * 0.01),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Center(
+                                child: AnimatedEmoji(
+                                  journalController
+                                      .singleJournal.value!.emotion,
+                                  errorWidget: Text(
+                                    journalController
+                                        .singleJournal.value!.emotion
+                                        .toUnicodeEmoji(),
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 100),
+                                  ),
+                                  size: 150,
+                                  source: AnimatedEmojiSource.asset,
+                                ),
                               ),
-                            ),
+                              Center(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {},
+                                      icon: const Icon(
+                                          CupertinoIcons.left_chevron),
+                                    ),
+                                    Title(
+                                      color: Colors.black,
+                                      child: Text(
+                                        DateFormat('EEEE, MMMM d, y')
+                                            .format(journalController
+                                                .singleJournal.value!.date)
+                                            .toUpperCase(),
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          wordSpacing: 0,
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      onPressed: () {},
+                                      icon: const Icon(
+                                          CupertinoIcons.right_chevron),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SingleChildScrollView(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: Get.width * 0.07),
+                                  child: Center(
+                                    child: Text(
+                                      journalController
+                                          .singleJournal.value!.content,
+                                      textAlign: TextAlign.justify,
+                                      style: TextStyle(
+                                        fontSize: Get.width * 0.04,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(CupertinoIcons.right_chevron),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Center(
-                      child: Text(widget.content),
-                    )
-                  ],
-                ),
-              ),
+                        ),
+                      )
+                    : const SizedBox();
+              },
             ),
           ],
         ),

@@ -11,6 +11,8 @@ class JournalController extends GetxController {
   var isLoading = false.obs;
   var journals = <Journal>[].obs;
   var formatCalender = CalendarFormat.month.obs;
+  var singleJournal = Rxn<Journal>();
+
   // Data for the journal
 
   var content = ''.obs;
@@ -53,7 +55,7 @@ class JournalController extends GetxController {
 
   Future<void> getJournal(DateTime date) async {
     // Fetch journal from Firestore
-
+    log("get journal");
     try {
       final journal = await FirebaseFirestore.instance
           .collection("profile")
@@ -68,11 +70,12 @@ class JournalController extends GetxController {
           (emoji) => emoji.id.toString() == journalData["emotion"],
           orElse: () => AnimatedEmojis.neutralFace,
         );
-        log(journalData.toString());
+        singleJournal.value = Journal.fromDocument(journalData);
       } else {
         log("Journal not found for the given date.");
       }
     } catch (e) {
+      log(e.toString());
       Get.snackbar("Error", e.toString());
     }
   }

@@ -1,4 +1,5 @@
 import 'package:animated_emoji/animated_emoji.dart';
+import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/ui/utils/helper_functions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,7 @@ void showEmojiSheet(void Function(AnimatedEmojiData) onEmojiSelected,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       SizedBox(
-                        height: Get.height * 0.05,
+                        height: Get.height * 0.02,
                       ),
                       Text(
                         "Emoji Name",
@@ -54,21 +55,32 @@ void showEmojiSheet(void Function(AnimatedEmojiData) onEmojiSelected,
                       ),
                     ],
                   ),
-                  IconButton(
-                    onPressed: () {
-                      Get.back();
-                    },
-                    icon: const Icon(CupertinoIcons.xmark),
-                  )
+                  Column(
+                    children: [
+                      SizedBox(
+                        height: Get.height * 0.04,
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        icon: const Column(
+                          children: [
+                            Icon(CupertinoIcons.xmark),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
               Expanded(
                 child: GridView.builder(
-                  scrollDirection: Axis.horizontal,
+                  scrollDirection: Axis.vertical,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 5,
-                    crossAxisSpacing: 10.0,
-                    mainAxisSpacing: 10.0,
+                    crossAxisCount: 6,
+                    crossAxisSpacing: 5.0,
+                    mainAxisSpacing: 5.0,
                   ),
                   itemCount: AnimatedEmojis.values.length,
                   itemBuilder: (context, index) {
@@ -76,15 +88,19 @@ void showEmojiSheet(void Function(AnimatedEmojiData) onEmojiSelected,
                     return Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           setState(() {
                             selectedEmoji = emoji;
                           });
                           onEmojiSelected(emoji);
                         },
-                        child: AnimatedEmoji(
-                          emoji,
-                          size: Get.width * 0.15,
+                        child: Center(
+                          child: Text(
+                            emoji.toUnicodeEmoji(),
+                            style: TextStyle(
+                              fontSize: Get.width * 0.095,
+                            ),
+                          ),
                         ),
                       ),
                     );

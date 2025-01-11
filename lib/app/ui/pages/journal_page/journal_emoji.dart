@@ -25,10 +25,14 @@ class _JournalEmojiWidgetState extends State<JournalEmojiWidget> {
       children: <Widget>[] +
           widget.emojis.map((e) {
             return InkWell(
+                borderRadius: const BorderRadius.all(Radius.circular(30)),
                 onTap: () {
                   widget.onClick(e);
                 },
-                child: AnimatedEmoji(e, size: Get.width * 0.12));
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: AnimatedEmoji(e, size: Get.width * 0.12),
+                ));
           }).toList() +
           <Widget>[
             InkWell(
