@@ -8,17 +8,27 @@ import 'package:get/get.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class JournalController extends GetxController {
+  var indexDataJournal = 0.obs;
   var isLoading = false.obs;
   var journals = <Journal>[].obs;
   var formatCalender = CalendarFormat.month.obs;
   var singleJournal = Rxn<Journal>();
-  // var foucusDate = Rxn<Journal>();
-
-  // Data for the journal
 
   var content = ''.obs;
   var date = DateTime.now().obs;
   Rx<AnimatedEmojiData> emotion = AnimatedEmojis.neutralFace.obs;
+
+  void previousPage() {
+    log(indexDataJournal.value.toString());
+    indexDataJournal.value != 0 ? indexDataJournal.value -= 1 : null;
+  }
+
+  void nextPage() {
+    log(indexDataJournal.value.toString());
+    indexDataJournal.value < journals.length - 1
+        ? indexDataJournal.value += 1
+        : null;
+  }
 
   Future<String?> createJournal() async {
     isLoading.value = true;

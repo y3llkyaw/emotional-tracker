@@ -200,7 +200,7 @@ class _NewJournalPageState extends State<NewJournalPage> {
                             if (widget.editEmoji != null) {
                               Get.back();
                               await journalController.getJournal(widget.date);
-                              Get.to(() => DataJournalPage(date: widget.date));
+                              // Get.to(() => DataJournalPage(date: widget.date));
                             }
                             journalController.emotion.value =
                                 AnimatedEmojis.neutralFace;

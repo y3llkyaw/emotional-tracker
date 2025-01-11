@@ -229,14 +229,8 @@ Widget dataCalendar(
     padding: const EdgeInsets.only(top: 15),
     child: GestureDetector(
       onTap: () async {
-        await Get.to(
-          () => DataJournalPage(
-            
-            date: day,
-            index: index,
-          ),
-          transition: Transition.downToUp,
-        );
+        journalController.indexDataJournal.value = index;
+        Get.to(() => JournalPageView());
         journalController.fetchJournals();
       },
       child: Center(

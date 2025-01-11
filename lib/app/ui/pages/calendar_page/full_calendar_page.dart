@@ -214,12 +214,12 @@ Widget dataCalendar(DateTime day, String content, AnimatedEmojiData emojiData) {
     padding: const EdgeInsets.only(top: 15),
     child: GestureDetector(
       onTap: () async {
-        await Get.to(
-          () => DataJournalPage(
-            date: day,
-          ),
-          transition: Transition.downToUp,
-        );
+        // await Get.to(
+        //   () => DataJournalPage(
+        //     date: day,
+        //   ),
+        //   transition: Transition.downToUp,
+        // );
         journalController.fetchJournals();
       },
       child: Center(
