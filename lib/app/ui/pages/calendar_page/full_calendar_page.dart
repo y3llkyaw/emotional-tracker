@@ -21,50 +21,48 @@ class _FullCalendarPageState extends State<FullCalendarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: Get.width * 0.005),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: Get.width * 0.08, right: Get.width * 0.03),
-                        child: Text(
-                          "FULL CALENDAR",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: Get.width * 0.04,
-                          ),
-                        ),
+        child: Obx(
+          () => Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: Get.width * 0.08,
+                  vertical: Get.width * 0.04,
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      journalController.journals.isEmpty
+                          ? 'Journals'
+                          : 'Journals',
+                      style: TextStyle(
+                        fontSize: Get.width * 0.046,
+                        fontWeight: FontWeight.bold,
                       ),
-                      const Icon(Icons.calendar_month),
-                    ],
-                  ),
-                ),
-                const Spacer(),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: Get.width * 0.04),
-                  child: IconButton(
-                    onPressed: () {
-                      Get.back();
-                    },
-                    icon: const Icon(
-                      CupertinoIcons.xmark,
                     ),
-                  ),
+                    SizedBox(
+                      width: Get.width * 0.02,
+                    ),
+                    const Icon(CupertinoIcons.news_solid),
+                    const Spacer(),
+                    IconButton(
+                      onPressed: () {},
+                      icon: IconButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        icon: const Icon(CupertinoIcons.xmark),
+                      ),
+                    )
+                  ],
                 ),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: Get.width * 0.005),
-              child: _calendar(),
-            ),
-          ],
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: Get.width * 0.005),
+                child: _calendar(),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -215,13 +213,14 @@ Widget dataCalendar(DateTime day, String content, AnimatedEmojiData emojiData) {
   return Padding(
     padding: const EdgeInsets.only(top: 15),
     child: GestureDetector(
-      onTap: () {
-        Get.to(
+      onTap: () async {
+        await Get.to(
           () => DataJournalPage(
             date: day,
           ),
           transition: Transition.downToUp,
         );
+        journalController.fetchJournals();
       },
       child: Center(
         child: Column(

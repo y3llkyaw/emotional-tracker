@@ -24,7 +24,7 @@ class CalendarPage extends GetView<HomeController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // title goes here
-              Padding(
+            Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: Get.width * 0.08,
                   vertical: Get.width * 0.04,
@@ -33,7 +33,7 @@ class CalendarPage extends GetView<HomeController> {
                   children: [
                     Text(
                       journalController.journals.isEmpty
-                          ? 'No Journals'
+                          ? 'Journals'
                           : 'Journals',
                       style: TextStyle(
                         fontSize: Get.width * 0.046,
