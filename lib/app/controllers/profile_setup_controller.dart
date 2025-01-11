@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,51 +20,47 @@ class ProfileSetupController extends GetxController {
   Future<void> setupProfile() async {
     loading.value = true;
 
-    if (!isProflieValid(name, gender, day, month, year)) {
+    if (!isProfileValid()) {
       loading.value = false;
+      Get.snackbar("Error", "Please fill all the required fields.");
       return;
     }
 
     dob.value = DateTime(year.value, month.value, day.value);
-    await auth.currentUser!.updateDisplayName(name.value);
-    await firestore.collection("profile").doc(auth.currentUser!.uid).set({
-      "uid": auth.currentUser!.uid,
-      "name": name.value,
-      "gender": gender.value.toString(),
-      "dob": dob.value,
-      "recentEmojis": [
-        AnimatedEmojis.angry,
-        AnimatedEmojis.sad,
-        AnimatedEmojis.neutralFace,
-        AnimatedEmojis.smile,
-        AnimatedEmojis.joy,
-      ]
-    }).then((value) {
+
+    try {
+      await auth.currentUser?.updateDisplayName(name.value);
+
+      await firestore.collection("profile").doc(auth.currentUser?.uid).set({
+        "uid": auth.currentUser?.uid,
+        "name": name.value,
+        "gender": gender.value.toString(),
+        "dob": dob.value.toIso8601String(),
+        "recentEmojis": [
+          AnimatedEmojis.angry.name,
+          AnimatedEmojis.sad.name,
+          AnimatedEmojis.neutralFace.name,
+          AnimatedEmojis.smile.name,
+          AnimatedEmojis.joy.name,
+        ],
+      });
+
       Get.snackbar("Success", "Profile setup successfully!");
       Get.offAllNamed("/home");
-    }).onError((error, stackTrace) {
-      Get.snackbar("Error", error.toString());
-    });
-    loading.value = false;
-    // await auth.currentUser!.updateProfile();
+    } catch (error, stackTrace) {
+      log("Error setting up profile: $error", stackTrace: stackTrace);
+      Get.snackbar("Error", "Failed to setup profile. Please try again.");
+    } finally {
+      loading.value = false;
+    }
   }
-}
 
-bool isProflieValid(name, gender, day, month, year) {
-  if (name.value.isEmpty) {
-    return false;
+  bool isProfileValid() {
+    if (name.value.isEmpty) return false;
+    if (gender.value == null) return false;
+    if (day.value == null || day.value < 1 || day.value > 31) return false;
+    if (month.value == null || month.value < 1 || month.value > 12) return false;
+    if (year.value == null || year.value > DateTime.now().year) return false;
+    return true;
   }
-  if (gender.value == null) {
-    return false;
-  }
-  if (day.value == null) {
-    return false;
-  }
-  if (month.value == null) {
-    return false;
-  }
-  if (year.value == null) {
-    return false;
-  }
-  return true;
 }

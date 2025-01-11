@@ -40,7 +40,7 @@ class Profile {
       name: json['name'],
       gender: Gender.values
           .firstWhere((element) => element.toString() == json['gender']),
-      dob: json['dob'],
+      dob: Timestamp.fromDate(DateTime.parse(json['dob'])),
       emoji: _getEmojiFromJson(json),
       avatar: json['avatar'],
       recentEmojis: _getEmojiList(json),

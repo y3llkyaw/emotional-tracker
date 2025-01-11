@@ -34,6 +34,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void initState() {
+    profilePageController.getCurrentUserProfile();
     super.initState();
     isOn = box.read('isOn') ?? false;
     selectedTime = readTime();
@@ -156,7 +157,9 @@ class _ProfilePageState extends State<ProfilePage> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: IconButton(
               tooltip: "profile setting",
-              onPressed: () {},
+              onPressed: () {
+                showLicensePage(context: context,);
+              },
               icon: const Icon(Icons.settings),
             ),
           )
