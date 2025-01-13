@@ -257,9 +257,14 @@ class JournalPageView extends StatelessWidget {
                           children: [
                             Center(
                               child: AnimatedEmoji(
-                                journalList[index].emotion,
+                                journalList[journalController
+                                        .indexDataJournal.value]
+                                    .emotion,
                                 errorWidget: Text(
-                                  journalList[index].emotion.toUnicodeEmoji(),
+                                  journalList[journalController
+                                          .indexDataJournal.value]
+                                      .emotion
+                                      .toUnicodeEmoji(),
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(fontSize: 100),
                                 ),

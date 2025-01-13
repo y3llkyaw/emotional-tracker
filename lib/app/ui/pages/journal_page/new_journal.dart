@@ -3,6 +3,7 @@ import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/journal_emoji.dart';
+import 'package:emotion_tracker/app/ui/pages/journal_page/sentiment_radio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -36,8 +37,7 @@ class _NewJournalPageState extends State<NewJournalPage> {
 
   @override
   Widget build(BuildContext context) {
-    journalController.emotion.value =
-        widget.editEmoji ?? AnimatedEmojis.airplaneArrival;
+    journalController.emotion.value = widget.editEmoji ?? AnimatedEmojis.bat;
     journalController.content.value = widget.editContent ?? "";
     textEditingController.text = widget.editContent ?? "";
     selectedEmoji = widget.editEmoji ?? AnimatedEmojis.neutralFace;
@@ -50,168 +50,196 @@ class _NewJournalPageState extends State<NewJournalPage> {
     ];
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: Get.width * 0.04),
-                  child: IconButton(
-                    onPressed: () {
-                      Get.back();
-                    },
-                    icon: const Icon(
-                      CupertinoIcons.xmark,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Obx(
-              () => Center(
-                child: AnimatedEmoji(
-                  journalController.emotion.value,
-                  size: 100,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: Get.height * 0.7,
-              child: Padding(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
                 padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(
-                      child: Title(
-                        color: Colors.black,
-                        child: Text(
-                          "WHAT'S YOUR MOOD TODAY?",
-                          style: TextStyle(
-                            fontSize: Get.height * 0.021,
-                            fontWeight: FontWeight.bold,
-                            wordSpacing: 0,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Center(
-                      child: Title(
-                        color: Colors.black,
-                        child: Text(
-                          DateFormat('EEEE, MMMM d, y').format(widget.date),
-                          style: TextStyle(
-                            fontSize: Get.height * 0.015,
-                            fontWeight: FontWeight.w500,
-                            wordSpacing: 0,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Obx(() => JournalEmojiWidget(
-                        emojis: profilePageController
-                                .userProfile.value!.recentEmojis.isEmpty
-                            ? basicEmojis
-                            : profilePageController
-                                .userProfile.value!.recentEmojis,
-                        onClick: (emoji) {
-                          journalController.emotion.value = emoji;
-                        })),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        Column(
+                          children: [
+                            Title(
+                              color: Colors.black,
+                              child: Text(
+                                "WHAT'S YOUR MOOD TODAY?",
+                                style: TextStyle(
+                                  fontSize: Get.height * 0.021,
+                                  fontWeight: FontWeight.bold,
+                                  wordSpacing: 0,
+                                  letterSpacing: 0.3,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: Get.width * 0.02),
-                          child: Title(
-                            color: Colors.black,
-                            child: Text(
-                              "TEll ME HOW YOU FEEL",
-                              style: TextStyle(
-                                fontSize: Get.height * 0.017,
-                                fontWeight: FontWeight.w700,
-                                wordSpacing: 0,
-                              ),
+                              horizontal: Get.width * 0.04),
+                          child: IconButton(
+                            onPressed: () {
+                              Get.back();
+                            },
+                            icon: const Icon(
+                              CupertinoIcons.xmark,
                             ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: Get.height * 0.03,
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(Get.width * 0.04),
-                          decoration: BoxDecoration(
-                            color: Colors.white60,
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(20),
-                            ),
-                            border: Border.all(
-                              width: 1,
-                              color: Colors.grey.withOpacity(0.2),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 1,
-                                blurRadius: 0.4,
-                                // offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: TextField(
-                            decoration: const InputDecoration(
-                              hintText: "Describe how you feel today!",
-                              border: InputBorder.none,
-                            ),
-                            controller: textEditingController,
-                            maxLines: 10,
                           ),
                         ),
                       ],
                     ),
-                    Obx(
-                      () => CustomButton(
-                        isLoading: journalController.isLoading.value,
-                        text: "Confirm",
-                        onPressed: () async {
-                          journalController.content.value =
-                              textEditingController.text;
-                          journalController.date.value = widget.date;
-                          journalController.createJournal().then((value) async {
-                            await profilePageController
-                                .getCurrentUserProfile()
-                                .then((value) {
-                              if (!profilePageController
-                                  .userProfile.value!.recentEmojis
-                                  .contains(journalController.emotion.value)) {
-                                profilePageController
-                                    .userProfile.value!.recentEmojis
-                                    .add(journalController.emotion.value);
-                                profilePageController
-                                    .userProfile.value!.recentEmojis
-                                    .removeAt(0);
-                              }
-                              profilePageController.updateRecentEmojis();
-                            });
-                            if (widget.editEmoji != null) {
-                              Get.back();
-                              await journalController.getJournal(widget.date);
-                              // Get.to(() => DataJournalPage(date: widget.date));
-                            }
-                            journalController.emotion.value =
-                                AnimatedEmojis.neutralFace;
-                          });
-                        },
+                    Title(
+                      color: Colors.black,
+                      child: Text(
+                        DateFormat('EEEE, MMMM d, y').format(widget.date),
+                        style: TextStyle(
+                          fontSize: Get.height * 0.017,
+                          fontWeight: FontWeight.w500,
+                          wordSpacing: 0,
+                        ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
-            ),
-          ],
+              Obx(
+                () => Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      AnimatedEmoji(
+                        journalController.emotion.value,
+                        size: Get.width / 3,
+                      ),
+                      const SentimentRadio()
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: Get.height * 0.55,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Obx(
+                        () => JournalEmojiWidget(
+                          emojis: profilePageController
+                                  .userProfile.value!.recentEmojis.isEmpty
+                              ? basicEmojis
+                              : profilePageController
+                                  .userProfile.value!.recentEmojis,
+                          onClick: (emoji) {
+                            journalController.emotion.value = emoji;
+                          },
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: Get.width * 0.02),
+                            child: Title(
+                              color: Colors.black,
+                              child: Text(
+                                "TEll ME HOW YOU FEEL",
+                                style: TextStyle(
+                                  fontSize: Get.height * 0.017,
+                                  fontWeight: FontWeight.w700,
+                                  wordSpacing: 0,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: Get.height * 0.03,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(Get.width * 0.04),
+                            decoration: BoxDecoration(
+                              color: Colors.white60,
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(20),
+                              ),
+                              border: Border.all(
+                                width: 1,
+                                color: Colors.grey.withOpacity(0.2),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  spreadRadius: 1,
+                                  blurRadius: 0.4,
+                                  // offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: TextField(
+                              decoration: const InputDecoration(
+                                hintText: "Describe how you feel today!",
+                                border: InputBorder.none,
+                              ),
+                              controller: textEditingController,
+                              maxLines: 10,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Obx(
+                        () => CustomButton(
+                          isLoading: journalController.isLoading.value,
+                          text: "Confirm",
+                          onPressed: () async {
+                            journalController.content.value =
+                                textEditingController.text;
+                            journalController.date.value = widget.date;
+                            journalController
+                                .createJournal()
+                                .then((value) async {
+                              await profilePageController
+                                  .getCurrentUserProfile()
+                                  .then((value) {
+                                if (!profilePageController
+                                    .userProfile.value!.recentEmojis
+                                    .contains(
+                                        journalController.emotion.value)) {
+                                  profilePageController
+                                      .userProfile.value!.recentEmojis
+                                      .add(journalController.emotion.value);
+                                  profilePageController
+                                      .userProfile.value!.recentEmojis
+                                      .removeAt(0);
+                                }
+                                profilePageController.updateRecentEmojis();
+                              });
+                              if (widget.editEmoji != null) {
+                                Get.back();
+                                await journalController.getJournal(widget.date);
+                                // Get.to(() => DataJournalPage(date: widget.date));
+                              }
+                              journalController.emotion.value =
+                                  AnimatedEmojis.neutralFace;
+                            });
+                          },
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -7,6 +7,7 @@ import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
 import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
+import 'package:emotion_tracker/app/sources/enums.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -262,14 +263,51 @@ class _ProfilePageState extends State<ProfilePage> {
         SizedBox(height: Get.height * 0.05),
         Center(
           child: Obx(
-            () => Text(
-              profilePageController.userProfile.value?.name ??
-                  FirebaseAuth.instance.currentUser!.displayName ??
-                  '',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
+            () => Column(
+              children: [
+                Text(
+                  profilePageController.userProfile.value?.name ??
+                      FirebaseAuth.instance.currentUser!.displayName ??
+                      '',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [ 
+                    Text(
+                      profilePageController.userProfile.value != null
+                          ? "age: ${DateTime.now().difference(profilePageController.userProfile.value!.dob.toDate()).inDays ~/ 365}"
+                          : "",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.all(10),
+                      width: 2,
+                      color: Colors.black,
+                      height: 20,
+                    ),
+                    profilePageController.userProfile.value != null
+                        ? Icon(
+                            profilePageController.userProfile.value!.gender ==
+                                    Gender.Male
+                                ? Icons.male
+                                : profilePageController
+                                            .userProfile.value!.gender ==
+                                        Gender.Female
+                                    ? Icons.female
+                                    : CupertinoIcons.news,
+                            color: Colors.blue,
+                          )
+                        : Container(),
+                  ],
+                )
+              ],
             ),
           ),
         ),

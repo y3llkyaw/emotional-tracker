@@ -33,9 +33,7 @@ class CalendarPage extends GetView<HomeController> {
                 child: Row(
                   children: [
                     Text(
-                      journalController.journals.isEmpty
-                          ? 'Journals'
-                          : 'Journals',
+                      journalController.journals.isEmpty ? 'Home' : 'Home',
                       style: TextStyle(
                         fontSize: Get.width * 0.046,
                         fontWeight: FontWeight.bold,
@@ -44,19 +42,16 @@ class CalendarPage extends GetView<HomeController> {
                     SizedBox(
                       width: Get.width * 0.02,
                     ),
-                    const Icon(CupertinoIcons.news_solid),
+                    const Icon(CupertinoIcons.house_fill),
                   ],
                 ),
               ),
-              SizedBox(
-                height: Get.width * 0.03,
-              ),
-              // calendar goes here
+
               calendar(),
-              SizedBox(
-                height: Get.width * 0.03,
+              Divider(
+                color: Colors.grey.shade300,
               ),
-              const PiechartPage(),
+              PiechartPage(),
             ],
           ),
         ),
@@ -66,9 +61,9 @@ class CalendarPage extends GetView<HomeController> {
 
   Widget calendar() {
     return SizedBox(
-      height: Get.height * 0.22,
+      height: Get.height / 4,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
         child: TableCalendar(
           shouldFillViewport: true,
           rowHeight: Get.height * 0.11,
@@ -76,6 +71,7 @@ class CalendarPage extends GetView<HomeController> {
           availableCalendarFormats: const {
             CalendarFormat.month: 'full-calendar',
             CalendarFormat.week: 'full-calendar',
+            CalendarFormat.twoWeeks: 'full-calendar',
           },
           availableGestures: AvailableGestures.horizontalSwipe,
           headerStyle: HeaderStyle(
