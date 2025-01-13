@@ -2,7 +2,6 @@ import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
-import 'package:emotion_tracker/app/ui/pages/journal_page/data_journal.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/journal_emoji.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -92,7 +91,7 @@ class _NewJournalPageState extends State<NewJournalPage> {
                         child: Text(
                           "WHAT'S YOUR MOOD TODAY?",
                           style: TextStyle(
-                            fontSize: Get.width * 0.05,
+                            fontSize: Get.height * 0.021,
                             fontWeight: FontWeight.bold,
                             wordSpacing: 0,
                           ),
@@ -105,7 +104,7 @@ class _NewJournalPageState extends State<NewJournalPage> {
                         child: Text(
                           DateFormat('EEEE, MMMM d, y').format(widget.date),
                           style: TextStyle(
-                            fontSize: Get.width * 0.04,
+                            fontSize: Get.height * 0.015,
                             fontWeight: FontWeight.w500,
                             wordSpacing: 0,
                           ),
@@ -132,7 +131,7 @@ class _NewJournalPageState extends State<NewJournalPage> {
                             child: Text(
                               "TEll ME HOW YOU FEEL",
                               style: TextStyle(
-                                fontSize: Get.width * 0.04,
+                                fontSize: Get.height * 0.017,
                                 fontWeight: FontWeight.w700,
                                 wordSpacing: 0,
                               ),

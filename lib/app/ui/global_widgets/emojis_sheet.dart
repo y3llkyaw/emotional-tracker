@@ -1,5 +1,4 @@
 import 'package:animated_emoji/animated_emoji.dart';
-import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/ui/utils/helper_functions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -78,7 +77,7 @@ void showEmojiSheet(void Function(AnimatedEmojiData) onEmojiSelected,
                 child: GridView.builder(
                   scrollDirection: Axis.vertical,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 6,
+                    crossAxisCount: 5,
                     crossAxisSpacing: 5.0,
                     mainAxisSpacing: 5.0,
                   ),
@@ -98,7 +97,7 @@ void showEmojiSheet(void Function(AnimatedEmojiData) onEmojiSelected,
                           child: Text(
                             emoji.toUnicodeEmoji(),
                             style: TextStyle(
-                              fontSize: Get.width * 0.095,
+                              fontSize: Get.width * 0.1,
                             ),
                           ),
                         ),

@@ -25,7 +25,7 @@ dependencies:
   firebase_core: ^3.8.0
   cloud_firestore:
   flutter_svg: ^2.0.14
-  flutter_spinkit: ^5.2.1
+  # flutter_spinkit: ^5.2.1
   table_calendar: ^3.1.2
   gender_picker: ^1.1.0
   cool_dropdown: ^2.1.1
@@ -37,12 +37,13 @@ dependencies:
   avatar_plus: ^0.0.5
   local_auth: ^2.3.0
   chat_bubbles: ^1.6.0
-  rename: ^3.0.2
   intl: ^0.19.0
+  fl_chart: ^0.69.2
 
 dev_dependencies:
   build_runner:
   freezed:
+  rename: ^3.0.2
 
   # #to make native splash screen
   # # 1) change path image_path
@@ -428,7 +429,6 @@ flutter:
     - packages/animated_emoji/lottie/triangularFlag.json
     - packages/animated_emoji/lottie/blackFlag.json
     - packages/animated_emoji/lottie/whiteFlag.json
-
 
     # - assets/svg/
 

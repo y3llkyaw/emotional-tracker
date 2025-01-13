@@ -33,8 +33,8 @@ class _FullCalendarPageState extends State<FullCalendarPage> {
                   children: [
                     Text(
                       journalController.journals.isEmpty
-                          ? 'Journals'
-                          : 'Journals',
+                          ? 'Full Calendar'
+                          : 'Full Calendar',
                       style: TextStyle(
                         fontSize: Get.width * 0.046,
                         fontWeight: FontWeight.bold,
@@ -43,7 +43,7 @@ class _FullCalendarPageState extends State<FullCalendarPage> {
                     SizedBox(
                       width: Get.width * 0.02,
                     ),
-                    const Icon(CupertinoIcons.news_solid),
+                    const Icon(CupertinoIcons.calendar_circle_fill),
                     const Spacer(),
                     IconButton(
                       onPressed: () {},
@@ -105,16 +105,12 @@ Widget _calendar() {
           ),
         ),
         calendarFormat: CalendarFormat.month,
-        onFormatChanged: (format) {
-          // journalController.toggleCalendarFormat();
-          // Get.to(const CalendarDetailPage(), transition: Transition.downToUp);
-        },
         formatAnimationCurve: Curves.easeInOut,
         formatAnimationDuration: const Duration(milliseconds: 400),
         weekNumbersVisible: true,
         focusedDay: DateTime.now(),
         firstDay: DateTime(DateTime.now().year - 1),
-        lastDay: DateTime(DateTime.now().year + 1),
+        lastDay: DateTime.now(),
         calendarBuilders: CalendarBuilders(
           defaultBuilder: (context, date, events) {
             for (var element in journalController.journals) {
@@ -214,12 +210,10 @@ Widget dataCalendar(DateTime day, String content, AnimatedEmojiData emojiData) {
     padding: const EdgeInsets.only(top: 15),
     child: GestureDetector(
       onTap: () async {
-        // await Get.to(
-        //   () => DataJournalPage(
-        //     date: day,
-        //   ),
-        //   transition: Transition.downToUp,
-        // );
+        await Get.to(
+          () => JournalPageView(),
+          transition: Transition.downToUp,
+        );
         journalController.fetchJournals();
       },
       child: Center(
