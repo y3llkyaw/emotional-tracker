@@ -165,6 +165,7 @@ Widget _labelWidget(Color color, String text) {
     child: Row(
       children: [
         CircleAvatar(
+          radius: 14,
           backgroundColor: color,
         ),
         SizedBox(

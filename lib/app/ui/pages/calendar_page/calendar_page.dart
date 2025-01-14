@@ -5,8 +5,10 @@ import 'package:emotion_tracker/app/ui/pages/calendar_page/piechart_page.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/data_journal.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/new_journal.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:emotion_tracker/app/controllers/home_controller.dart';
 
@@ -19,41 +21,110 @@ class CalendarPage extends GetView<HomeController> {
     journalController.fetchJournals();
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Obx(
-          () => Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // title goes here
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: Get.width * 0.08,
-                  vertical: Get.width * 0.04,
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      journalController.journals.isEmpty ? 'Home' : 'Home',
-                      style: TextStyle(
-                        fontSize: Get.width * 0.046,
-                        fontWeight: FontWeight.bold,
+      body: Obx(
+        () => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // title goes here
+            // Padding(
+            //   padding: EdgeInsets.symmetric(
+            //     horizontal: Get.width * 0.08,
+            //     vertical: Get.width * 0.04,
+            //   ),
+            //   child: Row(
+            //     children: [
+            //       Text(
+            //         journalController.journals.isEmpty ? 'Home' : 'Home',
+            //         style: TextStyle(
+            //           fontSize: Get.width * 0.046,
+            //           fontWeight: FontWeight.bold,
+            //         ),
+            //       ),
+            //       SizedBox(
+            //         width: Get.width * 0.02,
+            //       ),
+            //       const Icon(CupertinoIcons.house_fill),
+            //     ],
+            //   ),
+            // ),
+            calendar(),
+            Divider(
+              color: Colors.grey.shade300,
+            ),
+            PiechartPage(),
+            Divider(
+              color: Colors.grey.shade300,
+            ),
+            Expanded(
+              child: ListView.builder(
+                controller: ScrollController(),
+                scrollDirection: Axis.horizontal,
+                itemCount: journalController.journals.length,
+                itemBuilder: (context, index) {
+                  return SizedBox(
+                    width: Get.width / 1.05,
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      margin: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          width: 2,
+                          color: Colors.green,
+                        ),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(20)),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              CircleAvatar(
+                                radius: 40,
+                                backgroundColor: Colors.transparent,
+                                child: AnimatedEmoji(
+                                  journalController.journals[index].emotion,
+                                  size: 200,
+                                ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    DateFormat('EEEE, MMMM d, y').format(
+                                      journalController.journals[index].date,
+                                    ),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(CupertinoIcons.news),
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
+                          const Divider(
+                            color: Colors.lightBlue,
+                          ),
+                          const Spacer(),
+                          Center(
+                            child: Text(
+                              journalController.journals[index].content,
+                            ),
+                          ),
+                          const Spacer(),
+                        ],
                       ),
                     ),
-                    SizedBox(
-                      width: Get.width * 0.02,
-                    ),
-                    const Icon(CupertinoIcons.house_fill),
-                  ],
-                ),
+                  );
+                },
               ),
-
-              calendar(),
-              Divider(
-                color: Colors.grey.shade300,
-              ),
-              PiechartPage(),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
