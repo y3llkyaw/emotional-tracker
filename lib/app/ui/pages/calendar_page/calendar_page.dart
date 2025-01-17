@@ -4,8 +4,8 @@ import 'package:emotion_tracker/app/ui/pages/calendar_page/full_calendar_page.da
 import 'package:emotion_tracker/app/ui/pages/calendar_page/piechart_page.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/data_journal.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/new_journal.dart';
+import 'package:emotion_tracker/app/ui/utils/helper_functions.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -56,72 +56,85 @@ class CalendarPage extends GetView<HomeController> {
               color: Colors.grey.shade300,
             ),
             Expanded(
-              child: ListView.builder(
-                controller: ScrollController(),
-                scrollDirection: Axis.horizontal,
-                itemCount: journalController.journals.length,
-                itemBuilder: (context, index) {
-                  return SizedBox(
-                    width: Get.width / 1.05,
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      margin: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          width: 2,
-                          color: Colors.green,
-                        ),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(20)),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              CircleAvatar(
-                                radius: 40,
-                                backgroundColor: Colors.transparent,
-                                child: AnimatedEmoji(
-                                  journalController.journals[index].emotion,
-                                  size: 200,
+              child: Padding(
+                padding: EdgeInsets.all(Get.width * 0.02),
+                child: ListView.builder(
+                  controller: ScrollController(),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: journalController.journals.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      color:
+                          valueToColor(journalController.journals[index].value),
+                      shadowColor: Colors.transparent,
+                      child: Transform(
+                        transform:
+                            Matrix4.translationValues(0, -Get.height * 0.03, 0),
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                  color: valueToColor(
+                                      journalController.journals[index].value),
+                                  shape: BoxShape.circle),
+                              child: AnimatedEmoji(
+                                journalController.journals[index].emotion,
+                                size: 50,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                DateFormat('EEEE, MMMM d, y').format(
+                                  journalController.journals[index].date,
+                                ),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black45,
                                 ),
                               ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    DateFormat('EEEE, MMMM d, y').format(
-                                      journalController.journals[index].date,
-                                    ),
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(CupertinoIcons.news),
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                          const Divider(
-                            color: Colors.lightBlue,
-                          ),
-                          const Spacer(),
-                          Center(
-                            child: Text(
-                              journalController.journals[index].content,
                             ),
-                          ),
-                          const Spacer(),
-                        ],
+                            Padding(
+                              padding: EdgeInsets.all(Get.width * 0.02),
+                              child: SizedBox(
+                                width: 200,
+                                height: 30,
+                                child: Text(
+                                  journalController.journals[index].content,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Colors.black45,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(Icons.thumb_up),
+                                ),
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(
+                                    CupertinoIcons.conversation_bubble,
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(Icons.share),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ],
@@ -185,8 +198,8 @@ class CalendarPage extends GetView<HomeController> {
                 if (DateTime(element.date.day, element.date.month,
                         element.date.year) ==
                     DateTime(date.day, date.month, date.year)) {
-                  return dataCalendar(
-                      date, element.content, element.emotion, index);
+                  return dataCalendar(date, element.content, element.emotion,
+                      index, element.value);
                 }
                 index++;
               }
@@ -198,8 +211,8 @@ class CalendarPage extends GetView<HomeController> {
                 if (DateTime(element.date.day, element.date.month,
                         element.date.year) ==
                     DateTime(date.day, date.month, date.year)) {
-                  return dataCalendar(
-                      date, element.content, element.emotion, index);
+                  return dataCalendar(date, element.content, element.emotion,
+                      index, element.value);
                 }
                 index++;
               }
@@ -213,8 +226,8 @@ class CalendarPage extends GetView<HomeController> {
                 if (DateTime(element.date.day, element.date.month,
                         element.date.year) ==
                     DateTime(date.day, date.month, date.year)) {
-                  return dataCalendar(
-                      date, element.content, element.emotion, index);
+                  return dataCalendar(date, element.content, element.emotion,
+                      index, element.value);
                 }
                 index++;
               }
@@ -289,14 +302,17 @@ class CalendarPage extends GetView<HomeController> {
     );
   }
 
-  Widget dataCalendar(
-      DateTime day, String content, AnimatedEmojiData emojiData, int index) {
+  Widget dataCalendar(DateTime day, String content, AnimatedEmojiData emojiData,
+      int index, int value) {
     return Padding(
       padding: const EdgeInsets.only(top: 15),
       child: GestureDetector(
         onTap: () async {
           journalController.indexDataJournal.value = index;
-          Get.to(() => JournalPageView());
+          Get.to(
+            () => JournalPageView(),
+            transition: Transition.downToUp,
+          );
           journalController.fetchJournals();
         },
         child: Center(
@@ -322,7 +338,7 @@ class CalendarPage extends GetView<HomeController> {
               Center(
                 child: CircleAvatar(
                   radius: Get.width * 0.028,
-                  backgroundColor: Colors.yellow,
+                  backgroundColor: valueToColor(value).withOpacity(0.5),
                   child: Text(
                     day.day.toString(),
                     style: TextStyle(

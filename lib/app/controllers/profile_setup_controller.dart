@@ -37,11 +37,11 @@ class ProfileSetupController extends GetxController {
         "gender": gender.value.toString(),
         "dob": dob.value.toIso8601String(),
         "recentEmojis": [
-          AnimatedEmojis.angry.name,
-          AnimatedEmojis.sad.name,
-          AnimatedEmojis.neutralFace.name,
-          AnimatedEmojis.smile.name,
-          AnimatedEmojis.joy.name,
+          AnimatedEmojis.angry.id,
+          AnimatedEmojis.sad.id,
+          AnimatedEmojis.neutralFace.id,
+          AnimatedEmojis.smile.id,
+          AnimatedEmojis.joy.id,
         ],
       });
 

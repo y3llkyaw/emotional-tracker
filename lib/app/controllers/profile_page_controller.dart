@@ -1,12 +1,15 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/sources/enums.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
 class ProfilePageController extends GetxController {
+  final JournalController journalController = JournalController();
+
   var userProfile = Rxn<Profile>();
   var isLoading = false.obs;
 
@@ -16,16 +19,24 @@ class ProfilePageController extends GetxController {
     await getCurrentUserProfile();
   }
 
+  List<String> newEmojiList() {
+    final original = userProfile.value!.recentEmojis.map((e) => e.id).toList();
+    if (!original.contains(journalController.emotion.value.id)) {
+      List<String> newEmoji = original + [journalController.emotion.value.id];
+      newEmoji.removeAt(0);
+      return newEmoji;
+    }
+    return original;
+  }
+
   Future<void> updateRecentEmojis() async {
     await FirebaseFirestore.instance
         .collection("profile")
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .update({
-      "recentEmojis": userProfile.value!.recentEmojis.map((e) => e.id).toList()
+      "recentEmojis": newEmojiList(),
     }).then(
-      (value) {
-        log("message");
-      },
+      (value) {},
     );
   }
 

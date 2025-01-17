@@ -6,12 +6,15 @@ class Journal {
   final DateTime date;
   final String content;
   final AnimatedEmojiData emotion;
+  final int value;
 
-  const Journal(
-      {required this.uid,
-      required this.date,
-      required this.content,
-      required this.emotion});
+  const Journal({
+    required this.uid,
+    required this.date,
+    required this.content,
+    required this.emotion,
+    required this.value,
+  });
 
   factory Journal.fromDocument(Map<String, dynamic> json) {
     return Journal(
@@ -19,6 +22,7 @@ class Journal {
       date: (json['date'] as Timestamp).toDate(),
       content: json['content'],
       emotion: AnimatedEmojis.fromId(json['emotion'].toString()),
+      value: json['value'],
     );
   }
 }

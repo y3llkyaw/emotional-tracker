@@ -111,7 +111,7 @@ void showEmojiSheet(void Function(AnimatedEmojiData) onEmojiSelected,
         );
       },
     ),
-    // elevation: 1,
+    elevation: 1,
     backgroundColor: Colors.white,
     enableDrag: true,
   );

@@ -3,6 +3,7 @@
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/new_journal.dart';
+import 'package:emotion_tracker/app/ui/utils/helper_functions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,6 +24,9 @@ class DataJournalPage extends StatelessWidget {
           () {
             var journalList = journalController.journals.value;
             int index = journalController.indexDataJournal.value;
+            if (index < 0 || index >= journalList.length) {
+              return Center(child: Text('No journal entry available'));
+            }
             return GestureDetector(
               onHorizontalDragEnd: (details) {
                 if (details.primaryVelocity != null) {
@@ -189,20 +193,24 @@ class JournalPageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Obx(
-          () {
-            var journalList = journalController.journals.value;
-            int index = journalController.indexDataJournal.value;
-            return PageView.builder(
-              itemCount: journalList.length,
-              controller: PageController(initialPage: index),
-              onPageChanged: (newIndex) {
-                journalController.indexDataJournal.value = newIndex;
-              },
-              itemBuilder: (context, index) {
-                return Column(
+    return Obx(
+      () {
+        var journalList = journalController.journals.value;
+        int index = journalController.indexDataJournal.value;
+        if (index < 0 || index >= journalList.length) {
+          return const Center(child: Text('No journal entry available'));
+        }
+        return PageView.builder(
+          itemCount: journalList.length,
+          controller: PageController(initialPage: index),
+          onPageChanged: (newIndex) {
+            journalController.indexDataJournal.value = newIndex;
+          },
+          itemBuilder: (context, index) {
+            return Scaffold(
+              backgroundColor: valueToColor(journalList[index].value),
+              body: SafeArea(
+                child: Column(
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -214,7 +222,9 @@ class JournalPageView extends StatelessWidget {
                             onPressed: () {
                               Get.back();
                             },
-                            icon: const Icon(CupertinoIcons.xmark),
+                            icon: const Icon(
+                              CupertinoIcons.xmark,
+                            ),
                           ),
                         ),
                         Padding(
@@ -236,6 +246,8 @@ class JournalPageView extends StatelessWidget {
                                       date: journalList[index].date,
                                       editContent: journalList[index].content,
                                       editEmoji: journalList[index].emotion,
+                                      editValue: journalList[index].value,
+
                                     ),
                                   );
                                 },
@@ -281,8 +293,10 @@ class JournalPageView extends StatelessWidget {
                                     onPressed: () {
                                       journalController.previousPage();
                                     },
-                                    icon:
-                                        const Icon(CupertinoIcons.left_chevron),
+                                    icon: const Icon(
+                                      CupertinoIcons.left_chevron,
+                                      color: Colors.black54,
+                                    ),
                                   ),
                                   Title(
                                     color: Colors.black,
@@ -296,6 +310,7 @@ class JournalPageView extends StatelessWidget {
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                         wordSpacing: 0,
+                                        color: Colors.black54,
                                       ),
                                     ),
                                   ),
@@ -304,7 +319,9 @@ class JournalPageView extends StatelessWidget {
                                       journalController.nextPage();
                                     },
                                     icon: const Icon(
-                                        CupertinoIcons.right_chevron),
+                                      CupertinoIcons.right_chevron,
+                                      color: Colors.black54,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -317,10 +334,12 @@ class JournalPageView extends StatelessWidget {
                                   child: Text(
                                     journalList[journalController
                                             .indexDataJournal.value]
-                                        .content,
+                                        .content
+                                        .toString(),
                                     textAlign: TextAlign.justify,
                                     style: TextStyle(
                                       fontSize: Get.width * 0.04,
+                                      color: Colors.black54,
                                     ),
                                   ),
                                 ),
@@ -331,12 +350,12 @@ class JournalPageView extends StatelessWidget {
                       ),
                     ),
                   ],
-                );
-              },
+                ),
+              ),
             );
           },
-        ),
-      ),
+        );
+      },
     );
   }
 }

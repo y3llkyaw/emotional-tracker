@@ -2,17 +2,20 @@ import 'dart:developer';
 
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emotion_tracker/app/controllers/mood_slider_controller.dart';
 import 'package:emotion_tracker/app/data/models/journal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class JournalController extends GetxController {
+  final moodsliderController = MoodSliderController();
   var indexDataJournal = 0.obs;
   var isLoading = false.obs;
   var journals = <Journal>[].obs;
   var formatCalender = CalendarFormat.month.obs;
   var singleJournal = Rxn<Journal>();
+  var moodSlider = 2.obs;
 
   var content = ''.obs;
   var date = DateTime.now().obs;
@@ -44,6 +47,7 @@ class JournalController extends GetxController {
         "date": date.value,
         "content": content.value,
         "emotion": emotion.value.id.toString(),
+        "value": moodSlider.value,
       }).then((value) {
         Get.back();
         Get.snackbar("Success", "Journal Created Successfully..");

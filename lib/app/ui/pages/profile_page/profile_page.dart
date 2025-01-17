@@ -276,13 +276,13 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [ 
+                  children: [
                     Text(
                       profilePageController.userProfile.value != null
                           ? "age: ${DateTime.now().difference(profilePageController.userProfile.value!.dob.toDate()).inDays ~/ 365}"
                           : "",
                       style: const TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
                     ),

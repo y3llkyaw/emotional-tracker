@@ -8,6 +8,10 @@ class PiechartPage extends StatelessWidget {
   final journalController = Get.put(JournalController());
   @override
   Widget build(BuildContext context) {
+    TextStyle title = const TextStyle(
+      fontWeight: FontWeight.w400,
+      color: Colors.black54,
+    );
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: Get.width * 0.025),
       child: Column(
@@ -94,45 +98,86 @@ class PiechartPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    PieChart(
-                      PieChartData(
-                        startDegreeOffset: 180,
-                        centerSpaceColor: Colors.transparent,
-                        borderData: FlBorderData(
-                          show: false,
-                        ),
-                        centerSpaceRadius: 70,
-                        pieTouchData: PieTouchData(
-                          touchCallback: (p0, p1) {},
-                        ),
-                        sections: [
-                          PieChartSectionData(
-                              color: Colors.red,
-                              showTitle: false,
-                              title: "super bad",
-                              value: 10),
-                          PieChartSectionData(
-                              color: Colors.orange,
-                              showTitle: false,
-                              title: "kinda bad",
-                              value: 40),
-                          PieChartSectionData(
-                              color: Colors.amber,
-                              showTitle: false,
-                              title: "Meh",
-                              value: 40),
-                          PieChartSectionData(
-                              color: Colors.lightGreen,
-                              showTitle: false,
-                              title: "Pretty Good",
-                              value: 20),
-                          PieChartSectionData(
-                              color: Colors.green,
-                              showTitle: false,
-                              title: "Awsome",
-                              value: 10),
-                        ],
-                      ),
+                    Obx(
+                      () {
+                        double awsome = 0;
+                        double pgood = 0;
+                        double meh = 0;
+                        double kindaBad = 0;
+                        double superBad = 0;
+
+                        for (var element in journalController.journals) {
+                          switch (element.value) {
+                            case 0:
+                              superBad++;
+                              break;
+                            case 1:
+                              kindaBad++;
+                              break;
+                            case 2:
+                              meh++;
+                              break;
+                            case 3:
+                              pgood++;
+                              break;
+                            case 4:
+                              awsome++;
+                              break;
+                            default:
+                              break;
+                          }
+                        }
+                        return PieChart(
+                          PieChartData(
+                            startDegreeOffset: 180,
+                            centerSpaceColor: Colors.transparent,
+                            borderData: FlBorderData(
+                              show: false,
+                            ),
+                            centerSpaceRadius: 65,
+                            pieTouchData: PieTouchData(
+                              touchCallback: (p0, p1) {},
+                            ),
+                            sections: [
+                              PieChartSectionData(
+                                color: Colors.red,
+                                showTitle: true,
+                                title: superBad.toInt().toString(),
+                                value: superBad,
+                                titleStyle: title,
+                              ),
+                              PieChartSectionData(
+                                color: Colors.orange,
+                                showTitle: true,
+                                title: kindaBad.toInt().toString(),
+                                value: kindaBad,
+                                titleStyle: title,
+                              ),
+                              PieChartSectionData(
+                                color: Colors.grey,
+                                showTitle: true,
+                                title: meh.toInt().toString(),
+                                value: meh,
+                                titleStyle: title,
+                              ),
+                              PieChartSectionData(
+                                color: Colors.lightGreen,
+                                showTitle: true,
+                                title: pgood.toInt().toString(),
+                                value: pgood,
+                                titleStyle: title,
+                              ),
+                              PieChartSectionData(
+                                color: Colors.green,
+                                showTitle: true,
+                                title: awsome.toInt().toString(),
+                                value: awsome,
+                                titleStyle: title,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -143,7 +188,7 @@ class PiechartPage extends StatelessWidget {
                 children: [
                   _labelWidget(Colors.red, "Super Bad"),
                   _labelWidget(Colors.orange, "Kinda Bad"),
-                  _labelWidget(Colors.amber, "Meh"),
+                  _labelWidget(Colors.grey, "Meh"),
                   _labelWidget(Colors.lightGreen, "Pretty Good"),
                   _labelWidget(Colors.green, "Awsome"),
                 ],
@@ -165,7 +210,7 @@ Widget _labelWidget(Color color, String text) {
     child: Row(
       children: [
         CircleAvatar(
-          radius: 14,
+          radius: 7,
           backgroundColor: color,
         ),
         SizedBox(
