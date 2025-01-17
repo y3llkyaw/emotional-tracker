@@ -10,7 +10,7 @@ class PiechartPage extends StatelessWidget {
   Widget build(BuildContext context) {
     TextStyle title = const TextStyle(
       fontWeight: FontWeight.w400,
-      color: Colors.black54,
+      color: Colors.white70,
     );
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: Get.width * 0.025),
@@ -88,10 +88,11 @@ class PiechartPage extends StatelessWidget {
                         Obx(
                           () {
                             return CircleAvatar(
+                              radius: 13,
                               backgroundColor: Colors.blue.withOpacity(0.2),
                               child: Text(
                                 journalController.journals.length.toString(),
-                                style: const TextStyle(color: Colors.black),
+                                style: const TextStyle(color: Colors.black54),
                               ),
                             );
                           },

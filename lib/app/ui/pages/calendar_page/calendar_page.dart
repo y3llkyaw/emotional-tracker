@@ -56,85 +56,122 @@ class CalendarPage extends GetView<HomeController> {
               color: Colors.grey.shade300,
             ),
             Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(Get.width * 0.02),
-                child: ListView.builder(
-                  controller: ScrollController(),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: journalController.journals.length,
-                  itemBuilder: (context, index) {
-                    return Card(
+              child: ListView.builder(
+                reverse: true,
+                controller: ScrollController(),
+                scrollDirection: Axis.horizontal,
+                itemCount: journalController.journals.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin: EdgeInsets.all(Get.height * 0.02),
+                    child: Card(
                       color:
                           valueToColor(journalController.journals[index].value),
                       shadowColor: Colors.transparent,
-                      child: Transform(
-                        transform:
-                            Matrix4.translationValues(0, -Get.height * 0.03, 0),
-                        child: Column(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                  color: valueToColor(
-                                      journalController.journals[index].value),
-                                  shape: BoxShape.circle),
-                              child: AnimatedEmoji(
-                                journalController.journals[index].emotion,
-                                size: 50,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                DateFormat('EEEE, MMMM d, y').format(
-                                  journalController.journals[index].date,
-                                ),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black45,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Transform(
+                                alignment: Alignment.center,
+                                transform: Matrix4.translationValues(
+                                    -Get.width * 0.02, -Get.height * 0.022, 0),
+                                child: Container(
+                                  padding: const EdgeInsets.all(8.0),
+                                  decoration: BoxDecoration(
+                                      color: valueToColor(journalController
+                                          .journals[index].value),
+                                      shape: BoxShape.circle),
+                                  child: AnimatedEmoji(
+                                    journalController.journals[index].emotion,
+                                    size: 50,
+                                  ),
                                 ),
                               ),
+                              Transform(
+                                alignment: Alignment.center,
+                                transform: Matrix4.translationValues(
+                                    Get.width * 0.009, -Get.height * 0.012, 0),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: Get.width * 0.03),
+                                  child: Text(
+                                    DateFormat('MMMM d, y').format(
+                                      journalController.journals[index].date,
+                                    ),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: Get.width * 0.05,
                             ),
-                            Padding(
-                              padding: EdgeInsets.all(Get.width * 0.02),
-                              child: SizedBox(
-                                width: 200,
-                                height: 30,
+                            child: SizedBox(
+                              width: 200,
+                              height: 40,
+                              child: Center(
                                 child: Text(
                                   journalController.journals[index].content,
-                                  maxLines: 1,
+                                  maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                    color: Colors.black45,
+                                    color: Colors.white,
                                   ),
                                 ),
                               ),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.thumb_up),
+                          ),
+                          const Spacer(),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: Get.width * 0.05,
+                            ),
+                            child: Container(
+                              width: 200,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.4),
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20),
                                 ),
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(
-                                    CupertinoIcons.conversation_bubble,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      CupertinoIcons.heart,
+                                      // color: Colors.blue,
+                                    ),
                                   ),
-                                ),
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.share),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      CupertinoIcons.conversation_bubble,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(Icons.share),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
             ),
           ],
@@ -338,12 +375,12 @@ class CalendarPage extends GetView<HomeController> {
               Center(
                 child: CircleAvatar(
                   radius: Get.width * 0.028,
-                  backgroundColor: valueToColor(value).withOpacity(0.5),
+                  backgroundColor: valueToColor(value),
                   child: Text(
                     day.day.toString(),
                     style: TextStyle(
                       fontSize: Get.width * 0.023,
-                      color: Colors.black,
+                      color: Colors.white,
                       // fontSize: 11,
                     ),
                   ),
