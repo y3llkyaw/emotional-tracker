@@ -83,8 +83,32 @@ class FriendService {
         .collection('friends_request')
         .doc(profile.uid)
         .get();
+
+    final friends = await FirebaseFirestore.instance
+        .collection("profile")
+        .doc(_cuid)
+        .collection("friends")
+        .doc(profile.uid)
+        .get();
+
+    final noti = await FirebaseFirestore.instance
+        .collection("profile")
+        .doc(_cuid)
+        .collection("notifications")
+        .doc(profile.uid)
+        .get();
+
+    if (noti.exists && noti.data() != null) {
+      if (noti.data()!["type"] == "fr") {
+        return "FriendStatus.fr";
+      }
+    }
+
+    if (friends.exists && friends.data() != null) {
+      return "FriendStatus.friend";
+    }
     if (f.exists && f.data() != null) {
-      log(f.data()!['status']);
+      log(f.data()!['status'], name: "not-friend");
       return f.data()!['status'];
     } else {
       return null;

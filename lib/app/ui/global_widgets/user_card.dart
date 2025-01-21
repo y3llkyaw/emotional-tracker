@@ -1,6 +1,7 @@
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_page/friend_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,7 +12,16 @@ class UserCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        if (profile != null) {
+          Get.to(
+            () => FriendProfilePage(
+              profile: profile!,
+            ),
+            transition: Transition.downToUp,
+          );
+        }
+      },
       customBorder: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),

@@ -3,6 +3,8 @@ import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/controllers/noti_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_page/friend_profile_page.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_page/other_profile_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -33,20 +35,15 @@ class _NotificationPageState extends State<NotificationPage> {
                 "Notifications",
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Icon(
+                  CupertinoIcons.bell_fill,
+                ),
+              )
             ],
           ),
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                CupertinoIcons.person_3_fill,
-              ),
-            ),
-          )
-        ],
       ),
       body: Padding(
         padding: EdgeInsets.all(Get.width * 0.05),
@@ -55,35 +52,47 @@ class _NotificationPageState extends State<NotificationPage> {
             stream: nc.notifications.value,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                List<String> fr = [];
-                var frAccept = [];
-                var other = [];
-                for (var element in snapshot.data!) {
-                  switch (element['type']) {
-                    case "fr":
-                      fr.add(element['uid']);
-                      break;
-                    case "fr-accept":
-                      frAccept.add(element['uid']);
-                      break;
-                    case "other":
-                      other.add(element['uid']);
-                      break;
-                  }
+                if (snapshot.data!.isEmpty) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        CupertinoIcons.bell,
+                        color: Colors.grey.shade500,
+                        size: Get.height * 0.03,
+                      ),
+                      SizedBox(
+                        width: Get.width * 0.04,
+                      ),
+                      Center(
+                        child: Text(
+                          "you have no notifications right now !",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: Get.width * 0.036,
+                            color: Colors.black26,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
                 }
-                return Column(
-                  children:
-                      // _buildExpansionTile(
-                      //   icon: CupertinoIcons.person_3_fill,
-                      //   title: "Friends Requests",
-                      //   children: [
-                      //     ..._buildFriendRequests(fr),
-                      //     ..._buildFriendAccepts(frAccept.cast<String>()),
-                      //   ],
-                      // ),
-
-                      _buildOtherNotifications(other.cast<String>()),
-                );
+                return ListView.builder(
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      switch (snapshot.data![index]['type']) {
+                        case "fr":
+                          return _buildFriendRequests(
+                              snapshot.data![index]["uid"]);
+                        case "fr-accept":
+                          return _buildFriendAccept(
+                              snapshot.data![index]["uid"]);
+                        case "other":
+                          // other.add(snapshot.data![index]['uid']);
+                          break;
+                      }
+                      return Container();
+                    });
               }
               return const Center(child: CircularProgressIndicator());
             },
@@ -93,36 +102,34 @@ class _NotificationPageState extends State<NotificationPage> {
     );
   }
 
-  List<Widget> _buildFriendRequests(List<String> friendRequests) {
-    return friendRequests.map((uid) {
-      return FutureBuilder(
-        future: pc.getProfileByUid(uid),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return _skeletonTile();
-          } else if (snapshot.hasData) {
-            var profile = snapshot.data as Profile?;
-            return _buildFriendRequestTile(profile, uid);
-          }
+  FutureBuilder<Profile> _buildFriendRequests(String uid) {
+    return FutureBuilder(
+      future: pc.getProfileByUid(uid),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return _skeletonTile();
-        },
-      );
-    }).toList();
+        } else if (snapshot.hasData) {
+          var profile = snapshot.data;
+          return _buildFriendRequestTile(profile, uid);
+        }
+        return _skeletonTile();
+      },
+    );
   }
 
-  List<Widget> _buildFriendAccepts(List<String> friendAccepts) {
-    return friendAccepts.map((uid) {
-      return FutureBuilder(
-        future: pc.getProfileByUid(uid),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            var profile = snapshot.data as Profile?;
-            return _buildFriendAcceptTile(profile, uid);
-          }
-          return ListTile(title: Text(uid));
-        },
-      );
-    }).toList();
+  FutureBuilder<Profile> _buildFriendAccept(String uid) {
+    return FutureBuilder(
+      future: pc.getProfileByUid(uid),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _skeletonTile();
+        } else if (snapshot.hasData) {
+          var profile = snapshot.data;
+          return _buildFriendAcceptTile(profile, uid);
+        }
+        return _skeletonTile();
+      },
+    );
   }
 
   List<Widget> _buildOtherNotifications(List<String> otherNotifications) {
@@ -181,37 +188,44 @@ class _NotificationPageState extends State<NotificationPage> {
   }
 
   Widget _buildFriendRequestTile(Profile? profile, String uid) {
-    return ListTile(
-      leading: CircleAvatar(child: AvatarPlus("$uid${profile?.name}")),
-      title: Text(
-        profile?.name ?? 'Unknown',
-        style: const TextStyle(fontWeight: FontWeight.w500),
-      ),
-      subtitle: Padding(
-        padding: EdgeInsets.only(top: Get.width * 0.01),
-        child: Row(
-          children: [
-            InkWell(
-              onTap: () async {
-                await afc.confirmFriendRequest(profile!);
-                setState(() {});
-              },
-              child: afc.isLoading.value
-                  ? const CircularProgressIndicator()
-                  : const Text(
-                      "Accept",
-                      style: TextStyle(color: Colors.blueAccent),
-                    ),
-            ),
-            SizedBox(width: Get.width * 0.05),
-            InkWell(
-              onTap: () {},
-              child: const Text(
-                "Decline",
-                style: TextStyle(color: Colors.redAccent),
+    return InkWell(
+      onTap: () {
+        if (profile != null) {
+          Get.to(()=>OtherProfilePage(profile: profile));
+        }
+      },
+      child: ListTile(
+        leading: CircleAvatar(child: AvatarPlus("$uid${profile?.name}")),
+        title: Text(
+          profile?.name ?? 'Unknown',
+          style: const TextStyle(fontWeight: FontWeight.w500),
+        ),
+        subtitle: Padding(
+          padding: EdgeInsets.only(top: Get.width * 0.01),
+          child: Row(
+            children: [
+              InkWell(
+                onTap: () async {
+                  await afc.confirmFriendRequest(profile!);
+                  setState(() {});
+                },
+                child: afc.isLoading.value
+                    ? const CircularProgressIndicator()
+                    : const Text(
+                        "Accept",
+                        style: TextStyle(color: Colors.blueAccent),
+                      ),
               ),
-            ),
-          ],
+              SizedBox(width: Get.width * 0.05),
+              InkWell(
+                onTap: () {},
+                child: const Text(
+                  "Decline",
+                  style: TextStyle(color: Colors.redAccent),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -220,42 +234,57 @@ class _NotificationPageState extends State<NotificationPage> {
   Widget _buildFriendAcceptTile(Profile? profile, String uid) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Get.width * 0.002),
-      child: ListTile(
-        leading: CircleAvatar(child: AvatarPlus("$uid${profile?.name}")),
-        title: Row(
-          children: [
-            Text(
-              "${profile?.name}",
-              style: const TextStyle(fontWeight: FontWeight.w500),
-            ),
-            SizedBox(width: Get.width * 0.04),
-            Icon(
-              CupertinoIcons.check_mark_circled,
-              size: Get.width * 0.04,
-              color: Colors.green,
-            ),
-          ],
-        ),
-        subtitle: Padding(
-          padding: EdgeInsets.only(top: Get.width * 0.01),
-          child: const Text("accepted your friend request"),
+      child: InkWell(
+        onTap: () {
+          if (profile != null) {
+            Get.to(
+              () => FriendProfilePage(profile: profile),
+            );
+          }
+        },
+        child: ListTile(
+          leading: CircleAvatar(
+            child: AvatarPlus("$uid${profile?.name}"),
+          ),
+          title: Row(
+            children: [
+              Text(
+                "${profile?.name}",
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+              SizedBox(width: Get.width * 0.04),
+              Icon(
+                CupertinoIcons.check_mark_circled,
+                size: Get.width * 0.04,
+                color: Colors.green,
+              ),
+            ],
+          ),
+          subtitle: Padding(
+            padding: EdgeInsets.only(top: Get.width * 0.01),
+            child: const Text("accepted your friend request"),
+          ),
+          trailing: IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.more_horiz),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildExpansionTile({
-    required IconData icon,
-    required String title,
-    required List<Widget> children,
-  }) {
-    return ExpansionTile(
-      iconColor: Colors.black,
-      leading: Icon(icon),
-      title: Text(title),
-      children: children,
-    );
-  }
+  // Widget _buildExpansionTile({
+  //   required IconData icon,
+  //   required String title,
+  //   required List<Widget> children,
+  // }) {
+  //   return ExpansionTile(
+  //     iconColor: Colors.black,
+  //     leading: Icon(icon),
+  //     title: Text(title),
+  //     children: children,
+  //   );
+  // }
 
   Widget _skeletonTile() {
     return ListTile(

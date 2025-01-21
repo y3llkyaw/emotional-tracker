@@ -1,6 +1,8 @@
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/search_widget.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_page/friend_profile_page.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_page/other_profile_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -67,31 +69,6 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
   }
 
   Widget _buildFriendTile(profile) {
-    return InkWell(
-      onTap: () => {},
-      child: ListTile(
-        contentPadding: EdgeInsets.symmetric(
-          vertical: Get.width * 0.03,
-          horizontal: Get.width * 0.03,
-        ),
-        leading: CircleAvatar(
-          radius: 40,
-          child: AvatarPlus("${profile.uid.toString()}${profile.name}"),
-        ),
-        title: Text(
-          profile.name,
-          style: const TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        trailing: _buildFriendStatusIcon(profile),
-        subtitle: _buildFriendStatusText(profile),
-      ),
-    );
-  }
-
-  Widget _buildFriendStatusIcon(profile) {
     return FutureBuilder(
       future: addFriendsController.checkFriendStatus(profile),
       builder: (context, snapshot) {
@@ -99,58 +76,81 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
           CupertinoIcons.person_crop_circle_badge_plus,
           color: Colors.blue,
         );
-
+        String statusText = "click button to send request";
+        Function a = () {
+          setState(() {});
+        };
         switch (snapshot.data) {
           case "FriendStatus.pending":
             icon = const Icon(
               CupertinoIcons.person_crop_circle_badge_minus,
               color: Colors.orangeAccent,
             );
+            statusText = "click button to remove request";
+            a = () async {
+              await Get.to(() => OtherProfilePage(profile: profile));
+              setState(() {});
+            };
             break;
           case "FriendStatus.friend":
             icon = const Icon(
               CupertinoIcons.person_crop_circle_badge_checkmark,
               color: Colors.green,
             );
+            statusText = "already friend";
+            a = () async {
+              await Get.to(() => FriendProfilePage(profile: profile));
+              setState(() {});
+            };
             break;
           case "FriendStatus.blocked":
             icon = const Icon(
               CupertinoIcons.person_crop_circle_badge_xmark,
               color: Colors.red,
             );
+            statusText = "you blocked this person";
+            a = () {};
             break;
+          default:
+            a = () async {
+              await Get.to(() => OtherProfilePage(profile: profile));
+              setState(() {});
+            };
         }
-
-        return IconButton(
-          alignment: Alignment.centerRight,
-          icon: icon,
-          onPressed: () {
-            _handleFriendStatusAction(snapshot.data as String?, profile);
+        return InkWell(
+          onTap: () {
+            a();
           },
-        );
-      },
-    );
-  }
-
-  Widget _buildFriendStatusText(profile) {
-    return FutureBuilder(
-      future: addFriendsController.checkFriendStatus(profile),
-      builder: (context, snapshot) {
-        String status = "click button to send request";
-        switch (snapshot.data) {
-          case "FriendStatus.pending":
-            status = "click button to remove request";
-            break;
-          case "FriendStatus.friend":
-            status = "already friend";
-            break;
-          case "FriendStatus.blocked":
-            status = "you blocked this person";
-            break;
-        }
-        return Text(
-          status,
-          style: const TextStyle(color: Colors.grey),
+          child: ListTile(
+            contentPadding: EdgeInsets.symmetric(
+              vertical: Get.width * 0.03,
+              horizontal: Get.width * 0.03,
+            ),
+            leading: CircleAvatar(
+              radius: 40,
+              child: AvatarPlus("${profile.uid.toString()}${profile.name}"),
+            ),
+            title: Text(
+              profile.name,
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            trailing: IconButton(
+              alignment: Alignment.centerRight,
+              icon: icon,
+              onPressed: () {
+                _handleFriendStatusAction(snapshot.data as String?, profile);
+              },
+            ),
+            subtitle: Text(
+              statusText,
+              style: const TextStyle(
+                color: Colors.grey,
+              ),
+            ),
+          ),
         );
       },
     );

@@ -78,14 +78,22 @@ class CalendarPage extends GetView<HomeController> {
                                 transform: Matrix4.translationValues(
                                     -Get.width * 0.02, -Get.height * 0.022, 0),
                                 child: Container(
-                                  padding: const EdgeInsets.all(8.0),
                                   decoration: BoxDecoration(
                                       color: valueToColor(journalController
                                           .journals[index].value),
                                       shape: BoxShape.circle),
-                                  child: AnimatedEmoji(
-                                    journalController.journals[index].emotion,
-                                    size: 50,
+                                  child: CircleAvatar(
+                                    radius: 30,
+                                    backgroundColor:
+                                        Colors.white.withOpacity(0.4),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: AnimatedEmoji(
+                                        journalController
+                                            .journals[index].emotion,
+                                        size: 50,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
