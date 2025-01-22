@@ -111,7 +111,7 @@ class FriendService {
       log(f.data()!['status'], name: "not-friend");
       return f.data()!['status'];
     } else {
-      return null;
+      return "FriendStatus.none";
     }
   }
 

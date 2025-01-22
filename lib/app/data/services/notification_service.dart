@@ -16,6 +16,15 @@ class NotificationService {
     });
   }
 
+  Future<void> readNoti(String nid) async {
+    await _firestore
+        .collection('profile')
+        .doc(_cuid)
+        .collection('notifications')
+        .doc(nid)
+        .update({"read": true});
+  }
+
   Future<void> sendFriendRequstNoti(Profile profile) async {
     await _firestore
         .collection('profile')

@@ -23,7 +23,7 @@ class _NotificationPageState extends State<NotificationPage> {
 
   @override
   Widget build(BuildContext context) {
-    nc.getNotification();
+    nc.getAllNotification();
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -83,10 +83,14 @@ class _NotificationPageState extends State<NotificationPage> {
                       switch (snapshot.data![index]['type']) {
                         case "fr":
                           return _buildFriendRequests(
-                              snapshot.data![index]["uid"]);
+                            snapshot.data![index]["uid"],
+                            snapshot.data![index]["read"],
+                          );
                         case "fr-accept":
                           return _buildFriendAccept(
-                              snapshot.data![index]["uid"]);
+                            snapshot.data![index]["uid"],
+                            snapshot.data![index]["read"],
+                          );
                         case "other":
                           // other.add(snapshot.data![index]['uid']);
                           break;
@@ -102,7 +106,7 @@ class _NotificationPageState extends State<NotificationPage> {
     );
   }
 
-  FutureBuilder<Profile> _buildFriendRequests(String uid) {
+  FutureBuilder<Profile> _buildFriendRequests(String uid, bool read) {
     return FutureBuilder(
       future: pc.getProfileByUid(uid),
       builder: (context, snapshot) {
@@ -110,14 +114,14 @@ class _NotificationPageState extends State<NotificationPage> {
           return _skeletonTile();
         } else if (snapshot.hasData) {
           var profile = snapshot.data;
-          return _buildFriendRequestTile(profile, uid);
+          return _buildFriendRequestTile(profile, uid, read);
         }
         return _skeletonTile();
       },
     );
   }
 
-  FutureBuilder<Profile> _buildFriendAccept(String uid) {
+  FutureBuilder<Profile> _buildFriendAccept(String uid, bool read) {
     return FutureBuilder(
       future: pc.getProfileByUid(uid),
       builder: (context, snapshot) {
@@ -125,7 +129,8 @@ class _NotificationPageState extends State<NotificationPage> {
           return _skeletonTile();
         } else if (snapshot.hasData) {
           var profile = snapshot.data;
-          return _buildFriendAcceptTile(profile, uid);
+
+          return _buildFriendAcceptTile(profile, uid, read);
         }
         return _skeletonTile();
       },
@@ -187,11 +192,12 @@ class _NotificationPageState extends State<NotificationPage> {
     );
   }
 
-  Widget _buildFriendRequestTile(Profile? profile, String uid) {
+  Widget _buildFriendRequestTile(Profile? profile, String uid, bool read) {
     return InkWell(
       onTap: () {
         if (profile != null) {
-          Get.to(()=>OtherProfilePage(profile: profile));
+          nc.readNoti(uid);
+          Get.to(() => OtherProfilePage(profile: profile));
         }
       },
       child: ListTile(
@@ -231,12 +237,13 @@ class _NotificationPageState extends State<NotificationPage> {
     );
   }
 
-  Widget _buildFriendAcceptTile(Profile? profile, String uid) {
+  Widget _buildFriendAcceptTile(Profile? profile, String uid, bool read) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Get.width * 0.002),
       child: InkWell(
         onTap: () {
           if (profile != null) {
+            nc.readNoti(uid);
             Get.to(
               () => FriendProfilePage(profile: profile),
             );

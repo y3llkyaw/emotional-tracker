@@ -1,13 +1,14 @@
 import 'package:avatar_plus/avatar_plus.dart';
-import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/sources/enums.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_page/widget/profile_bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:emotion_tracker/app/controllers/other_profile_page_controller.dart';
 
 class OtherProfilePage extends StatefulWidget {
-  OtherProfilePage({Key? key, required this.profile}) : super(key: key);
+  const OtherProfilePage({Key? key, required this.profile}) : super(key: key);
   final Profile profile;
 
   @override
@@ -15,7 +16,21 @@ class OtherProfilePage extends StatefulWidget {
 }
 
 class _OtherProfilePageState extends State<OtherProfilePage> {
-  final fc = FriendsController();
+  final controller = Get.put(OtherProfilePageController());
+
+  @override
+  void initState() {
+    super.initState();
+    controller.checkFriendStatus(widget.profile);
+  }
+
+  final ButtonStyle buttonStyle = ButtonStyle(
+    backgroundColor: WidgetStateProperty.all(Colors.blue),
+  );
+
+  final TextStyle textStyle = const TextStyle(
+    color: Colors.white,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +49,7 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
               ),
               SizedBox(
                 width: Get.width * 0.03,
-              )
+              ),
             ],
           ),
         ],
@@ -98,135 +113,14 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          FutureBuilder(
-                              future: fc.checkFriendStatus(widget.profile),
-                              builder: (context, snapshot) {
-                                // print("ekm ${snapshot.data}");
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return ElevatedButton.icon(
-                                    onPressed: () async {},
-                                    label: const Text("loading"),
-                                    icon: const Icon(CupertinoIcons.circle),
-                                  );
-                                } else if (snapshot.hasData) {
-                                  if (snapshot.data! == "FriendStatus.fr") {
-                                    return Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            ElevatedButton(
-                                              onPressed: () async {
-                                                await fc
-                                                    .confirmFriendRequest(
-                                                        widget.profile)
-                                                    .then((v) {
-                                                  setState(() {});
-                                                });
-                                              },
-                                              style: ButtonStyle(
-                                                backgroundColor:
-                                                    WidgetStateProperty.all(
-                                                  Colors.blue,
-                                                ),
-                                              ),
-                                              child: const Text(
-                                                "Accept",
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: Get.width * 0.03,
-                                            ),
-                                            ElevatedButton(
-                                              onPressed: () {},
-                                              style: ButtonStyle(
-                                                backgroundColor:
-                                                    WidgetStateProperty.all(
-                                                  Colors.red.shade400,
-                                                ),
-                                              ),
-                                              child: const Text(
-                                                "Decline",
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ],
-                                    );
-                                  }
-                                  return ElevatedButton.icon(
-                                    onPressed: () async {
-                                      await fc
-                                          .removeFriendRequest(widget.profile)
-                                          .then((v) {
-                                        setState(() {});
-                                      });
-                                    },
-                                    style: ButtonStyle(
-                                      backgroundColor: WidgetStateProperty.all(
-                                          Colors.orange),
-                                    ),
-                                    label: const Text(
-                                      "  remove  ",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    icon: const Icon(
-                                      CupertinoIcons
-                                          .person_crop_circle_badge_minus,
-                                      color: Colors.white,
-                                    ),
-                                  );
-                                }
-                                return ElevatedButton.icon(
-                                  onPressed: () async {
-                                    await fc
-                                        .addFriend(widget.profile)
-                                        .then((v) {
-                                      setState(() {});
-                                    });
-                                  },
-                                  style: ButtonStyle(
-                                    backgroundColor:
-                                        WidgetStateProperty.all(Colors.blue),
-                                  ),
-                                  label: const Text(
-                                    "add friend",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  icon: const Icon(
-                                    CupertinoIcons.person_badge_plus_fill,
-                                    color: Colors.white,
-                                  ),
-                                );
-                              }),
+                          _buildFriendButton(),
                           SizedBox(
-                            width: Get.width * 0.03,
+                            width: Get.width * 0.04,
                           ),
-                          ElevatedButton.icon(
+                          IconButton(
                             onPressed: () {},
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  WidgetStateProperty.all(Colors.grey),
-                            ),
-                            label: const Text(
-                              "More",
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
                             icon: const Icon(
                               Icons.more_horiz,
-                              color: Colors.white,
                             ),
                           ),
                         ],
@@ -239,6 +133,78 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildFriendButton() {
+    return AnimatedContainer(
+      duration: Durations.short1,
+      child: Obx(() {
+        if (controller.isLoading.value) {
+          return const ElevatedButton(
+            onPressed: null,
+            child: Text("Loading..."),
+          );
+        }
+        final status = controller.friendStatus.value;
+        switch (status) {
+          case "FriendStatus.pending":
+            return ElevatedButton.icon(
+              onPressed: () => showPendingProfileBottomSheet(
+                Get.context!,
+                widget.profile,
+              ),
+              icon: const Icon(CupertinoIcons.clock),
+              label: const Text("Pending"),
+              style: _buttonStyle(Colors.orange),
+            );
+          case "FriendStatus.fr":
+            return ElevatedButton.icon(
+              onPressed: () =>
+                  showRequestedProfileBottomSheet(Get.context!, widget.profile),
+              icon: const Icon(Icons.person_outline),
+              label: const Text("requested"),
+              style: _buttonStyle(Colors.blue),
+            );
+          case "FriendStatus.friend":
+            return Row(
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () => {},
+                  icon: const Icon(
+                      CupertinoIcons.person_crop_circle_badge_checkmark),
+                  label: const Text("Friend"),
+                  style: _buttonStyle(Colors.grey),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => {},
+                  icon: const Icon(CupertinoIcons.chat_bubble_fill),
+                  label: const Text("Message"),
+                  style: _buttonStyle(Colors.blue),
+                ),
+              ],
+            );
+          case "FriendStatus.none":
+            return ElevatedButton.icon(
+              onPressed: () => controller.addFriend(widget.profile),
+              icon: const Icon(CupertinoIcons.person_crop_circle_badge_plus),
+              label: const Text("Add Friend"),
+              style: _buttonStyle(Colors.blue),
+            );
+          default:
+            return const ElevatedButton(
+              onPressed: null,
+              child: Text("Loading...."),
+            );
+        }
+      }),
+    );
+  }
+
+  ButtonStyle _buttonStyle(Color color) {
+    return ButtonStyle(
+      backgroundColor: WidgetStateProperty.all(color),
+      foregroundColor: WidgetStateProperty.all(Colors.white),
     );
   }
 }

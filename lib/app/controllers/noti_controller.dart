@@ -12,11 +12,20 @@ class NotiController extends GetxController {
   @override
   onInit() {
     streamNoti();
+    getAllNotification();
     super.onInit();
   }
 
   Future<void> getNotification() async {
     notifications.value = streamNoti();
+  }
+
+  Future<void> getAllNotification() async {
+    notifications.value = streamAllNoti();
+  }
+
+  Future<void> readNoti(String nid) async {
+    await ns.readNoti(nid);
   }
 
   Stream<List<Map<String, dynamic>>> streamNoti() {
@@ -26,6 +35,18 @@ class NotiController extends GetxController {
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection("notifications")
         .where("read", isEqualTo: false)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) => doc.data()).toList();
+    });
+  }
+
+  Stream<List<Map<String, dynamic>>> streamAllNoti() {
+    log("stream worked");
+    return FirebaseFirestore.instance
+        .collection("profile")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection("notifications")
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) => doc.data()).toList();
