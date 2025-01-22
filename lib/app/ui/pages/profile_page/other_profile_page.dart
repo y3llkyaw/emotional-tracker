@@ -170,7 +170,12 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
             return Row(
               children: [
                 ElevatedButton.icon(
-                  onPressed: () => {},
+                  onPressed: () => {
+                    showProfileFriendBottomSheet(
+                      Get.context!,
+                      widget.profile,
+                    ),
+                  },
                   icon: const Icon(
                       CupertinoIcons.person_crop_circle_badge_checkmark),
                   label: const Text("Friend"),

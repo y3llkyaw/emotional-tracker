@@ -1,7 +1,9 @@
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
+import 'package:emotion_tracker/app/controllers/other_profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/sources/enums.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_page/widget/profile_bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,6 +11,8 @@ import 'package:get/get.dart';
 class FriendProfilePage extends StatelessWidget {
   FriendProfilePage({Key? key, required this.profile}) : super(key: key);
   final FriendsController fc = FriendsController();
+  final controller = Get.put(OtherProfilePageController());
+
   final Profile profile;
   @override
   Widget build(BuildContext context) {
@@ -27,7 +31,7 @@ class FriendProfilePage extends StatelessWidget {
               ),
               SizedBox(
                 width: Get.width * 0.03,
-              )
+              ),
             ],
           ),
         ],
@@ -90,10 +94,15 @@ class FriendProfilePage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          width: Get.width* 0.1,
+                          width: Get.width * 0.1,
                         ),
                         ElevatedButton.icon(
-                          onPressed: () {},
+                          onPressed: () {
+                            showProfileFriendBottomSheet(
+                              Get.context!,
+                              profile,
+                            );
+                          },
                           style: ButtonStyle(
                             backgroundColor:
                                 WidgetStateProperty.all(Colors.grey),
