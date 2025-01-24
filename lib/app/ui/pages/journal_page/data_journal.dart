@@ -329,7 +329,7 @@ class JournalPageView extends StatelessWidget {
                               scrollDirection: Axis.vertical,
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: valueToColor(journalList[index].value),
+                                  color: valueToColor(journalList[index].value).withOpacity(0.4),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 height: Get.height * 0.33,
