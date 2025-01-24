@@ -247,7 +247,6 @@ class JournalPageView extends StatelessWidget {
                                       editContent: journalList[index].content,
                                       editEmoji: journalList[index].emotion,
                                       editValue: journalList[index].value,
-
                                     ),
                                   );
                                 },
@@ -327,24 +326,32 @@ class JournalPageView extends StatelessWidget {
                               ),
                             ),
                             SingleChildScrollView(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: Get.width * 0.07),
-                                child: Center(
-                                  child: Text(
-                                    journalList[journalController
-                                            .indexDataJournal.value]
-                                        .content
-                                        .toString(),
-                                    textAlign: TextAlign.justify,
-                                    style: TextStyle(
-                                      fontSize: Get.width * 0.04,
-                                      color: Colors.black54,
+                              scrollDirection: Axis.vertical,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: valueToColor(journalList[index].value),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                height: Get.height * 0.33,
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: Get.width * 0.07),
+                                  child: Center(
+                                    child: SelectableText(
+                                      journalList[journalController
+                                              .indexDataJournal.value]
+                                          .content
+                                          .toString(),
+                                      textAlign: TextAlign.justify,
+                                      style: TextStyle(
+                                        fontSize: Get.width * 0.04,
+                                        color: Colors.black54,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),

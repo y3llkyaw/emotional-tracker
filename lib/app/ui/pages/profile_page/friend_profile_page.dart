@@ -3,6 +3,7 @@ import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/controllers/other_profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/sources/enums.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_page/widget/friend_piechart.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/widget/profile_bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class FriendProfilePage extends StatelessWidget {
   final Profile profile;
   @override
   Widget build(BuildContext context) {
+    controller.fetchJournals(profile.uid.toString());
     return Scaffold(
       appBar: AppBar(
         leading: Container(),
@@ -161,9 +163,20 @@ class FriendProfilePage extends StatelessWidget {
                         IconButton(
                           onPressed: () {},
                           icon: const Icon(Icons.more_horiz),
-                        )
+                        ),
                       ],
                     ),
+                    const Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Divider(),
+                    ),
+                    Obx(() {
+                      if (controller.journals.isEmpty) {
+                        return FriendPiechart();
+                      } else {
+                        return FriendPiechart();
+                      }
+                    }),
                   ],
                 ),
               )

@@ -1,5 +1,6 @@
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/controllers/other_profile_page_controller.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
@@ -343,135 +344,114 @@ class ProfileFriendBottomSheet extends StatelessWidget {
       width: double.infinity,
       child: Padding(
         padding: EdgeInsets.symmetric(
-            horizontal: Get.width * 0.02, vertical: Get.height * 0.01),
-        child: Column(
-          children: [
-            // AvatarPlus("${profile.uid}${profile.name}"),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    Get.back();
-                  },
-                  icon: const Icon(CupertinoIcons.xmark),
-                )
-              ],
-            ),
-            SizedBox(
-              width: Get.width * 0.8,
-              height: Get.height * 0.2,
-              child: const AnimatedEmoji(AnimatedEmojis.crystalBall),
-            ),
-            const SizedBox(height: 16),
-            Text.rich(
-              TextSpan(
+          horizontal: Get.width * 0.02,
+          vertical: Get.height * 0.01,
+        ),
+        child: Padding(
+          padding: EdgeInsets.only(bottom: Get.width * 0.1),
+          child: Column(
+            children: [
+              // AvatarPlus("${profile.uid}${profile.name}"),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  const TextSpan(
-                    text: "waiting ",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
+                  IconButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    icon: const Icon(CupertinoIcons.xmark),
+                  )
+                ],
+              ),
+              SizedBox(
+                width: Get.width * 0.8,
+                height: Get.height * 0.2,
+                child: const AnimatedEmoji(AnimatedEmojis.crystalBall),
+              ),
+              const Spacer(),
+              const SizedBox(height: 16),
+              Text.rich(
+                TextSpan(
+                  children: [
+                    const TextSpan(
+                      text: "Do you want to ",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                  TextSpan(
-                    text: profile.name,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.blue.shade700,
+                    TextSpan(
+                      text: "unfriend",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.red.shade700,
+                      ),
                     ),
+                    TextSpan(
+                      text: " ${profile.name} ?",
+                      style: const TextStyle(
+                        fontSize: 19,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Obx(
+                    () => controller.isLoading.value
+                        ? ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.grey,
+                            ),
+                            onPressed: null,
+                            child: const CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 1,
+                            ),
+                          )
+                        : ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red.shade700,
+                            ),
+                            onPressed: () async {
+                              await controller
+                                  .removeFriendRequest(profile)
+                                  .then((v) {
+                                Get.back();
+                              });
+                            },
+                            label: const Text("unfriend",
+                                style: TextStyle(color: Colors.white)),
+                            icon: const Icon(
+                              CupertinoIcons.person_crop_circle_badge_minus,
+                              color: Colors.white,
+                            ),
+                          ),
                   ),
-                  const TextSpan(
-                    text: " to be approved",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey,
+                    ),
+                    onPressed: () {
+                      Get.back();
+                    },
+                    label: const Text("close",
+                        style: TextStyle(color: Colors.white)),
+                    icon: const Icon(
+                      CupertinoIcons.xmark,
+                      color: Colors.white,
                     ),
                   ),
                 ],
               ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            Text.rich(
-              TextSpan(children: [
-                const TextSpan(
-                  text: "Do you want to ",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                TextSpan(
-                  text: "remove",
-                  style: TextStyle(
-                    fontSize: 19,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.red.shade700,
-                  ),
-                ),
-                const TextSpan(
-                  text: " friend request ?",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ]),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Obx(
-                  () => controller.isLoading.value
-                      ? ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey,
-                          ),
-                          onPressed: null,
-                          child: const CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 1,
-                          ),
-                        )
-                      : ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red.shade700,
-                          ),
-                          onPressed: () async {
-                            await controller
-                                .removeFriendRequest(profile)
-                                .then((v) {
-                              Get.back();
-                            });
-                          },
-                          label: const Text("Remove Friend-request",
-                              style: TextStyle(color: Colors.white)),
-                          icon: const Icon(
-                            CupertinoIcons.person_crop_circle_badge_minus,
-                            color: Colors.white,
-                          ),
-                        ),
-                ),
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey,
-                  ),
-                  onPressed: () {
-                    Get.back();
-                  },
-                  label: const Text("close",
-                      style: TextStyle(color: Colors.white)),
-                  icon: const Icon(
-                    CupertinoIcons.xmark,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            )
-          ],
+            ],
+          ),
         ),
       ),
     ); // Add your bottom sheet content here

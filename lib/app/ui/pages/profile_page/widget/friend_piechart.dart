@@ -1,11 +1,12 @@
-import 'package:emotion_tracker/app/controllers/journal_controller.dart';
+import 'package:emotion_tracker/app/controllers/other_profile_page_controller.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class PiechartPage extends StatelessWidget {
-  PiechartPage({Key? key}) : super(key: key);
-  final journalController = Get.put(JournalController());
+class FriendPiechart extends StatelessWidget {
+  FriendPiechart({Key? key}) : super(key: key);
+  final controller = Get.put(OtherProfilePageController());
+
   @override
   Widget build(BuildContext context) {
     TextStyle title = const TextStyle(
@@ -46,7 +47,7 @@ class PiechartPage extends StatelessWidget {
                               radius: 13,
                               backgroundColor: Colors.blue.withOpacity(0.2),
                               child: Text(
-                                journalController.journals.length.toString(),
+                                controller.journals.length.toString(),
                                 style: const TextStyle(color: Colors.black54),
                               ),
                             );
@@ -62,7 +63,7 @@ class PiechartPage extends StatelessWidget {
                         double kindaBad = 0;
                         double superBad = 0;
 
-                        for (var element in journalController.journals) {
+                        for (var element in controller.journals) {
                           switch (element.value) {
                             case 0:
                               superBad++;

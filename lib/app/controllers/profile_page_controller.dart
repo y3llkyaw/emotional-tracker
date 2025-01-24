@@ -19,6 +19,8 @@ class ProfilePageController extends GetxController {
     await getCurrentUserProfile();
   }
 
+
+
   List<String> newEmojiList() {
     final original = userProfile.value!.recentEmojis.map((e) => e.id).toList();
     if (!original.contains(journalController.emotion.value.id)) {

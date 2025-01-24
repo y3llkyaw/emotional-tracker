@@ -1,4 +1,7 @@
+import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
+import 'package:emotion_tracker/app/data/models/journal.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:get/get.dart';
 
@@ -6,6 +9,25 @@ class OtherProfilePageController extends GetxController {
   final _friendsController = Get.find<FriendsController>();
   final friendStatus = Rx<String?>(null);
   final isLoading = false.obs;
+  final journals = [].obs;
+
+  Future<void> fetchJournals(String uid) async {
+    log("fetch-journal", name: "journal-controller");
+    try {
+      final journalCollection = await FirebaseFirestore.instance
+          .collection("profile")
+          .doc(uid)
+          .collection("journals")
+          .get();
+
+      journals.value = journalCollection.docs
+          .map((journal) => Journal.fromDocument(journal.data()))
+          .toList();
+    } catch (e) {
+      Get.snackbar("Error", e.toString());
+    }
+    update();
+  }
 
   Future<void> checkFriendStatus(Profile profile) async {
     try {
