@@ -1,15 +1,17 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class ChatController extends GetxController {
   // final RxList<Message> messages = RxList.empty();
-  final RxString message = RxString("");
+  final message = ''.obs;
+  final showEmoji = false.obs;
 
   void setMessage(String value) {
     message.value = value;
+    print(message);
   }
 
-  // void sendMessage() {
-  //   messages.add(Message(content: messageController.text, sender: "user"));
-  //   messageController.clear();
-  // }
+  void clearMessage() {
+    message.value = '';
+  }
 }

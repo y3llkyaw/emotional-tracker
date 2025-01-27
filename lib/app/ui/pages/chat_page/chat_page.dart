@@ -1,26 +1,28 @@
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:avatar_plus/avatar_plus.dart';
+import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key, required this.profile}) : super(key: key);
-  final Profile profile;
+  ChatPage({Key? key, required this.profile}) : super(key: key);
+
+  Profile profile;
 
   @override
   State<ChatPage> createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {
-  final TextEditingController messageController = TextEditingController();
-  bool showEmoji = false;
+  final ChatController chatController = Get.put(ChatController());
+  late final TextEditingController controller;
 
   @override
-  void dispose() {
-    messageController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    controller = TextEditingController(text: chatController.message.value);
   }
 
   @override
@@ -81,94 +83,131 @@ class _ChatPageState extends State<ChatPage> {
                   ),
                 ],
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            showEmoji = !showEmoji;
-                            FocusScope.of(context).unfocus();
-                          });
-                        },
-                        icon: Icon(
-                          showEmoji
-                              ? CupertinoIcons.keyboard
-                              : CupertinoIcons.smiley,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      Container(
-                        width: Get.width * 0.73,
-                        padding: EdgeInsets.only(
-                          left: Get.width * 0.03,
-                          right: Get.width * 0.03,
-                          bottom: Get.height * 0.01,
-                        ),
-                        margin: EdgeInsets.only(
-                          top: Get.height * 0.03,
-                        ),
-                        child: TextField(
-                          onTap: () {
-                            setState(() {
-                              showEmoji = false;
-                            });
+              child: Obx(
+                () => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            chatController.showEmoji.value =
+                                !chatController.showEmoji.value;
                           },
-                          maxLines: 2,
-                          controller: messageController,
-                          decoration: const InputDecoration(
-                            hintText: "Type a message ",
-                            border: InputBorder.none,
-                            hintStyle: TextStyle(color: Colors.grey),
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 15,
-                            ),
+                          icon: Icon(
+                            chatController.showEmoji.value
+                                ? CupertinoIcons.keyboard
+                                : CupertinoIcons.smiley,
+                            color: Colors.grey,
                           ),
-                          textInputAction: TextInputAction.send,
                         ),
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(CupertinoIcons.paperplane_fill),
-                        color: Colors.blue,
-                      ),
-                    ],
-                  ),
-                  if (showEmoji)
-                    Container(
-                      color: Colors.white,
-                      height: Get.height * 0.3,
-                      child: GridView.builder(
-                        padding: const EdgeInsets.all(8),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 8,
-                          childAspectRatio: 1,
-                        ),
-                        itemCount: AnimatedEmojis.values.length,
-                        itemBuilder: (context, index) {
-                          final emoji = AnimatedEmojis.values[index];
-                          return GestureDetector(
+                        Container(
+                          width: Get.width * 0.73,
+                          padding: EdgeInsets.only(
+                            left: Get.width * 0.03,
+                            right: Get.width * 0.03,
+                            bottom: Get.height * 0.01,
+                          ),
+                          margin: EdgeInsets.only(
+                            top: Get.height * 0.03,
+                          ),
+                          child: TextField(
                             onTap: () {
-                              messageController.text += emoji.toUnicodeEmoji();
-                              setState(() {
-                                showEmoji = false;
-                              });
+                              chatController.showEmoji.value = false;
                             },
-                            child: Center(
-                              child: Text(
-                                emoji.toUnicodeEmoji(),
-                                style: TextStyle(fontSize: Get.width * 0.06),
+                            controller: controller,
+                            maxLines: 2,
+                            decoration: const InputDecoration(
+                              hintText: "Type a message ",
+                              border: InputBorder.none,
+                              hintStyle: TextStyle(color: Colors.grey),
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 15,
                               ),
                             ),
-                          );
-                        },
-                      ),
+                            textInputAction: TextInputAction.send,
+                            onChanged: (value) {
+                              Get.find<ChatController>().setMessage(value);
+                            },
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            if (controller.text.isNotEmpty) {
+                              // Send message logic here
+                              chatController.setMessage(controller.text);
+                              // Clear both the text controller and GetX state
+                              controller.clear();
+                              chatController.clearMessage();
+                            }
+                          },
+                          icon: const Icon(CupertinoIcons.paperplane_fill),
+                          color: Colors.blue,
+                        ),
+                      ],
                     ),
-                ],
+                    if (chatController.showEmoji.value)
+                      Container(
+                        color: Colors.white,
+                        height: Get.height * 0.3,
+                        child: GridView.builder(
+                          padding: const EdgeInsets.all(8),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 8,
+                            childAspectRatio: 1,
+                          ),
+                          itemCount: AnimatedEmojis.values.length,
+                          itemBuilder: (context, index) {
+                            final emoji = AnimatedEmojis.values[index];
+                            return GestureDetector(
+                              onTap: () {
+                                // Get current cursor position
+                                final cursorPos =
+                                    controller.selection.base.offset;
+
+                                // Get current text
+                                String text = controller.text;
+
+                                // Insert emoji at cursor position
+                                if (cursorPos >= 0) {
+                                  String newText =
+                                      text.substring(0, cursorPos) +
+                                          emoji.toUnicodeEmoji() +
+                                          text.substring(cursorPos);
+                                  controller.text = newText;
+
+                                  // Move cursor after emoji
+                                  controller.selection =
+                                      TextSelection.fromPosition(
+                                    TextPosition(
+                                        offset: cursorPos +
+                                            emoji.toUnicodeEmoji().length),
+                                  );
+                                } else {
+                                  // If no cursor position, add to end
+                                  controller.text += emoji.toUnicodeEmoji();
+                                }
+
+                                // Update GetX controller
+                                chatController.setMessage(controller.text);
+
+                                // Optionally close emoji picker
+                                chatController.showEmoji.value = false;
+                              },
+                              child: Center(
+                                child: Text(
+                                  emoji.toUnicodeEmoji(),
+                                  style: TextStyle(fontSize: Get.width * 0.06),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
