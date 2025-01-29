@@ -1,11 +1,15 @@
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:avatar_plus/avatar_plus.dart';
+import 'package:chat_bubbles/bubbles/bubble_normal.dart';
 import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
+// ignore: must_be_immutable
 class ChatPage extends StatefulWidget {
   ChatPage({Key? key, required this.profile}) : super(key: key);
 
@@ -22,6 +26,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
+    chatController.getUserMessages(widget.profile.uid);
     controller = TextEditingController(text: chatController.message.value);
   }
 
@@ -62,13 +67,50 @@ class _ChatPageState extends State<ChatPage> {
       ),
       body: Column(
         children: [
-          const Expanded(
-            child: SizedBox(),
+          SizedBox(
+            height: Get.height * 0.03,
+          ),
+          Obx(
+            () => Expanded(
+              child: ListView.builder(
+                reverse: true,
+                itemCount: chatController.messages.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      BubbleNormal(
+                        color: Colors.black12,
+                        isSender: chatController.messages[index].uid ==
+                                FirebaseAuth.instance.currentUser!.uid
+                            ? false
+                            : true,
+                        // seen: false,
+                        // delivered: true,
+                        text: chatController.messages[index].message,
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(right: 30),
+                        child: Text(
+                          timeago.format(
+                            chatController.messages[index].timestamp.toDate(),
+                            locale:
+                                'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
+                          ),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
           ),
           Center(
             child: Container(
-              // width: Get.width * 0.94,
-
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: const BorderRadius.only(
@@ -137,9 +179,13 @@ class _ChatPageState extends State<ChatPage> {
                             if (controller.text.isNotEmpty) {
                               // Send message logic here
                               chatController.setMessage(controller.text);
+                              chatController
+                                  .sendMessage(widget.profile.uid)
+                                  .then((v) {
+                                controller.clear();
+                                chatController.clearMessage();
+                              });
                               // Clear both the text controller and GetX state
-                              controller.clear();
-                              chatController.clearMessage();
                             }
                           },
                           icon: const Icon(CupertinoIcons.paperplane_fill),
