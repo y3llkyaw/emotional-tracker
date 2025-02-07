@@ -77,7 +77,7 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
           color: Colors.blue,
         );
         String statusText = "click button to send request";
-        Function a = () {
+        Function action = () {
           setState(() {});
         };
         switch (snapshot.data) {
@@ -87,7 +87,9 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
               color: Colors.orangeAccent,
             );
             statusText = "click button to remove request";
-            a = () async {
+            action = () async {
+              _handleFriendStatusAction(snapshot.data as String?, profile);
+
               await Get.to(() => OtherProfilePage(profile: profile));
               setState(() {});
             };
@@ -98,7 +100,7 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
               color: Colors.green,
             );
             statusText = "already friend";
-            a = () async {
+            action = () async {
               await Get.to(() => FriendProfilePage(profile: profile));
               setState(() {});
             };
@@ -109,17 +111,17 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
               color: Colors.red,
             );
             statusText = "you blocked this person";
-            a = () {};
+            action = () {};
             break;
           default:
-            a = () async {
+            action = () async {
               await Get.to(() => OtherProfilePage(profile: profile));
               setState(() {});
             };
         }
         return InkWell(
           onTap: () {
-            a();
+            action();
           },
           child: ListTile(
             contentPadding: EdgeInsets.symmetric(
@@ -158,7 +160,7 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
 
   void _handleFriendStatusAction(String? status, profile) {
     switch (status) {
-      case null:
+      case "FriendStatus.none":
         addFriendsController.addFriend(profile).then((value) {
           setState(() {});
         });
@@ -168,6 +170,7 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
           setState(() {});
         });
         break;
+      default:
     }
   }
 }

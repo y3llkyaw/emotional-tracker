@@ -30,6 +30,24 @@ class ChatService {
     }
   }
 
+  Future<void> sendSticker(Message message) async {
+    try {
+      await _firestore
+          .collection("profile")
+          .doc(_cuid)
+          .collection("chat")
+          .doc(message.uid)
+          .collection("messages")
+          .add(message.toDocument())
+          .then((v) => log("sent sticker successfully"))
+          .onError((e, stackTrace) {
+        log(e.toString());
+      });
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
   Stream<List<Message>> getUserMessages(String uid) {
     try {
       var sentMessagesStream = _firestore
@@ -46,6 +64,7 @@ class ChatService {
                     read: doc.data()['read'],
                     message: doc.data()['message'],
                     timestamp: doc.data()['timestamp'],
+                    type: doc.data()['type'],
                   ))
               .toList());
 
@@ -63,6 +82,7 @@ class ChatService {
                     read: doc.data()['read'],
                     message: doc.data()['message'],
                     timestamp: doc.data()['timestamp'],
+                    type: doc.data()['type'],
                   ))
               .toList());
 

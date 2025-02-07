@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/data/models/message.dart';
 import 'package:emotion_tracker/app/data/services/chat_service.dart';
@@ -36,8 +38,22 @@ class ChatController extends GetxController {
       read: false,
       message: message.value,
       timestamp: Timestamp.now(),
+      type: "text",
     );
     await chatService.sendMessage(m);
+    clearMessage();
+  }
+
+  Future<void> sendSticker(String uid) async {
+    log(message.toString());
+    final m = Message(
+      uid: uid,
+      read: false,
+      message: message.value,
+      timestamp: Timestamp.now(),
+      type: "sticker",
+    );
+    await chatService.sendSticker(m);
     clearMessage();
   }
 }

@@ -33,7 +33,6 @@ class FriendsPage extends StatelessWidget {
             ],
           ),
         ),
-       
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -135,7 +134,7 @@ class FriendsPage extends StatelessWidget {
             const Text(
               "Add New Friends",
               style: TextStyle(
-                color: Colors.black45,
+                color: Colors.black26,
                 fontWeight: FontWeight.bold,
               ),
             ),

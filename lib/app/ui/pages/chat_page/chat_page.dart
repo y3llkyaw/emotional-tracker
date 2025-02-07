@@ -76,6 +76,43 @@ class _ChatPageState extends State<ChatPage> {
                 reverse: true,
                 itemCount: chatController.messages.length,
                 itemBuilder: (context, index) {
+                  if (chatController.messages[index].type == "sticker") {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(20),
+                              margin: const EdgeInsets.all(10),
+                              decoration: const BoxDecoration(
+                                color: Colors.black12,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20),
+                                  bottomLeft: Radius.circular(20),
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: Get.height * 0.15,
+                                    width: Get.width * 0.3,
+                                    child: AnimatedEmoji(
+                                      AnimatedEmojis.fromEmojiString(
+                                          chatController.messages[index].message
+                                              .toString())!,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  }
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -85,8 +122,8 @@ class _ChatPageState extends State<ChatPage> {
                                 FirebaseAuth.instance.currentUser!.uid
                             ? false
                             : true,
-                        // seen: false,
-                        // delivered: true,
+                        // seen: true,
+                        delivered: true,
                         text: chatController.messages[index].message,
                       ),
                       Container(
@@ -238,6 +275,13 @@ class _ChatPageState extends State<ChatPage> {
 
                                 // Update GetX controller
                                 chatController.setMessage(controller.text);
+                                chatController
+                                    .sendSticker(widget.profile.uid)
+                                    .then((v) {
+                                  controller.clear();
+                                  chatController.clearMessage();
+                                });
+                                // print("object");
 
                                 // Optionally close emoji picker
                                 chatController.showEmoji.value = false;
