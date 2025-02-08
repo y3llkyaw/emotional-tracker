@@ -89,7 +89,7 @@ class _ChatPageState extends State<ChatPage> {
                               decoration: const BoxDecoration(
                                 color: Colors.black12,
                                 borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(20),
+                                  // topLeft: Radius.circular(20),
                                   topRight: Radius.circular(20),
                                   bottomLeft: Radius.circular(20),
                                 ),
