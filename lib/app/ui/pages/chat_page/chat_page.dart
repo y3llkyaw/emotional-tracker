@@ -2,8 +2,10 @@ import 'package:animated_emoji/animated_emoji.dart';
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:chat_bubbles/bubbles/bubble_normal.dart';
 import 'package:emotion_tracker/app/controllers/chat_controller.dart';
+import 'package:emotion_tracker/app/data/models/message.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -76,72 +78,12 @@ class _ChatPageState extends State<ChatPage> {
                 reverse: true,
                 itemCount: chatController.messages.length,
                 itemBuilder: (context, index) {
+                  final message = chatController.messages[index];
+
                   if (chatController.messages[index].type == "sticker") {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(20),
-                              margin: const EdgeInsets.all(10),
-                              decoration: const BoxDecoration(
-                                color: Colors.black12,
-                                borderRadius: BorderRadius.only(
-                                  // topLeft: Radius.circular(20),
-                                  topRight: Radius.circular(20),
-                                  bottomLeft: Radius.circular(20),
-                                ),
-                              ),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: Get.height * 0.15,
-                                    width: Get.width * 0.3,
-                                    child: AnimatedEmoji(
-                                      AnimatedEmojis.fromEmojiString(
-                                          chatController.messages[index].message
-                                              .toString())!,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
+                    return _buildStickerWidget(message, index);
                   }
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      BubbleNormal(
-                        color: Colors.black12,
-                        isSender: chatController.messages[index].uid ==
-                                FirebaseAuth.instance.currentUser!.uid
-                            ? false
-                            : true,
-                        // seen: true,
-                        delivered: true,
-                        text: chatController.messages[index].message,
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(right: 30),
-                        child: Text(
-                          timeago.format(
-                            chatController.messages[index].timestamp.toDate(),
-                            locale:
-                                'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
-                          ),
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
+                  return _buildMessageWidget(message, index);
                 },
               ),
             ),
@@ -212,19 +154,21 @@ class _ChatPageState extends State<ChatPage> {
                           ),
                         ),
                         IconButton(
-                          onPressed: () {
-                            if (controller.text.isNotEmpty) {
-                              // Send message logic here
-                              chatController.setMessage(controller.text);
-                              chatController
-                                  .sendMessage(widget.profile.uid)
-                                  .then((v) {
-                                controller.clear();
-                                chatController.clearMessage();
-                              });
-                              // Clear both the text controller and GetX state
-                            }
-                          },
+                          onPressed: chatController.message.value != ""
+                              ? () {
+                                  if (controller.text.isNotEmpty) {
+                                    // Send message logic here
+                                    chatController.setMessage(controller.text);
+                                    chatController
+                                        .sendMessage(widget.profile.uid)
+                                        .then((v) {
+                                      controller.clear();
+                                      chatController.clearMessage();
+                                    });
+                                    // Clear both the text controller and GetX state
+                                  }
+                                }
+                              : null,
                           icon: const Icon(CupertinoIcons.paperplane_fill),
                           color: Colors.blue,
                         ),
@@ -303,6 +247,109 @@ class _ChatPageState extends State<ChatPage> {
           ),
         ],
       ),
+    );
+  }
+
+  //Sticker widget
+  _buildStickerWidget(Message message, int index) {
+    return Column(
+      crossAxisAlignment: message.uid != FirebaseAuth.instance.currentUser!.uid
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment:
+              message.uid != FirebaseAuth.instance.currentUser!.uid
+                  ? MainAxisAlignment.end
+                  : MainAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              margin: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.black12,
+                borderRadius: BorderRadius.only(
+                  bottomLeft:
+                      message.uid != FirebaseAuth.instance.currentUser!.uid
+                          ? const Radius.circular(20)
+                          : const Radius.circular(0),
+                  bottomRight:
+                      message.uid != FirebaseAuth.instance.currentUser!.uid
+                          ? const Radius.circular(0)
+                          : const Radius.circular(20),
+                  topRight: const Radius.circular(20),
+                  topLeft: const Radius.circular(20),
+                ),
+              ),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: Get.height * 0.15,
+                    width: Get.width * 0.3,
+                    child: AnimatedEmoji(
+                      AnimatedEmojis.fromEmojiString(
+                          chatController.messages[index].message.toString())!,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(
+              timeago.format(
+                chatController.messages[index].timestamp.toDate(),
+                locale:
+                    'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
+              ),
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.black45,
+              ),
+            ),
+            SizedBox(
+              width: Get.width * 0.05,
+            )
+          ],
+        ),
+      ],
+    );
+  }
+
+  // Message widget
+  _buildMessageWidget(Message message, int index) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        BubbleNormal(
+          onLongPress: () {},
+          color: Colors.black12,
+          isSender: chatController.messages[index].uid ==
+                  FirebaseAuth.instance.currentUser!.uid
+              ? false
+              : true,
+          // seen: true,
+          delivered: true,
+          text: chatController.messages[index].message,
+        ),
+        Container(
+          margin: const EdgeInsets.only(right: 30),
+          child: Text(
+            timeago.format(
+              chatController.messages[index].timestamp.toDate(),
+              locale:
+                  'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
+            ),
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey[600],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
