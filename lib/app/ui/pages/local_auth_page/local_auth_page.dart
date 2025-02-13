@@ -1,9 +1,7 @@
 import 'dart:developer';
 
-import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/controllers/local_auth_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -32,26 +30,31 @@ class _LocalAuthPageState extends State<LocalAuthPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
+            const SizedBox(
+              height: 20,
+            ),
             Column(
               children: [
-                AnimatedEmoji(
-                  AnimatedEmojis.monocle,
-                  size: Get.width * 0.09,
-                  errorWidget: Center(
-                      child: SvgPicture.asset(
-                    "assets/svg/emoji_u${AnimatedEmojis.monocle.id.replaceAll("_fe0f", "")}.svg",
-                  )),
+                SvgPicture.asset(
+                  'assets/image/undraw_fingerprint_kdwq.svg',
+                  width: Get.width * 0.8,
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Text(
-                  'Please verify, it\'s you!',
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
-                ),
+
+                // AnimatedEmoji(
+                //   AnimatedEmojis.monocle,
+                //   size: Get.width * 0.09,
+                //   errorWidget: Center(
+                //       child: SvgPicture.asset(
+                //     "assets/svg/emoji_u${AnimatedEmojis.monocle.id.replaceAll("_fe0f", "")}.svg",
+                //   )),
+                // ),
               ],
+            ),
+            const Text(
+              'Please verify, it\'s you!',
+              style: TextStyle(
+                fontSize: 20,
+              ),
             ),
             IconButton(
               color: Colors.black,

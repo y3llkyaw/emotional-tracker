@@ -1,6 +1,7 @@
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({Key? key}) : super(key: key);
@@ -17,8 +18,8 @@ class LandingPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(
-                  'assets/image/detective.png',
+                SvgPicture.asset(
+                  'assets/image/undraw_metrics_02ml.svg',
                   height: 250,
                   width: 250,
                 ),

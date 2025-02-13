@@ -4,6 +4,7 @@ import 'package:emotion_tracker/app/ui/global_widgets/form_container_widget.dart
 import 'package:emotion_tracker/app/ui/global_widgets/outline_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -18,7 +19,7 @@ class LoginPage extends StatelessWidget {
       appBar: AppBar(),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(30),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -29,7 +30,11 @@ class LoginPage extends StatelessWidget {
               SizedBox(
                 height: MediaQuery.of(context).size.height / 4,
                 width: double.infinity,
-                child: Image.asset('assets/image/login_account.png'),
+                child: SvgPicture.asset(
+                    "assets/image/undraw_mobile-login_4ntr.svg"),
+              ),
+              SizedBox(
+                height: Get.height * 0.05,
               ),
               FormContainerWidget(
                 hintText: 'Email Address',

@@ -226,14 +226,15 @@ class _ChatPageState extends State<ChatPage> {
                                   chatController.clearMessage();
                                 });
                                 // print("object");
-
                                 // Optionally close emoji picker
                                 chatController.showEmoji.value = false;
                               },
                               child: Center(
                                 child: Text(
                                   emoji.toUnicodeEmoji(),
-                                  style: TextStyle(fontSize: Get.width * 0.06),
+                                  style: TextStyle(
+                                    fontSize: Get.width * 0.06,
+                                  ),
                                 ),
                               ),
                             );
@@ -297,8 +298,14 @@ class _ChatPageState extends State<ChatPage> {
           ],
         ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment:
+              message.uid != FirebaseAuth.instance.currentUser!.uid
+                  ? MainAxisAlignment.end
+                  : MainAxisAlignment.start,
           children: [
+            SizedBox(
+              width: Get.width * 0.05,
+            ),
             Text(
               timeago.format(
                 chatController.messages[index].timestamp.toDate(),

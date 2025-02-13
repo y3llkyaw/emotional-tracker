@@ -4,6 +4,7 @@ import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/form_container_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class RegisterEmailPage extends StatefulWidget {
   const RegisterEmailPage({Key? key}) : super(key: key);
@@ -27,7 +28,7 @@ class _RegisterEmailPageState extends State<RegisterEmailPage> {
       body: SingleChildScrollView(
         physics: const ScrollPhysics(parent: BouncingScrollPhysics()),
         child: SizedBox(
-          height: Get.height * 0.95,
+          height: Get.height * 1,
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -36,12 +37,16 @@ class _RegisterEmailPageState extends State<RegisterEmailPage> {
               children: [
                 const Text(
                   'Sign Up With Email',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 SizedBox(
-                  height: 150,
+                  height: 240,
                   width: double.infinity,
-                  child: Image.asset('assets/image/login_account.png'),
+                  child: SvgPicture.asset(
+                      "assets/image/undraw_access-account_aydp.svg"),
                 ),
                 FormContainerWidget(
                   controller: emailController,

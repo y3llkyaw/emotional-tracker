@@ -38,7 +38,8 @@ class CreateAccountPage extends StatelessWidget {
                 ),
               ],
             ),
-            Image.asset("assets/image/detective.png"),
+            SvgPicture.asset("assets/image/undraw_sign-up_qamz.svg"),
+            // Image.asset("assets/image/undraw_sign-up_qamz.svg"),
             const Text(
               " so I can help you to find out how are you feeling.",
               textAlign: TextAlign.center,

@@ -154,19 +154,19 @@ class CalendarPage extends GetView<HomeController> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(
-                                      CupertinoIcons.heart,
-                                      // color: Colors.blue,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(
-                                      CupertinoIcons.conversation_bubble,
-                                    ),
-                                  ),
+                                  // IconButton(
+                                  //   onPressed: () {},
+                                  //   icon: const Icon(
+                                  //     CupertinoIcons.heart,
+                                  //     // color: Colors.blue,
+                                  //   ),
+                                  // ),
+                                  // IconButton(
+                                  //   onPressed: () {},
+                                  //   icon: const Icon(
+                                  //     CupertinoIcons.conversation_bubble,
+                                  //   ),
+                                  // ),
                                   IconButton(
                                     onPressed: () {},
                                     icon: const Icon(Icons.share),
