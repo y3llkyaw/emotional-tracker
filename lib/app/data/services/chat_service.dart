@@ -106,19 +106,30 @@ class ChatService {
     }
   }
 
-  Future<void> readMessage(Message message) async {
+  Future<void> readMessage(Message message, String uid) async {
+    log("Updating message read status: ${message.id}");
     log("Updating message read status: ${message.id}");
     try {
-      // DatabaseReference ref = FirebaseDatabase.instance
-      //     .ref("/profile/${message.uid}/chat/$_cuid/messages/${message.id}");
+      DocumentReference docRef = _firestore
+          .collection('profile')
+          .doc(uid)
+          .collection('chat')
+          .doc(_cuid)
+          .collection("messages")
+          .doc(message.id);
 
-      // await ref.set({
-      //   "name": "John",
-      //   "age": 18,
-      //   "address": {"line1": "100 Mountain View"}
-      // });
+      // Update the "read" status
+      await docRef.update({"read": true});
+      log("Message ${message.id} marked as read.");
+
+      // Fetch updated document
+      DocumentSnapshot updatedDoc = await docRef.get();
+      log("Updated Message Data: ${updatedDoc.data()}");
+
+      // return updatedDoc; // Return updated document snapshot
     } catch (e) {
-      log('Error updating read status: $e');
+      log('Error updating and fetching read status: $e');
+      return null; // Return null if an error occurs
     }
   }
 }

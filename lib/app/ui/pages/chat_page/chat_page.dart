@@ -80,7 +80,7 @@ class _ChatPageState extends State<ChatPage> {
                   final message = chatController.messages[index];
                   if (message.uid == FirebaseAuth.instance.currentUser!.uid &&
                       (message.read == false)) {
-                     chatController.readMessage(message);
+                    chatController.readMessage(message, widget.profile.uid);
                   }
                   if (chatController.messages[index].type == "sticker") {
                     return _buildStickerWidget(message, index);
@@ -317,37 +317,59 @@ class _ChatPageState extends State<ChatPage> {
 
   // Message widget
   _buildMessageWidget(Message message, int index) {
-    return Column(
-      crossAxisAlignment: message.uid != FirebaseAuth.instance.currentUser!.uid
-          ? CrossAxisAlignment.end
-          : CrossAxisAlignment.start,
-      children: [
-        BubbleNormal(
-          onLongPress: () {},
-          color: Colors.black12,
-          isSender: chatController.messages[index].uid ==
-                  FirebaseAuth.instance.currentUser!.uid
-              ? false
-              : true,
-          seen: message.read ? true : false,
-          delivered: true,
-          text: chatController.messages[index].message,
-        ),
-        Container(
-          margin: const EdgeInsets.only(right: 20, left: 20),
-          child: Text(
-            timeago.format(
-              chatController.messages[index].timestamp.toDate(),
-              // locale:
-              //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
+    return InkWell(
+      onLongPress: () {},
+      onTap: () async {
+        await chatController.readMessage(message, widget.profile.uid);
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: Get.height * .01),
+        child: Column(
+          crossAxisAlignment:
+              message.uid != FirebaseAuth.instance.currentUser!.uid
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
+          children: [
+            BubbleNormal(
+              onLongPress: () {},
+              color: Colors.black12,
+              isSender: chatController.messages[index].uid ==
+                      FirebaseAuth.instance.currentUser!.uid
+                  ? false
+                  : true,
+              // seen: message.read ? true : false,
+              // delivered: false,
+              text: chatController.messages[index].message,
             ),
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
+            Container(
+              margin: const EdgeInsets.only(right: 20, left: 20),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.done_all,
+                    size: Get.width * 0.03,
+                    color: message.read ? Colors.green : Colors.black12,
+                  ),
+                  SizedBox(
+                    width: Get.width * 0.014,
+                  ),
+                  Text(
+                    timeago.format(
+                      chatController.messages[index].timestamp.toDate(),
+                      // locale:
+                      //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
+                    ),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

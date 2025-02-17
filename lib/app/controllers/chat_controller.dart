@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/data/models/message.dart';
 import 'package:emotion_tracker/app/data/services/chat_service.dart';
@@ -11,11 +13,6 @@ class ChatController extends GetxController {
   final RxList<Message> messages = <Message>[].obs;
   Stream<List<Message>>? messageStream;
   final _cuid = FirebaseAuth.instance.currentUser!.uid;
-
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
   void getUserMessages(String uid) {
     messageStream = chatService.getUserMessages(uid);
@@ -44,9 +41,7 @@ class ChatController extends GetxController {
     if (m.message == "") {
       return;
     }
-    await chatService.sendMessage(m).onError((error, stack) {
-      print(error);
-    });
+    await chatService.sendMessage(m).onError((error, stack) {});
     clearMessage();
   }
 
@@ -66,7 +61,7 @@ class ChatController extends GetxController {
     clearMessage();
   }
 
-  Future<void> readMessage(Message message) async {
-    await chatService.readMessage(message);
+  Future<void> readMessage(Message message, String uid) async {
+    await chatService.readMessage(message, uid).then((v) {});
   }
 }
