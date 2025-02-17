@@ -1,8 +1,7 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/data/models/message.dart';
 import 'package:emotion_tracker/app/data/services/chat_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
 class ChatController extends GetxController {
@@ -11,6 +10,7 @@ class ChatController extends GetxController {
   final showEmoji = false.obs;
   final RxList<Message> messages = <Message>[].obs;
   Stream<List<Message>>? messageStream;
+  final _cuid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void onInit() {
@@ -34,26 +34,39 @@ class ChatController extends GetxController {
 
   Future<void> sendMessage(String uid) async {
     final m = Message(
+      id: "${_cuid}_${uid}_${DateTime.now().microsecondsSinceEpoch}",
       uid: uid,
       read: false,
       message: message.value,
       timestamp: Timestamp.now(),
       type: "text",
     );
-    await chatService.sendMessage(m);
+    if (m.message == "") {
+      return;
+    }
+    await chatService.sendMessage(m).onError((error, stack) {
+      print(error);
+    });
     clearMessage();
   }
 
-  Future<void> sendSticker(String uid) async {
-    log(message.toString());
+  Future<void> sendSticker(String uid, String stickerData) async {
     final m = Message(
+      id: "${_cuid}_${uid}_${DateTime.now().microsecondsSinceEpoch}",
       uid: uid,
       read: false,
-      message: message.value,
+      message: stickerData,
       timestamp: Timestamp.now(),
       type: "sticker",
     );
+    if (m.message == "") {
+      return;
+    }
     await chatService.sendSticker(m);
     clearMessage();
+  }
+
+  Future<void> readMessage(Message message) async {
+    await chatService.readMessage(message);
   }
 }

@@ -5,7 +5,6 @@ import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/data/models/message.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -79,7 +78,10 @@ class _ChatPageState extends State<ChatPage> {
                 itemCount: chatController.messages.length,
                 itemBuilder: (context, index) {
                   final message = chatController.messages[index];
-
+                  if (message.uid == FirebaseAuth.instance.currentUser!.uid &&
+                      (message.read == false)) {
+                     chatController.readMessage(message);
+                  }
                   if (chatController.messages[index].type == "sticker") {
                     return _buildStickerWidget(message, index);
                   }
@@ -123,8 +125,17 @@ class _ChatPageState extends State<ChatPage> {
                             color: Colors.grey,
                           ),
                         ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            chatController.showEmoji.value
+                                ? CupertinoIcons.keyboard
+                                : CupertinoIcons.photo,
+                            color: Colors.grey,
+                          ),
+                        ),
                         Container(
-                          width: Get.width * 0.73,
+                          width: Get.width * 0.53,
                           padding: EdgeInsets.only(
                             left: Get.width * 0.03,
                             right: Get.width * 0.03,
@@ -190,37 +201,11 @@ class _ChatPageState extends State<ChatPage> {
                             final emoji = AnimatedEmojis.values[index];
                             return GestureDetector(
                               onTap: () {
-                                // Get current cursor position
-                                final cursorPos =
-                                    controller.selection.base.offset;
-
-                                // Get current text
-                                String text = controller.text;
-
-                                // Insert emoji at cursor position
-                                if (cursorPos >= 0) {
-                                  String newText =
-                                      text.substring(0, cursorPos) +
-                                          emoji.toUnicodeEmoji() +
-                                          text.substring(cursorPos);
-                                  controller.text = newText;
-
-                                  // Move cursor after emoji
-                                  controller.selection =
-                                      TextSelection.fromPosition(
-                                    TextPosition(
-                                        offset: cursorPos +
-                                            emoji.toUnicodeEmoji().length),
-                                  );
-                                } else {
-                                  // If no cursor position, add to end
-                                  controller.text += emoji.toUnicodeEmoji();
-                                }
-
                                 // Update GetX controller
                                 chatController.setMessage(controller.text);
                                 chatController
-                                    .sendSticker(widget.profile.uid)
+                                    .sendSticker(widget.profile.uid,
+                                        emoji.toUnicodeEmoji())
                                     .then((v) {
                                   controller.clear();
                                   chatController.clearMessage();
@@ -253,6 +238,9 @@ class _ChatPageState extends State<ChatPage> {
 
   //Sticker widget
   _buildStickerWidget(Message message, int index) {
+    if (message.message.toString() == "") {
+      return Column();
+    }
     return Column(
       crossAxisAlignment: message.uid != FirebaseAuth.instance.currentUser!.uid
           ? CrossAxisAlignment.end
@@ -289,7 +277,8 @@ class _ChatPageState extends State<ChatPage> {
                     width: Get.width * 0.3,
                     child: AnimatedEmoji(
                       AnimatedEmojis.fromEmojiString(
-                          chatController.messages[index].message.toString())!,
+                        message.message,
+                      )!, // Add null check operator to handle nullable AnimatedEmojiData
                     ),
                   ),
                 ],
@@ -309,8 +298,8 @@ class _ChatPageState extends State<ChatPage> {
             Text(
               timeago.format(
                 chatController.messages[index].timestamp.toDate(),
-                locale:
-                    'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
+                // locale:
+                //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
               ),
               style: const TextStyle(
                 fontSize: 12,
@@ -329,7 +318,9 @@ class _ChatPageState extends State<ChatPage> {
   // Message widget
   _buildMessageWidget(Message message, int index) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: message.uid != FirebaseAuth.instance.currentUser!.uid
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
       children: [
         BubbleNormal(
           onLongPress: () {},
@@ -338,17 +329,17 @@ class _ChatPageState extends State<ChatPage> {
                   FirebaseAuth.instance.currentUser!.uid
               ? false
               : true,
-          // seen: true,
+          seen: message.read ? true : false,
           delivered: true,
           text: chatController.messages[index].message,
         ),
         Container(
-          margin: const EdgeInsets.only(right: 30),
+          margin: const EdgeInsets.only(right: 20, left: 20),
           child: Text(
             timeago.format(
               chatController.messages[index].timestamp.toDate(),
-              locale:
-                  'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
+              // locale:
+              //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
             ),
             style: TextStyle(
               fontSize: 12,

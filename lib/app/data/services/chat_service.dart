@@ -17,7 +17,8 @@ class ChatService {
           .collection("chat")
           .doc(message.uid)
           .collection("messages")
-          .add(message.toDocument())
+          .doc(message.id)
+          .set(message.toDocument())
           .then(
         (v) {
           log("send");
@@ -38,7 +39,8 @@ class ChatService {
           .collection("chat")
           .doc(message.uid)
           .collection("messages")
-          .add(message.toDocument())
+          .doc(message.id)
+          .set(message.toDocument())
           .then((v) => log("sent sticker successfully"))
           .onError((e, stackTrace) {
         log(e.toString());
@@ -60,6 +62,7 @@ class ChatService {
           .snapshots()
           .map((snapshot) => snapshot.docs
               .map((doc) => Message(
+                    id: doc.data()['id'],
                     uid: uid,
                     read: doc.data()['read'],
                     message: doc.data()['message'],
@@ -78,6 +81,7 @@ class ChatService {
           .snapshots()
           .map((snapshot) => snapshot.docs
               .map((doc) => Message(
+                    id: doc.data()['id'],
                     uid: _cuid,
                     read: doc.data()['read'],
                     message: doc.data()['message'],
@@ -99,6 +103,22 @@ class ChatService {
       );
     } catch (e) {
       throw Exception(e.toString());
+    }
+  }
+
+  Future<void> readMessage(Message message) async {
+    log("Updating message read status: ${message.id}");
+    try {
+      // DatabaseReference ref = FirebaseDatabase.instance
+      //     .ref("/profile/${message.uid}/chat/$_cuid/messages/${message.id}");
+
+      // await ref.set({
+      //   "name": "John",
+      //   "age": 18,
+      //   "address": {"line1": "100 Mountain View"}
+      // });
+    } catch (e) {
+      log('Error updating read status: $e');
     }
   }
 }
