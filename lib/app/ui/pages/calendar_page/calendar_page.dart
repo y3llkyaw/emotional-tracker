@@ -1,11 +1,11 @@
 import 'package:animated_emoji/animated_emoji.dart';
+import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/ui/pages/calendar_page/full_calendar_page.dart';
 import 'package:emotion_tracker/app/ui/pages/calendar_page/piechart_page.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/data_journal.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/new_journal.dart';
 import 'package:emotion_tracker/app/ui/utils/helper_functions.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -15,11 +15,11 @@ import 'package:emotion_tracker/app/controllers/home_controller.dart';
 class CalendarPage extends GetView<HomeController> {
   CalendarPage({Key? key}) : super(key: key);
   final JournalController journalController = Get.put(JournalController());
-
+  final OnlineController onlineController = Get.put(OnlineController());
   @override
   Widget build(BuildContext context) {
     journalController.fetchJournals();
-
+    onlineController.updateOnlineStatus();
     return Scaffold(
       body: Obx(
         () => Column(
@@ -123,11 +123,11 @@ class CalendarPage extends GetView<HomeController> {
                             ),
                             child: SizedBox(
                               width: 200,
-                              height: 40,
+                              height: 100,
                               child: Center(
                                 child: Text(
                                   journalController.journals[index].content,
-                                  maxLines: 2,
+                                  maxLines: 4,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                     color: Colors.white,
@@ -161,27 +161,12 @@ class CalendarPage extends GetView<HomeController> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,
                                   children: [
-                                    // IconButton(
-                                    //   onPressed: () {},
-                                    //   icon: const Icon(
-                                    //     CupertinoIcons.heart,
-                                    //     // color: Colors.blue,
-                                    //   ),
-                                    // ),
-                                    // IconButton(
-                                    //   onPressed: () {},
-                                    //   icon: const Icon(
-                                    //     CupertinoIcons.conversation_bubble,
-                                    //   ),
-                                    // ),
-                                    // IconButton(
-                                    //   onPressed: () {},
-                                    //   icon: const Icon(Icons.share),
-                                    // ),
                                     SizedBox(
                                       width: 20,
                                     ),
-                                    Icon(Icons.share),
+                                    Icon(
+                                      Icons.share,
+                                    ),
                                     Text(
                                       "share",
                                       style: TextStyle(

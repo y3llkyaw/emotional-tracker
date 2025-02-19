@@ -2,6 +2,7 @@ import 'package:animated_emoji/animated_emoji.dart';
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:chat_bubbles/bubbles/bubble_normal.dart';
 import 'package:emotion_tracker/app/controllers/chat_controller.dart';
+import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/data/models/message.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,6 +23,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final ChatController chatController = Get.put(ChatController());
+  final OnlineController onlineController = Get.put(OnlineController());
   late final TextEditingController controller;
 
   @override
@@ -29,6 +31,7 @@ class _ChatPageState extends State<ChatPage> {
     super.initState();
     chatController.getUserMessages(widget.profile.uid);
     controller = TextEditingController(text: chatController.message.value);
+    onlineController.getFriendOnlineStatus(widget.profile.uid);
   }
 
   @override
@@ -54,7 +57,13 @@ class _ChatPageState extends State<ChatPage> {
             ],
           ),
           title: Text(widget.profile.name),
-          subtitle: const Text("online"),
+          subtitle: Obx(
+            () => Text(
+              timeago
+                  .format(onlineController.lastSeem.value.toDate())
+                  .toString(),
+            ),
+          ),
         ),
         actions: [
           Padding(
