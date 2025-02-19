@@ -1,4 +1,5 @@
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
+import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/search_widget.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/user_card.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,6 +10,7 @@ class FriendsPage extends StatelessWidget {
   FriendsPage({Key? key}) : super(key: key);
 
   final FriendsController friendsController = Get.put(FriendsController());
+  final OnlineController onlineController = Get.put(OnlineController());
   @override
   Widget build(BuildContext context) {
     friendsController.getFriends();
@@ -75,6 +77,8 @@ class FriendsPage extends StatelessWidget {
                         runSpacing: Get.width * 0.08,
                         children: <Widget>[addFrinedCard()] +
                             friendsController.friends.map<Widget>((friend) {
+                              onlineController
+                                  .getFriendsOnlineStatus(friend.uid);
                               return UserCard(profile: friend);
                             }).toList(),
                       ),

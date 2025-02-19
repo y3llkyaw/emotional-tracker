@@ -5,12 +5,13 @@ import 'package:get/get.dart';
 class OnlineController extends GetxController {
   final _cuid = FirebaseAuth.instance.currentUser!.uid;
   var lastSeem = Timestamp.now().obs;
+  var friendsOnlineStatus = {}.obs;
 
   //update user's online status
   Future<void> updateOnlineStatus() async {
     await FirebaseFirestore.instance.collection("isOnline").doc(_cuid).set({
       "uid": _cuid,
-      "last_seem": Timestamp.now(),
+      "lastSeem": Timestamp.now(),
     });
   }
 
@@ -18,6 +19,19 @@ class OnlineController extends GetxController {
   Future<void> getFriendOnlineStatus(String uid) async {
     final doc =
         await FirebaseFirestore.instance.collection("isOnline").doc(uid).get();
-    lastSeem.value = doc.data()!["lastseem"] as Timestamp;
+    lastSeem.value = doc.data()!["lastSeem"] as Timestamp;
+  }
+
+  // get all friends online status
+  Future<void> getFriendsOnlineStatus(String uid) async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection("isOnline")
+          .doc(uid)
+          .get();
+      friendsOnlineStatus[uid] = doc.data()!["lastSeem"] as Timestamp;
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }

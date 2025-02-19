@@ -27,7 +27,7 @@ class _FullCalendarPageState extends State<FullCalendarPage> {
               Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: Get.width * 0.08,
-                  vertical: Get.width * 0.04,
+                  vertical: Get.width * 0.01,
                 ),
                 child: Row(
                   children: [
@@ -43,7 +43,9 @@ class _FullCalendarPageState extends State<FullCalendarPage> {
                     SizedBox(
                       width: Get.width * 0.02,
                     ),
-                    const Icon(CupertinoIcons.calendar_circle_fill),
+                    const Icon(
+                      CupertinoIcons.calendar_circle_fill,
+                    ),
                     const Spacer(),
                     IconButton(
                       onPressed: () {},
@@ -81,6 +83,9 @@ Widget _calendar() {
         availableCalendarFormats: const {
           CalendarFormat.month: 'calendar',
           CalendarFormat.week: 'calendar',
+        },
+        onFormatChanged: (format) {
+          Get.back();
         },
         availableGestures: AvailableGestures.horizontalSwipe,
         headerStyle: HeaderStyle(

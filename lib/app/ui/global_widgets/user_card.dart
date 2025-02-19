@@ -1,14 +1,16 @@
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:avatar_plus/avatar_plus.dart';
+import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/friend_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class UserCard extends StatelessWidget {
-  const UserCard({Key? key, required this.profile}) : super(key: key);
+  UserCard({Key? key, required this.profile}) : super(key: key);
   final Profile? profile;
-
+  final OnlineController onlineController = Get.put(OnlineController());
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -80,6 +82,15 @@ class UserCard extends StatelessWidget {
               ),
             ),
             const SizedBox(),
+            Text(
+              timeago
+                  .format(onlineController.lastSeem.value.toDate())
+                  .toString(),
+              style: TextStyle(
+                fontSize: Get.width * 0.02,
+                color: Colors.black45,
+              ),
+            ),
           ],
         ),
       ),
