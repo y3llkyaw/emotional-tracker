@@ -141,37 +141,58 @@ class CalendarPage extends GetView<HomeController> {
                             padding: EdgeInsets.symmetric(
                               horizontal: Get.width * 0.05,
                             ),
-                            child: Container(
-                              width: 200,
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.4),
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(20),
-                                  topRight: Radius.circular(20),
-                                ),
+                            child: InkWell(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(20),
+                                topRight: Radius.circular(20),
                               ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  // IconButton(
-                                  //   onPressed: () {},
-                                  //   icon: const Icon(
-                                  //     CupertinoIcons.heart,
-                                  //     // color: Colors.blue,
-                                  //   ),
-                                  // ),
-                                  // IconButton(
-                                  //   onPressed: () {},
-                                  //   icon: const Icon(
-                                  //     CupertinoIcons.conversation_bubble,
-                                  //   ),
-                                  // ),
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(Icons.share),
+                              onTap: () {},
+                              child: Container(
+                                padding: const EdgeInsets.all(20),
+                                width: 200,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.4),
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(20),
+                                    topRight: Radius.circular(20),
                                   ),
-                                ],
+                                ),
+                                child: const Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    // IconButton(
+                                    //   onPressed: () {},
+                                    //   icon: const Icon(
+                                    //     CupertinoIcons.heart,
+                                    //     // color: Colors.blue,
+                                    //   ),
+                                    // ),
+                                    // IconButton(
+                                    //   onPressed: () {},
+                                    //   icon: const Icon(
+                                    //     CupertinoIcons.conversation_bubble,
+                                    //   ),
+                                    // ),
+                                    // IconButton(
+                                    //   onPressed: () {},
+                                    //   icon: const Icon(Icons.share),
+                                    // ),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    Icon(Icons.share),
+                                    Text(
+                                      "share",
+                                      style: TextStyle(
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),

@@ -239,7 +239,7 @@ class _ChatPageState extends State<ChatPage> {
   //Sticker widget
   _buildStickerWidget(Message message, int index) {
     if (message.message.toString() == "") {
-      return Column();
+      return const Column();
     }
     return Column(
       crossAxisAlignment: message.uid != FirebaseAuth.instance.currentUser!.uid
@@ -286,30 +286,49 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ],
         ),
-        Row(
-          mainAxisAlignment:
-              message.uid != FirebaseAuth.instance.currentUser!.uid
-                  ? MainAxisAlignment.end
-                  : MainAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: Get.width * 0.05,
-            ),
-            Text(
-              timeago.format(
-                chatController.messages[index].timestamp.toDate(),
-                // locale:
-                //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
+        Container(
+          margin: const EdgeInsets.only(right: 20, left: 20),
+          child: Row(
+            mainAxisAlignment: chatController.messages[index].uid ==
+                    FirebaseAuth.instance.currentUser!.uid
+                ? MainAxisAlignment.start
+                : MainAxisAlignment.end,
+            children: [
+              chatController.messages[index].uid ==
+                      FirebaseAuth.instance.currentUser!.uid
+                  ? Icon(
+                      Icons.done_all,
+                      size: Get.width * 0.03,
+                      color: message.read ? Colors.green : Colors.black12,
+                    )
+                  : Container(),
+              SizedBox(
+                width: Get.width * 0.014,
               ),
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.black45,
+              Text(
+                timeago.format(
+                  chatController.messages[index].timestamp.toDate(),
+                  // locale:
+                  //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
+                ),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                ),
               ),
-            ),
-            SizedBox(
-              width: Get.width * 0.05,
-            )
-          ],
+              SizedBox(
+                width: Get.width * 0.014,
+              ),
+              chatController.messages[index].uid ==
+                      FirebaseAuth.instance.currentUser!.uid
+                  ? Container()
+                  : Icon(
+                      Icons.done_all,
+                      size: Get.width * 0.03,
+                      color: message.read ? Colors.green : Colors.black12,
+                    ),
+            ],
+          ),
         ),
       ],
     );
@@ -344,15 +363,19 @@ class _ChatPageState extends State<ChatPage> {
             Container(
               margin: const EdgeInsets.only(right: 20, left: 20),
               child: Row(
+                mainAxisAlignment: chatController.messages[index].uid ==
+                        FirebaseAuth.instance.currentUser!.uid
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.end,
                 children: [
-                  Icon(
-                    Icons.done_all,
-                    size: Get.width * 0.03,
-                    color: message.read ? Colors.green : Colors.black12,
-                  ),
-                  SizedBox(
-                    width: Get.width * 0.014,
-                  ),
+                  chatController.messages[index].uid ==
+                          FirebaseAuth.instance.currentUser!.uid
+                      ? Icon(
+                          Icons.done_all,
+                          size: Get.width * 0.03,
+                          color: message.read ? Colors.green : Colors.black12,
+                        )
+                      : Container(),
                   Text(
                     timeago.format(
                       chatController.messages[index].timestamp.toDate(),
@@ -364,6 +387,17 @@ class _ChatPageState extends State<ChatPage> {
                       color: Colors.grey[600],
                     ),
                   ),
+                  SizedBox(
+                    width: Get.width * 0.014,
+                  ),
+                  chatController.messages[index].uid ==
+                          FirebaseAuth.instance.currentUser!.uid
+                      ? Container()
+                      : Icon(
+                          Icons.done_all,
+                          size: Get.width * 0.03,
+                          color: message.read ? Colors.green : Colors.black12,
+                        ),
                 ],
               ),
             ),
