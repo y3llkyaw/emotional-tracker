@@ -106,6 +106,27 @@ class ChatService {
     }
   }
 
+  Stream<List<Message>> getFriendsMessages() {
+    return _firestore
+        .collection("profile")
+        .doc(_cuid)
+        .collection("friends")
+        .snapshots()
+        .asyncMap((snapshot) async {
+      List<Stream<List<Message>>> friendMessageStreams = [];
+
+      for (var doc in snapshot.docs) {
+        friendMessageStreams.add(getUserMessages(doc.data()['uid']));
+      }
+
+      return CombineLatestStream.list(friendMessageStreams).map((list) {
+        List<Message> allMessages = list.expand((i) => i).toList();
+        allMessages.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+        return allMessages;
+      });
+    }).switchMap((stream) => stream);
+  }
+
   Future<void> readMessage(Message message, String uid) async {
     log("Updating message read status: ${message.id}");
     log("Updating message read status: ${message.id}");

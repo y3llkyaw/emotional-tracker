@@ -52,7 +52,7 @@ class FriendsPage extends StatelessWidget {
                       onSearch: (value) async {
                         // addFriendsController.searchFriends(value);
                       },
-                      controller: TextEditingController(),
+                    controller: TextEditingController(),
                       hintText: "Search for friends",
                     ),
                   ),
@@ -113,7 +113,7 @@ class FriendsPage extends StatelessWidget {
           vertical: Get.width * 0.03,
         ),
         decoration: BoxDecoration(
-          color: Colors.grey.shade300,
+          color: Get.theme.cardColor,
           // color: Get.theme.canvasColor, // Background color
           borderRadius: BorderRadius.circular(24.0), // Rounded corners
           boxShadow: [

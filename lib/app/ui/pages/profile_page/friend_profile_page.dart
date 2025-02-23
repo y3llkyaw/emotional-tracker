@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/controllers/other_profile_page_controller.dart';
@@ -8,6 +9,7 @@ import 'package:emotion_tracker/app/ui/pages/profile_page/widget/friend_piechart
 import 'package:emotion_tracker/app/ui/pages/profile_page/widget/profile_bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class FriendProfilePage extends StatelessWidget {
@@ -28,6 +30,8 @@ class FriendProfilePage extends StatelessWidget {
             children: [
               IconButton(
                 onPressed: () {
+                  final player = AudioPlayer();
+                  player.play(AssetSource("audio/swoosh.mp3"));
                   Get.back();
                 },
                 icon: const Icon(CupertinoIcons.xmark),
@@ -126,9 +130,14 @@ class FriendProfilePage extends StatelessWidget {
                         ),
                         ElevatedButton.icon(
                           onPressed: () {
-                            Get.to(() => ChatPage(
-                              profile: profile,
-                            ));
+                            final player = AudioPlayer();
+                            player.play(AssetSource("audio/swoosh.mp3"));
+                            Get.to(
+                              () => ChatPage(
+                                profile: profile,
+                              ),
+                              transition: Transition.rightToLeft,
+                            );
                           },
                           style: ButtonStyle(
                             backgroundColor:

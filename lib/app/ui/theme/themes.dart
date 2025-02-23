@@ -6,20 +6,23 @@ class Themes {
     cardColor: Colors.white,
     shadowColor: Colors.grey,
   );
-
-  final darkTheme = ThemeData.light().copyWith(
-    primaryColor: Colors.red,
-    cardColor: Colors.white,
-    shadowColor: Colors.grey,
-  );
+  final darkTheme = ThemeData.light();
   // final darkTheme = ThemeData.dark().copyWith(
-  //   primaryColor: Colors.grey[900],
-  //   cardColor: Colors.grey[900],
+  //   // primaryColor: Colors.red,
+  //   cardColor: Colors.white24,
+  //   primaryColorDark: Colors.blueAccent,
+  //   shadowColor: Colors.grey,
+  //   // scaffoldBackgroundColor: Colors.amber,
   //   textTheme: const TextTheme(
-  //     headlineLarge: TextStyle(
-  //       fontSize: 32,
+  //     titleLarge: TextStyle(
+  //       color: Colors.grey,
+  //     ),
+  //     titleMedium: TextStyle(
+  //       color: Colors.grey,
+  //     ),
+  //     titleSmall: TextStyle(
+  //       color: Colors.grey,
   //     ),
   //   ),
-  //   shadowColor: Colors.grey,
   // );
 }

@@ -1,10 +1,12 @@
 import 'package:emotion_tracker/app/controllers/noti_controller.dart';
 import 'package:emotion_tracker/app/ui/pages/calendar_page/calendar_page.dart';
 import 'package:emotion_tracker/app/ui/pages/friends_pages/friends_page.dart';
+import 'package:emotion_tracker/app/ui/pages/message_page/message_page.dart';
 import 'package:emotion_tracker/app/ui/pages/notification_page/notification_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/profile_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../../controllers/home_controller.dart';
 
@@ -24,6 +26,7 @@ class HomePage extends GetView<HomeController> {
               CalendarPage(),
               FriendsPage(),
               const NotificationPage(),
+              MessagePage(),
               const ProfilePage(),
             ],
           ),
@@ -38,10 +41,11 @@ class HomePage extends GetView<HomeController> {
           child: BottomNavigationBar(
             currentIndex: homeController.pageIndex.value,
             onTap: (index) {
+              SystemSound.play(SystemSoundType.click);
               homeController.changeIndex(index);
             },
             type: BottomNavigationBarType.fixed,
-            selectedItemColor: Colors.black,
+            selectedItemColor: Get.theme.primaryColorDark,
             unselectedItemColor: Colors.grey,
             backgroundColor: Get.isDarkMode ? Colors.black : Colors.grey[200],
             showSelectedLabels: false,
@@ -84,6 +88,13 @@ class HomePage extends GetView<HomeController> {
                   ),
                 ),
                 label: 'Notification',
+              ),
+              const BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: Icon(CupertinoIcons.chat_bubble_2),
+                ),
+                label: 'Messages',
               ),
               const BottomNavigationBarItem(
                 icon: Padding(

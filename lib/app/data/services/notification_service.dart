@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 class NotificationService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final _cuid = FirebaseAuth.instance.currentUser!.uid;
+  
   Stream<List<Map<String, dynamic>>> getNoti() {
     return _firestore
         .collection('profile')
@@ -59,7 +60,4 @@ class NotificationService {
       "read": false,
     });
   }
-
- 
-  
 }

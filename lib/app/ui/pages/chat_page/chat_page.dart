@@ -1,4 +1,5 @@
 import 'package:animated_emoji/animated_emoji.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:chat_bubbles/bubbles/bubble_normal.dart';
 import 'package:emotion_tracker/app/controllers/chat_controller.dart';
@@ -8,6 +9,7 @@ import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -182,8 +184,10 @@ class _ChatPageState extends State<ChatPage> {
                                     chatController
                                         .sendMessage(widget.profile.uid)
                                         .then((v) {
+                                      final player = AudioPlayer();
                                       controller.clear();
                                       chatController.clearMessage();
+                                      player.play(AssetSource("audio/pop.mp3"));
                                     });
                                     // Clear both the text controller and GetX state
                                   }

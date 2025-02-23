@@ -34,7 +34,7 @@ class UserCard extends StatelessWidget {
           vertical: Get.width * 0.03,
         ),
         decoration: BoxDecoration(
-          color: Colors.white70,
+          color: Get.theme.cardColor,
           // color: Get.theme.canvasColor, // Background color
           borderRadius: BorderRadius.circular(24.0), // Rounded corners
           boxShadow: [

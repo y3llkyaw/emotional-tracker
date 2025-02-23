@@ -1,4 +1,5 @@
 import 'package:animated_emoji/animated_emoji.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/controllers/mood_slider_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
@@ -250,6 +251,8 @@ class _NewJournalPageState extends State<NewJournalPage> {
                               }
                               journalController.moodSlider.value = 2;
                             });
+                            final player = AudioPlayer();
+                            player.play(AssetSource("audio/multi-pop.mp3"));
                           },
                         ),
                       )
