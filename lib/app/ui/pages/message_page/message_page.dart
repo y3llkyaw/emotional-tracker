@@ -51,45 +51,47 @@ class MessagePage extends StatelessWidget {
                   (e) => e.uid == messages[index].key,
                   orElse: () => null, // Avoids errors if no match is found
                 );
-
-                return InkWell(
-                  onTap: () {
-                    final player = AudioPlayer();
-                    player.play(AssetSource("audio/swoosh.mp3"));
-                    Get.to(() => ChatPage(profile: friend));
-                  },
-                  child: ListTile(
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: Get.width * 0.08),
-                    leading: CircleAvatar(
-                      child: AvatarPlus("${messages[index].key}${friend.name}"),
-                    ),
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          friend.name,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87,
+                if (friend != null) {
+                  return InkWell(
+                    onTap: () {
+                      final player = AudioPlayer();
+                      player.play(AssetSource("audio/swoosh.mp3"));
+                      Get.to(() => ChatPage(profile: friend));
+                    },
+                    child: ListTile(
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: Get.width * 0.08),
+                      leading: CircleAvatar(
+                        child:
+                            AvatarPlus("${messages[index].key}${friend.name}"),
+                      ),
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            friend.name,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87,
+                            ),
                           ),
+                        ],
+                      ),
+                      subtitle: Text(messages[index].value.first.message),
+                      // trailing: Text("data"),
+                      trailing: Text(
+                        timeago.format(
+                          onlineController.friendsOnlineStatus[friend.uid]
+                              .toDate(),
                         ),
-                      ],
-                    ),
-                    subtitle: Text(messages[index].value.first.message),
-                    // trailing: Text("data"),
-                    trailing: Text(
-                      timeago.format(
-                        onlineController.friendsOnlineStatus[friend.uid]
-                            .toDate(),
-                      ),
-                      style: TextStyle(
-                        fontSize: Get.width * 0.03,
-                        color: Colors.green,
+                        style: TextStyle(
+                          fontSize: Get.width * 0.03,
+                          color: Colors.green,
+                        ),
                       ),
                     ),
-                  ),
-                );
+                  );
+                }
               },
             );
           }

@@ -1,5 +1,5 @@
 import 'package:animated_emoji/animated_emoji.dart';
-import 'package:audioplayers/audioplayers.dart';
+// import 'package:audioplayers/audioplayers.dart';
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:chat_bubbles/bubbles/bubble_normal.dart';
 import 'package:emotion_tracker/app/controllers/chat_controller.dart';
@@ -184,10 +184,11 @@ class _ChatPageState extends State<ChatPage> {
                                     chatController
                                         .sendMessage(widget.profile.uid)
                                         .then((v) {
-                                      final player = AudioPlayer();
                                       controller.clear();
                                       chatController.clearMessage();
-                                      player.play(AssetSource("audio/pop.mp3"));
+                                      // final player = AudioPlayer();
+
+                                      // player.play(AssetSource("audio/pop.mp3"));
                                     });
                                     // Clear both the text controller and GetX state
                                   }
