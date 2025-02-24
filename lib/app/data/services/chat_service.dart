@@ -106,23 +106,29 @@ class ChatService {
     }
   }
 
-  Stream<List<Message>> getFriendsMessages() {
+  Stream<Map<String, List<Message>>> getFriendsMessages() {
     return _firestore
         .collection("profile")
         .doc(_cuid)
         .collection("friends")
         .snapshots()
         .asyncMap((snapshot) async {
-      List<Stream<List<Message>>> friendMessageStreams = [];
+      Map<String, Stream<List<Message>>> friendMessageStreams = {};
 
       for (var doc in snapshot.docs) {
-        friendMessageStreams.add(getUserMessages(doc.data()['uid']));
+        String uid = doc.data()['uid'];
+        friendMessageStreams[uid] = getUserMessages(uid);
       }
 
-      return CombineLatestStream.list(friendMessageStreams).map((list) {
-        List<Message> allMessages = list.expand((i) => i).toList();
-        allMessages.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-        return allMessages;
+      return CombineLatestStream.combine2(
+          Stream.value(friendMessageStreams.keys.toList()),
+          CombineLatestStream.list(friendMessageStreams.values),
+          (List<String> uids, List<List<Message>> messages) {
+        Map<String, List<Message>> result = {};
+        for (var i = 0; i < uids.length; i++) {
+          result[uids[i]] = messages[i];
+        }
+        return result;
       });
     }).switchMap((stream) => stream);
   }

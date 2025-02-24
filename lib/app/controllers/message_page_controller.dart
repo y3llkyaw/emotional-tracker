@@ -7,10 +7,10 @@ class MessagePageController extends GetxController {
   final _firestore = FirebaseFirestore.instance;
   final _cuid = FirebaseAuth.instance.currentUser!.uid;
   final ChatService chatService = ChatService();
-  RxList messagesStream = [].obs;
+  var messages = {}.obs;
 
   Future<void> getFriendsMessages() async {
-    // List<Stream> a = await chatService.getFriendsMessages();
+    messages.bindStream(chatService.getFriendsMessages());
   }
 
   Stream<List<Map<String, dynamic>>> getNoti() {

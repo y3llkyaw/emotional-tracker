@@ -52,7 +52,7 @@ class FriendsPage extends StatelessWidget {
                       onSearch: (value) async {
                         // addFriendsController.searchFriends(value);
                       },
-                    controller: TextEditingController(),
+                      controller: TextEditingController(),
                       hintText: "Search for friends",
                     ),
                   ),
