@@ -26,33 +26,9 @@ class _MoodSliderWidgetState extends State<MoodSliderWidget> {
     return AnimatedContainer(
       duration: Durations.short2,
       height: 200,
-      child: Row(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Obx(
-            () => RotatedBox(
-              quarterTurns: 7,
-              child: Slider(
-                value: moodSliderController.sliderValue.value,
-                min: 0,
-                max: 4,
-                activeColor: valueToColor(
-                    moodSliderController.sliderValue.value.toInt()),
-                secondaryActiveColor: valueToColor(
-                    moodSliderController.sliderValue.value.toInt()),
-
-                divisions: 4, // Number of steps for the slider
-                label: _moods[moodSliderController.sliderValue.value
-                    .toInt()], // Show the mood label
-                onChanged: (value) {
-                  moodSliderController.sliderValue.value = value;
-                  widget.onChange(
-                    value.toInt(),
-                  );
-                },
-              ),
-            ),
-          ),
           Obx(
             () => Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -64,7 +40,7 @@ class _MoodSliderWidgetState extends State<MoodSliderWidget> {
                     mood,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: moodSliderController.sliderValue.value == index
                           ? valueToColor(index)
@@ -73,6 +49,30 @@ class _MoodSliderWidgetState extends State<MoodSliderWidget> {
                   );
                 },
               ).toList(),
+            ),
+          ),
+          SizedBox(
+            height: Get.height * 0.03,
+          ),
+          Obx(
+            () => Slider(
+              value: moodSliderController.sliderValue.value,
+              min: 0,
+              max: 4,
+              activeColor:
+                  valueToColor(moodSliderController.sliderValue.value.toInt()),
+              secondaryActiveColor:
+                  valueToColor(moodSliderController.sliderValue.value.toInt()),
+
+              divisions: 4, // Number of steps for the slider
+              label: _moods[moodSliderController.sliderValue.value
+                  .toInt()], // Show the mood label
+              onChanged: (value) {
+                moodSliderController.sliderValue.value = value;
+                widget.onChange(
+                  value.toInt(),
+                );
+              },
             ),
           ),
         ],

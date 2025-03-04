@@ -1,4 +1,5 @@
 // import 'package:audioplayers/audioplayers.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/controllers/other_profile_page_controller.dart';
@@ -30,8 +31,8 @@ class FriendProfilePage extends StatelessWidget {
             children: [
               IconButton(
                 onPressed: () {
-                  // final player = AudioPlayer();
-                  // player.play(AssetSource("audio/swoosh.mp3"));
+                  final player = AudioPlayer();
+                  player.play(AssetSource("audio/swoosh.mp3"));
                   Get.back();
                 },
                 icon: const Icon(CupertinoIcons.xmark),
@@ -130,8 +131,8 @@ class FriendProfilePage extends StatelessWidget {
                         ),
                         ElevatedButton.icon(
                           onPressed: () {
-                            // final player = AudioPlayer();
-                            // player.play(AssetSource("audio/swoosh.mp3"));
+                            final player = AudioPlayer();
+                            player.play(AssetSource("audio/swoosh.mp3"));
                             Get.to(
                               () => ChatPage(
                                 profile: profile,

@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
@@ -29,6 +30,8 @@ class CustomButton extends StatelessWidget {
         onPressed: isDisabled
             ? null
             : () {
+                final player = AudioPlayer();
+                player.play(AssetSource("audio/multi-pop.mp3"));
                 onPressed();
               },
         child: Padding(

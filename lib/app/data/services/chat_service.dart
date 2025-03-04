@@ -59,6 +59,7 @@ class ChatService {
           .doc(uid)
           .collection("messages")
           .limit(30)
+          .orderBy("timestamp", descending: true)
           .snapshots()
           .map((snapshot) => snapshot.docs
               .map((doc) => Message(
@@ -78,6 +79,7 @@ class ChatService {
           .doc(_cuid)
           .collection("messages")
           .limit(30)
+          .orderBy("timestamp", descending: true)
           .snapshots()
           .map((snapshot) => snapshot.docs
               .map((doc) => Message(

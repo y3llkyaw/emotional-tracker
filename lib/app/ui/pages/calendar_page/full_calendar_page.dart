@@ -3,6 +3,7 @@ import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/data_journal.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/new_journal.dart';
+import 'package:emotion_tracker/app/ui/utils/helper_functions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -122,7 +123,8 @@ Widget _calendar() {
               if (DateTime(element.date.day, element.date.month,
                       element.date.year) ==
                   DateTime(date.day, date.month, date.year)) {
-                return dataCalendar(date, element.content, element.emotion);
+                return dataCalendar(
+                    date, element.content, element.emotion, element.value);
               }
             }
             return defaultCalendar(date);
@@ -132,7 +134,8 @@ Widget _calendar() {
               if (DateTime(element.date.day, element.date.month,
                       element.date.year) ==
                   DateTime(date.day, date.month, date.year)) {
-                return dataCalendar(date, element.content, element.emotion);
+                return dataCalendar(
+                    date, element.content, element.emotion, element.value);
               }
             }
             return defaultCalendar(date);
@@ -143,7 +146,8 @@ Widget _calendar() {
               if (DateTime(element.date.day, element.date.month,
                       element.date.year) ==
                   DateTime(date.day, date.month, date.year)) {
-                return dataCalendar(date, element.content, element.emotion);
+                return dataCalendar(
+                    date, element.content, element.emotion, element.value);
               }
             }
             return defaultCalendar(date);
@@ -210,7 +214,8 @@ Widget defaultCalendar(DateTime date) {
   );
 }
 
-Widget dataCalendar(DateTime day, String content, AnimatedEmojiData emojiData) {
+Widget dataCalendar(
+    DateTime day, String content, AnimatedEmojiData emojiData, int value) {
   return Padding(
     padding: const EdgeInsets.only(top: 15),
     child: GestureDetector(
@@ -244,12 +249,12 @@ Widget dataCalendar(DateTime day, String content, AnimatedEmojiData emojiData) {
             Center(
               child: CircleAvatar(
                 radius: Get.width * 0.028,
-                backgroundColor: Colors.yellow,
+                backgroundColor: valueToColor(value),
                 child: Text(
                   day.day.toString(),
                   style: TextStyle(
                     fontSize: Get.width * 0.023,
-                    color: Colors.black,
+                    color: Colors.white,
                     // fontSize: 11,
                   ),
                 ),
