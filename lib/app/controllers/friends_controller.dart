@@ -1,4 +1,5 @@
 import 'package:emotion_tracker/app/controllers/noti_controller.dart';
+import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/data/services/friends_service.dart';
@@ -12,6 +13,7 @@ class FriendsController extends GetxController {
   final _friendService = FriendService();
   final notificationController = NotiController();
   final profilePageController = ProfilePageController();
+  final onlineController = OnlineController();
 
   var friends = [].obs;
 
@@ -52,5 +54,8 @@ class FriendsController extends GetxController {
   Future<void> getFriends() async {
     final result = await _friendService.getFriends();
     friends.value = result;
+    friends.map((f) async {
+      onlineController.getFriendsOnlineStatus(f.uid);
+    });
   }
 }

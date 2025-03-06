@@ -1,5 +1,6 @@
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:avatar_plus/avatar_plus.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/friend_profile_page.dart';
@@ -84,7 +85,9 @@ class UserCard extends StatelessWidget {
             const SizedBox(),
             Text(
               timeago
-                  .format(onlineController.lastSeem.value.toDate())
+                  .format(onlineController.friendsOnlineStatus[profile!.uid]
+                          ?.toDate() ??
+                      Timestamp.now().toDate())
                   .toString(),
               style: TextStyle(
                 fontSize: Get.width * 0.02,

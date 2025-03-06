@@ -46,6 +46,12 @@ class MessagePage extends StatelessWidget {
           if (messagePageController.messages.isNotEmpty) {
             List<MapEntry> messages =
                 messagePageController.messages.entries.toList();
+            // Sort messages by timestamp of latest message
+            messages.sort((a, b) {
+              final aTimestamp = a.value.first.timestamp;
+              final bTimestamp = b.value.first.timestamp;
+              return bTimestamp.compareTo(aTimestamp); // Descending order
+            });
             return RefreshIndicator(
               onRefresh: () async {
                 await messagePageController.getFriendsMessages();

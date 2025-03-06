@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -31,7 +33,7 @@ class OnlineController extends GetxController {
           .get();
       friendsOnlineStatus[uid] = doc.data()!["lastSeem"] as Timestamp;
     } catch (e) {
-      print(e.toString());
+      log(e.toString());
     }
   }
 }
