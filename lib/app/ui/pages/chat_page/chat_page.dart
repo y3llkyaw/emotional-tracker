@@ -84,20 +84,31 @@ class _ChatPageState extends State<ChatPage> {
           ),
           Obx(
             () => Expanded(
-              child: ListView.builder(
-                reverse: true,
-                itemCount: chatController.messages.length,
-                itemBuilder: (context, index) {
-                  final message = chatController.messages[index];
-                  if (message.uid == FirebaseAuth.instance.currentUser!.uid &&
-                      (message.read == false)) {
-                    chatController.readMessage(message, widget.profile.uid);
+              child: NotificationListener<ScrollNotification>(
+                onNotification: (ScrollNotification scrollInfo) {
+                  if (scrollInfo.metrics.pixels ==
+                      scrollInfo.metrics.maxScrollExtent) {
+                    // Load more data when user reaches the end
+                    chatController.loadMoreMessages(widget.profile.uid);
                   }
-                  if (chatController.messages[index].type == "sticker") {
-                    return _buildStickerWidget(message, index);
-                  }
-                  return _buildMessageWidget(message, index);
+                  print(scrollInfo.metrics.pixels);
+                  return true;
                 },
+                child: ListView.builder(
+                  reverse: true,
+                  itemCount: chatController.messages.length,
+                  itemBuilder: (context, index) {
+                    final message = chatController.messages[index];
+                    if (message.uid == FirebaseAuth.instance.currentUser!.uid &&
+                        (message.read == false)) {
+                      chatController.readMessage(message, widget.profile.uid);
+                    }
+                    if (chatController.messages[index].type == "sticker") {
+                      return _buildStickerWidget(message, index);
+                    }
+                    return _buildMessageWidget(message, index);
+                  },
+                ),
               ),
             ),
           ),

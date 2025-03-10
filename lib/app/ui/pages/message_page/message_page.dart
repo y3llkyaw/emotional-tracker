@@ -52,91 +52,112 @@ class MessagePage extends StatelessWidget {
               final bTimestamp = b.value.first.timestamp;
               return bTimestamp.compareTo(aTimestamp); // Descending order
             });
-            return RefreshIndicator(
-              onRefresh: () async {
-                await messagePageController.getFriendsMessages();
-                await friendsController.getFriends();
-              },
-              child: ListView.builder(
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  final friend = friendsController.friends.firstWhere(
-                    (e) => e.uid == messages[index].key,
-                    orElse: () => null, // Avoids errors if no match is found
-                  );
-                  if (friend != null) {
-                    return InkWell(
-                      onTap: () {
-                        final player = AudioPlayer();
-                        player.play(AssetSource("audio/swoosh.mp3"));
-                        Get.to(
-                          () => ChatPage(profile: friend),
-                          transition: Transition.rightToLeft,
-                        );
-                      },
-                      child: ListTile(
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: Get.width * 0.08),
-                        leading: CircleAvatar(
-                          child: AvatarPlus(
-                              "${messages[index].key}${friend.name}"),
-                        ),
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              friend.name,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ],
-                        ),
-                        subtitle: Text(messages[index].value.first.message),
-                        // trailing: Text("data"),
-                        trailing: Text(
-                          timeago.format(
-                            onlineController.friendsOnlineStatus[friend.uid]
-                                .toDate(),
-                          ),
-                          style: TextStyle(
-                            fontSize: Get.width * 0.03,
-                            color: Colors.green,
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-                  log("returned null");
-                  // messagePageController.getFriendsMessages();
-                  return null;
-                },
-              ),
-            );
+
+            // is message empty
+            var isMessageEmpty = true;
+            for (var element in messages) {
+              if (element.value.isNotEmpty) {
+                isMessageEmpty = false;
+              }
+            }
+            if (isMessageEmpty) {
+              return _noMessage();
+            }
+            // data widget
+            return _message(messages);
           }
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                CupertinoIcons.chat_bubble_2_fill,
-                color: Colors.black26,
-                size: Get.width * 0.5,
-              ),
-              Center(
-                child: Text(
-                  "you have no messages right now !",
+          return _noMessage();
+        },
+      ),
+    );
+  }
+
+  Widget _message(messages) {
+    return RefreshIndicator(
+      onRefresh: () async {
+        await messagePageController.getFriendsMessages();
+        await friendsController.getFriends();
+      },
+      child: ListView.builder(
+        itemCount: messages.length,
+        itemBuilder: (context, index) {
+          final friend = friendsController.friends.firstWhere(
+            (e) => e.uid == messages[index].key,
+            orElse: () => null, // Avoids errors if no match is found
+          );
+
+          if (friend != null && messages[index].value.isNotEmpty) {
+            return InkWell(
+              onTap: () {
+                final player = AudioPlayer();
+                player.play(AssetSource("audio/swoosh.mp3"));
+                Get.to(
+                  () => ChatPage(profile: friend),
+                  transition: Transition.rightToLeft,
+                );
+              },
+              child: ListTile(
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: Get.width * 0.08),
+                leading: CircleAvatar(
+                  child: AvatarPlus("${messages[index].key}${friend.name}"),
+                ),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      friend.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+                subtitle: Text(messages[index].value.first.message),
+                // trailing: Text("data"),
+                trailing: Text(
+                  timeago.format(
+                    onlineController.friendsOnlineStatus[friend.uid]
+                            ?.toDate() ??
+                        DateTime.now(),
+                  ),
                   style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: Get.width * 0.036,
-                    color: Colors.black26,
+                    fontSize: Get.width * 0.03,
+                    color: Colors.green,
                   ),
                 ),
               ),
-            ],
-          );
+            );
+          }
+          log("returned null");
+          // messagePageController.getFriendsMessages();
+          return null;
         },
       ),
+    );
+  }
+
+  Widget _noMessage() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          CupertinoIcons.chat_bubble_2_fill,
+          color: Colors.black26,
+          size: Get.width * 0.5,
+        ),
+        Center(
+          child: Text(
+            "you have no messages right now !",
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: Get.width * 0.036,
+              color: Colors.black26,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

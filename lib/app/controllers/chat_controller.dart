@@ -19,6 +19,8 @@ class ChatController extends GetxController {
     });
   }
 
+  void loadMoreMessages(String uid) {}
+
   void setMessage(String value) {
     message.value = value;
   }
