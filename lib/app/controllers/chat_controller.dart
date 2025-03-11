@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/data/models/message.dart';
 import 'package:emotion_tracker/app/data/services/chat_service.dart';
@@ -11,6 +13,7 @@ class ChatController extends GetxController {
   final RxList<Message> messages = <Message>[].obs;
   Stream<List<Message>>? messageStream;
   final _cuid = FirebaseAuth.instance.currentUser!.uid;
+  var isLoading = false.obs;
 
   void getUserMessages(String uid) {
     messageStream = chatService.getUserMessages(uid);
@@ -19,7 +22,14 @@ class ChatController extends GetxController {
     });
   }
 
-  void loadMoreMessages(String uid) {}
+  void loadMoreMessages(String uid) async {
+    isLoading.value = true;
+    log("loading more message");
+    final messagesList =
+        await chatService.loadMoreMessages(uid, lastMessage: messages.last);
+    messages.addAll(messagesList);
+    isLoading.value = false;
+  }
 
   void setMessage(String value) {
     message.value = value;

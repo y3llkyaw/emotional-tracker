@@ -82,35 +82,40 @@ class _ChatPageState extends State<ChatPage> {
           SizedBox(
             height: Get.height * 0.03,
           ),
+          Obx(() => chatController.isLoading.value
+              ? const CircularProgressIndicator()
+              : const SizedBox.shrink()),
           Obx(
-            () => Expanded(
-              child: NotificationListener<ScrollNotification>(
-                onNotification: (ScrollNotification scrollInfo) {
-                  if (scrollInfo.metrics.pixels ==
-                      scrollInfo.metrics.maxScrollExtent) {
-                    // Load more data when user reaches the end
-                    chatController.loadMoreMessages(widget.profile.uid);
-                  }
-                  print(scrollInfo.metrics.pixels);
-                  return true;
-                },
-                child: ListView.builder(
-                  reverse: true,
-                  itemCount: chatController.messages.length,
-                  itemBuilder: (context, index) {
-                    final message = chatController.messages[index];
-                    if (message.uid == FirebaseAuth.instance.currentUser!.uid &&
-                        (message.read == false)) {
-                      chatController.readMessage(message, widget.profile.uid);
+            () {
+              return Expanded(
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (ScrollNotification scrollInfo) {
+                    if (scrollInfo.metrics.pixels ==
+                        scrollInfo.metrics.maxScrollExtent) {
+                      // Load more data when user reaches the end
+                      chatController.loadMoreMessages(widget.profile.uid);
                     }
-                    if (chatController.messages[index].type == "sticker") {
-                      return _buildStickerWidget(message, index);
-                    }
-                    return _buildMessageWidget(message, index);
+                    return true;
                   },
+                  child: ListView.builder(
+                    reverse: true,
+                    itemCount: chatController.messages.length,
+                    itemBuilder: (context, index) {
+                      final message = chatController.messages[index];
+                      if (message.uid ==
+                              FirebaseAuth.instance.currentUser!.uid &&
+                          (message.read == false)) {
+                        chatController.readMessage(message, widget.profile.uid);
+                      }
+                      if (chatController.messages[index].type == "sticker") {
+                        return _buildStickerWidget(message, index);
+                      }
+                      return _buildMessageWidget(message, index);
+                    },
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
           Center(
             child: Container(

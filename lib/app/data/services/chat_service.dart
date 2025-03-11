@@ -131,4 +131,31 @@ class ChatService {
       return null; // Return null if an error occurs
     }
   }
+
+  Future<List<Message>> loadMoreMessages(String uid,
+      {int limit = 20, Message? lastMessage}) async {
+    try {
+      String chatId = _getChatId(uid, _cuid);
+      Query query = _firestore
+          .collection('chats')
+          .doc(chatId)
+          .collection("messages")
+          .orderBy("timestamp", descending: true)
+          .limit(limit);
+
+      if (lastMessage != null) {
+        query = query.startAfter([lastMessage.timestamp]);
+      }
+
+      QuerySnapshot snapshot = await query.get();
+
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return Message.fromDocument(data);
+      }).toList();
+    } catch (e) {
+      log('Error loading more messages: $e');
+      return [];
+    }
+  }
 }
