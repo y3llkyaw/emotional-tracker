@@ -37,6 +37,7 @@ class JournalController extends GetxController {
     isLoading.value = true;
     // Save journal to Firestore
     try {
+      print("journal_${date.value.toString().split(" ")[0]}");
       await FirebaseFirestore.instance
           .collection("profile")
           .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -52,6 +53,7 @@ class JournalController extends GetxController {
         Get.back();
         Get.snackbar("Success", "Journal Created Successfully..");
       });
+
       isLoading.value = false;
       fetchJournals();
       return "journal_${date.value}";

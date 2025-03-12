@@ -71,6 +71,22 @@ class ChatController extends GetxController {
     clearMessage();
   }
 
+  Future<void> sendJournal(String uid, String jid) async {
+    final m = Message(
+      id: "${_cuid}_${uid}_${DateTime.now().microsecondsSinceEpoch}",
+      uid: uid,
+      read: false,
+      message: jid,
+      timestamp: Timestamp.now(),
+      type: "journal",
+    );
+    if (m.message == "") {
+      return;
+    }
+    await chatService.sendJournal(m);
+    clearMessage();
+  }
+
   Future<void> readMessage(Message message, String uid) async {
     await chatService.readMessage(message, uid).then((v) {});
   }

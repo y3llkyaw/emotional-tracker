@@ -9,7 +9,6 @@ import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -82,20 +81,13 @@ class _ChatPageState extends State<ChatPage> {
           SizedBox(
             height: Get.height * 0.03,
           ),
-          Obx(() => chatController.isLoading.value
-              ? const CircularProgressIndicator()
-              : const SizedBox.shrink()),
           Obx(
             () {
               return Expanded(
-                child: NotificationListener<ScrollNotification>(
-                  onNotification: (ScrollNotification scrollInfo) {
-                    if (scrollInfo.metrics.pixels ==
-                        scrollInfo.metrics.maxScrollExtent) {
-                      // Load more data when user reaches the end
-                      chatController.loadMoreMessages(widget.profile.uid);
-                    }
-                    return true;
+                child: RefreshIndicator.adaptive(
+                  onRefresh: () async {
+                    chatController.loadMoreMessages(widget.profile.uid);
+                    return;
                   },
                   child: ListView.builder(
                     reverse: true,

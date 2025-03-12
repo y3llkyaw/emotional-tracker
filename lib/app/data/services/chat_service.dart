@@ -55,6 +55,24 @@ class ChatService {
     }
   }
 
+  Future<void> sendJournal(Message message) async {
+    try {
+      String chatId = _getChatId(_cuid, message.uid);
+      await _firestore
+          .collection("chats")
+          .doc(chatId)
+          .collection("messages")
+          .doc(message.id)
+          .set(message.toDocument())
+          .then((v) => log("sent sticker successfully"))
+          .onError((e, stackTrace) {
+        log(e.toString());
+      });
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
   Stream<List<Message>> getUserMessages(String uid) {
     try {
       String chatId = _getChatId(_cuid, uid);

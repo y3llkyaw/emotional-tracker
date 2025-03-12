@@ -25,28 +25,6 @@ class CalendarPage extends GetView<HomeController> {
         () => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // title goes here
-            // Padding(
-            //   padding: EdgeInsets.symmetric(
-            //     horizontal: Get.width * 0.08,
-            //     vertical: Get.width * 0.04,
-            //   ),
-            //   child: Row(
-            //     children: [
-            //       Text(
-            //         journalController.journals.isEmpty ? 'Home' : 'Home',
-            //         style: TextStyle(
-            //           fontSize: Get.width * 0.046,
-            //           fontWeight: FontWeight.bold,
-            //         ),
-            //       ),
-            //       SizedBox(
-            //         width: Get.width * 0.02,
-            //       ),
-            //       const Icon(CupertinoIcons.house_fill),
-            //     ],
-            //   ),
-            // ),
             calendar(),
             Divider(
               color: Colors.grey.shade300,
@@ -146,7 +124,37 @@ class CalendarPage extends GetView<HomeController> {
                                 topLeft: Radius.circular(20),
                                 topRight: Radius.circular(20),
                               ),
-                              onTap: () {},
+                              onTap: () {
+                                // "journal_${date.value.toString().split(" ")[0]}"
+                                final jid =
+                                    "journal_${journalController.journals[index].date.toString().split(" ")[0]}";
+                                Get.bottomSheet(
+                                  Padding(
+                                    padding: EdgeInsets.all(Get.width * 0.08),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          "Share Your Emotions with",
+                                          style: TextStyle(
+                                            fontSize: Get.width * 0.04,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: ListView.builder(
+                                            itemBuilder: (context, index) {
+                                              return const Text(
+                                                  "data"); // TODO: Add list item widget
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  elevation: 1,
+                                  backgroundColor: Colors.white,
+                                  enableDrag: true,
+                                );
+                              },
                               child: Container(
                                 padding: const EdgeInsets.all(20),
                                 width: 200,
