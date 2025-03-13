@@ -1,11 +1,15 @@
 import 'package:animated_emoji/animated_emoji.dart';
+import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/share_sheet.dart';
 import 'package:emotion_tracker/app/ui/pages/calendar_page/full_calendar_page.dart';
 import 'package:emotion_tracker/app/ui/pages/calendar_page/piechart_page.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/data_journal.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/new_journal.dart';
 import 'package:emotion_tracker/app/ui/utils/helper_functions.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -128,32 +132,7 @@ class CalendarPage extends GetView<HomeController> {
                                 // "journal_${date.value.toString().split(" ")[0]}"
                                 final jid =
                                     "journal_${journalController.journals[index].date.toString().split(" ")[0]}";
-                                Get.bottomSheet(
-                                  Padding(
-                                    padding: EdgeInsets.all(Get.width * 0.08),
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          "Share Your Emotions with",
-                                          style: TextStyle(
-                                            fontSize: Get.width * 0.04,
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: ListView.builder(
-                                            itemBuilder: (context, index) {
-                                              return const Text(
-                                                  "data"); // TODO: Add list item widget
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  elevation: 1,
-                                  backgroundColor: Colors.white,
-                                  enableDrag: true,
-                                );
+                                showShareSheet(jid);
                               },
                               child: Container(
                                 padding: const EdgeInsets.all(20),
