@@ -11,15 +11,27 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class MessagePage extends StatelessWidget {
+class MessagePage extends StatefulWidget {
   MessagePage({Key? key}) : super(key: key);
+
+  @override
+  State<MessagePage> createState() => _MessagePageState();
+}
+
+class _MessagePageState extends State<MessagePage> {
   final MessagePageController messagePageController = MessagePageController();
   final FriendsController friendsController = Get.put(FriendsController());
   final OnlineController onlineController = Get.put(OnlineController());
+
   @override
-  Widget build(BuildContext context) {
+  void initState() {
     friendsController.getFriends();
     messagePageController.getFriendsMessages();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -160,4 +172,5 @@ class MessagePage extends StatelessWidget {
       ],
     );
   }
+
 }

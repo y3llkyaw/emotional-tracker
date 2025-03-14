@@ -13,6 +13,7 @@ class ChatController extends GetxController {
   final RxList<Message> messages = <Message>[].obs;
   Stream<List<Message>>? messageStream;
   final _cuid = FirebaseAuth.instance.currentUser!.uid;
+  var shareList = [].obs;
   var isLoading = false.obs;
 
   void getUserMessages(String uid) {

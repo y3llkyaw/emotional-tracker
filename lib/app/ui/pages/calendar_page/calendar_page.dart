@@ -1,8 +1,8 @@
 import 'package:animated_emoji/animated_emoji.dart';
-import 'package:avatar_plus/avatar_plus.dart';
+import 'package:emotion_tracker/app/controllers/chat_controller.dart';
+import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
-import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/share_sheet.dart';
 import 'package:emotion_tracker/app/ui/pages/calendar_page/full_calendar_page.dart';
 import 'package:emotion_tracker/app/ui/pages/calendar_page/piechart_page.dart';
@@ -18,8 +18,12 @@ import 'package:emotion_tracker/app/controllers/home_controller.dart';
 
 class CalendarPage extends GetView<HomeController> {
   CalendarPage({Key? key}) : super(key: key);
+
   final JournalController journalController = Get.put(JournalController());
   final OnlineController onlineController = Get.put(OnlineController());
+  final FriendsController friendsController = Get.put(FriendsController());
+  final ChatController chatController = Get.put(ChatController());
+
   @override
   Widget build(BuildContext context) {
     journalController.fetchJournals();
