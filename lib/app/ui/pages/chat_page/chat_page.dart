@@ -8,6 +8,7 @@ import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/data/models/journal.dart';
 import 'package:emotion_tracker/app/data/models/message.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
+import 'package:emotion_tracker/app/ui/utils/helper_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -83,9 +84,6 @@ class _ChatPageState extends State<ChatPage> {
       ),
       body: Column(
         children: [
-          SizedBox(
-            height: Get.height * 0.03,
-          ),
           Obx(
             () {
               return Expanded(
@@ -287,155 +285,223 @@ class _ChatPageState extends State<ChatPage> {
         }
         final journal = snapshot.data! as Journal;
 
-        return Container(
-          margin: EdgeInsets.symmetric(vertical: Get.height * 0.02),
-          child: Column(
-            crossAxisAlignment:
-                message.uid != FirebaseAuth.instance.currentUser!.uid
-                    ? CrossAxisAlignment.end
-                    : CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment:
+        return Column(
+          crossAxisAlignment:
+              message.uid != FirebaseAuth.instance.currentUser!.uid
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
+          children: [
+            Container(
+              margin: EdgeInsets.symmetric(vertical: Get.height * 0.02),
+              child: Column(
+                crossAxisAlignment:
                     message.uid != FirebaseAuth.instance.currentUser!.uid
-                        ? MainAxisAlignment.end
-                        : MainAxisAlignment.start,
+                        ? CrossAxisAlignment.end
+                        : CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: Get.width * 0.03),
-                    width: Get.width * 0.5,
-                    decoration: const BoxDecoration(
-                      color: Colors.black12,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                        bottomLeft: Radius.circular(20),
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Stack(
-                          alignment: Alignment.topRight,
+                  Row(
+                    mainAxisAlignment:
+                        message.uid != FirebaseAuth.instance.currentUser!.uid
+                            ? MainAxisAlignment.end
+                            : MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin:
+                            EdgeInsets.symmetric(horizontal: Get.width * 0.03),
+                        width: Get.width * 0.5,
+                        decoration: BoxDecoration(
+                          color: valueToColor(journal.value),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                            bottomLeft: Radius.circular(20),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Transform(
-                              transform: Matrix4.translationValues(
-                                  -Get.height * 0.01, -Get.height * 0.01, 0),
-                              child: Row(
-                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            Stack(
+                              alignment: Alignment.topRight,
+                              children: [
+                                Transform(
+                                  transform: Matrix4.translationValues(
+                                      -Get.height * 0.01,
+                                      -Get.height * 0.01,
+                                      0),
+                                  child: Row(
+                                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          color: valueToColor(journal.value),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: CircleAvatar(
+                                          radius: Get.width * 0.06,
+                                          backgroundColor:
+                                              Colors.white.withOpacity(0.4),
+                                          child: AnimatedEmoji(
+                                            journal.emotion,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: Get.width * 0.03,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          SizedBox(
+                                            height: Get.height * 0.01,
+                                          ),
+                                          Text(
+                                            DateFormat('MMM d, yyyy')
+                                                .format(journal.date),
+                                            style: TextStyle(
+                                              fontSize: Get.width * 0.025,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          Text(
+                                            "Check My Mood",
+                                            style: TextStyle(
+                                              fontSize: Get.width * 0.02,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: Get.width * 0.03),
+                              child: Column(
                                 children: [
-                                  CircleAvatar(
-                                    radius: Get.width * 0.06,
-                                    backgroundColor: Colors.grey,
-                                    child: AnimatedEmoji(
-                                      journal.emotion,
+                                  SizedBox(
+                                    height: Get.height * 0.06,
+                                    child: Center(
+                                      child: Text(
+                                        journal.content,
+                                        textAlign: TextAlign.justify,
+                                        overflow: TextOverflow.fade,
+                                        style: TextStyle(
+                                          fontSize: Get.width * 0.032,
+                                          color: Colors.white,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   SizedBox(
-                                    width: Get.width * 0.03,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      SizedBox(
-                                        height: Get.height * 0.01,
-                                      ),
-                                      Text(
-                                        DateFormat('MMM d, yyyy')
-                                            .format(journal.date),
-                                        style: TextStyle(
-                                          fontSize: Get.width * 0.025,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      Text(
-                                        "Check My Mood",
-                                        style: TextStyle(
-                                            fontSize: Get.width * 0.02),
-                                      ),
-                                    ],
+                                    height: Get.height * 0.013,
                                   ),
                                 ],
                               ),
                             ),
-                          ],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: Get.width * 0.03),
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: Get.height * 0.06,
-                                child: Center(
-                                  child: Text(
-                                    journal.content,
-                                    textAlign: TextAlign.justify,
-                                    overflow: TextOverflow.fade,
-                                    style:
-                                        TextStyle(fontSize: Get.width * 0.025),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                InkWell(
+                                  onTap: () {},
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                  ),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: Get.width * 0.03,
+                                      vertical: Get.height * 0.003,
+                                    ),
+                                    alignment: Alignment.center,
+                                    decoration: const BoxDecoration(
+                                        color: Colors.white30,
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
+                                        )),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(
+                                          CupertinoIcons.eye_fill,
+                                          color: Colors.white,
+                                        ),
+                                        SizedBox(
+                                          width: Get.width * 0.02,
+                                        ),
+                                        const Text(
+                                          "view detail",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(
-                                height: Get.height * 0.013,
-                              ),
-                            ],
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            InkWell(
-                              onTap: () {},
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                              ),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: Get.width * 0.03,
-                                  vertical: Get.height * 0.003,
-                                ),
-                                alignment: Alignment.center,
-                                decoration: const BoxDecoration(
-                                    color: Colors.black12,
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      topRight: Radius.circular(10),
-                                    )),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(
-                                      CupertinoIcons.eye_fill,
-                                      color: Colors.black45,
-                                    ),
-                                    SizedBox(
-                                      width: Get.width * 0.02,
-                                    ),
-                                    const Text(
-                                      "view detail",
-                                      style: TextStyle(
-                                        color: Colors.black54,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  )
+                      )
+                    ],
+                  ),
                 ],
               ),
-            ],
-          ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(right: 20, left: 20),
+              child: Row(
+                mainAxisAlignment: chatController.messages[index].uid ==
+                        FirebaseAuth.instance.currentUser!.uid
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.end,
+                children: [
+                  chatController.messages[index].uid ==
+                          FirebaseAuth.instance.currentUser!.uid
+                      ? Icon(
+                          Icons.done_all,
+                          size: Get.width * 0.03,
+                          color: message.read ? Colors.green : Colors.black12,
+                        )
+                      : Container(),
+                  SizedBox(
+                    width: Get.width * 0.014,
+                  ),
+                  Text(
+                    timeago.format(
+                      chatController.messages[index].timestamp.toDate(),
+                      // locale:
+                      //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
+                    ),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  SizedBox(
+                    width: Get.width * 0.014,
+                  ),
+                  chatController.messages[index].uid ==
+                          FirebaseAuth.instance.currentUser!.uid
+                      ? Container()
+                      : Icon(
+                          Icons.done_all,
+                          size: Get.width * 0.03,
+                          color: message.read ? Colors.green : Colors.black12,
+                        ),
+                ],
+              ),
+            ),
+          ],
         );
       },
     );
