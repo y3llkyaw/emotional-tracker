@@ -70,6 +70,26 @@ class JournalController extends GetxController {
         : CalendarFormat.week;
   }
 
+  Future<Journal?> getJournalByUidAndJid(String uid, String jid) async {
+    try {
+      final journal = await FirebaseFirestore.instance
+          .collection("profile")
+          .doc(uid)
+          .collection("journals")
+          .doc(jid)
+          .get();
+        print(journal.data());
+      if (journal.exists) {
+        return Journal.fromDocument(journal.data()!);
+      }
+      return null;
+    } catch (e) {
+      log(e.toString());
+      Get.snackbar("Error", e.toString());
+      return null;
+    }
+  }
+
   Future<void> getJournal(DateTime date) async {
     // Fetch journal from Firestore
     log("get journal");

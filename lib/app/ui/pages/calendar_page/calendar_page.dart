@@ -136,7 +136,8 @@ class CalendarPage extends GetView<HomeController> {
                                 // "journal_${date.value.toString().split(" ")[0]}"
                                 final jid =
                                     "journal_${journalController.journals[index].date.toString().split(" ")[0]}";
-                                showShareSheet(jid);
+                                showShareSheet(
+                                    journalController.journals[index]);
                               },
                               child: Container(
                                 padding: const EdgeInsets.all(20),

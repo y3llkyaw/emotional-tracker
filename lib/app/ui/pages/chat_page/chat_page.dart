@@ -3,13 +3,17 @@ import 'package:animated_emoji/animated_emoji.dart';
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:chat_bubbles/bubbles/bubble_normal.dart';
 import 'package:emotion_tracker/app/controllers/chat_controller.dart';
+import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/controllers/online_controller.dart';
+import 'package:emotion_tracker/app/data/models/journal.dart';
 import 'package:emotion_tracker/app/data/models/message.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 // ignore: must_be_immutable
@@ -25,6 +29,7 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final ChatController chatController = Get.put(ChatController());
   final OnlineController onlineController = Get.put(OnlineController());
+  final JournalController journalController = Get.put(JournalController());
   late final TextEditingController controller;
 
   @override
@@ -101,6 +106,9 @@ class _ChatPageState extends State<ChatPage> {
                       }
                       if (chatController.messages[index].type == "sticker") {
                         return _buildStickerWidget(message, index);
+                      }
+                      if (chatController.messages[index].type == "journal") {
+                        return _buildJournalWidget(message, index);
                       }
                       return _buildMessageWidget(message, index);
                     },
@@ -254,6 +262,329 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // Build Journal Widget
+  _buildJournalWidget(Message message, int index) {
+    if (message.uid == FirebaseAuth.instance.currentUser!.uid) {}
+
+    return FutureBuilder(
+      future: journalController.getJournalByUidAndJid(
+          message.uid == FirebaseAuth.instance.currentUser!.uid
+              ? widget.profile.uid
+              : FirebaseAuth.instance.currentUser!.uid,
+          message.message),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _buildShimmerJournalCard(message);
+        }
+        // return _buildShimmerJournalCard(message);
+
+        if (!snapshot.hasData) {
+          return const SizedBox();
+        }
+        final journal = snapshot.data! as Journal;
+
+        return Container(
+          margin: EdgeInsets.symmetric(vertical: Get.height * 0.02),
+          child: Column(
+            crossAxisAlignment:
+                message.uid != FirebaseAuth.instance.currentUser!.uid
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment:
+                    message.uid != FirebaseAuth.instance.currentUser!.uid
+                        ? MainAxisAlignment.end
+                        : MainAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: Get.width * 0.03),
+                    width: Get.width * 0.5,
+                    decoration: const BoxDecoration(
+                      color: Colors.black12,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                        bottomLeft: Radius.circular(20),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Stack(
+                          alignment: Alignment.topRight,
+                          children: [
+                            Transform(
+                              transform: Matrix4.translationValues(
+                                  -Get.height * 0.01, -Get.height * 0.01, 0),
+                              child: Row(
+                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  CircleAvatar(
+                                    radius: Get.width * 0.06,
+                                    backgroundColor: Colors.grey,
+                                    child: AnimatedEmoji(
+                                      journal.emotion,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: Get.width * 0.03,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      SizedBox(
+                                        height: Get.height * 0.01,
+                                      ),
+                                      Text(
+                                        DateFormat('MMM d, yyyy')
+                                            .format(journal.date),
+                                        style: TextStyle(
+                                          fontSize: Get.width * 0.025,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      Text(
+                                        "Check My Mood",
+                                        style: TextStyle(
+                                            fontSize: Get.width * 0.02),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: Get.width * 0.03),
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: Get.height * 0.06,
+                                child: Center(
+                                  child: Text(
+                                    journal.content,
+                                    textAlign: TextAlign.justify,
+                                    overflow: TextOverflow.fade,
+                                    style:
+                                        TextStyle(fontSize: Get.width * 0.025),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: Get.height * 0.013,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            InkWell(
+                              onTap: () {},
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
+                              ),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: Get.width * 0.03,
+                                  vertical: Get.height * 0.003,
+                                ),
+                                alignment: Alignment.center,
+                                decoration: const BoxDecoration(
+                                    color: Colors.black12,
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(10),
+                                      topRight: Radius.circular(10),
+                                    )),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(
+                                      CupertinoIcons.eye_fill,
+                                      color: Colors.black45,
+                                    ),
+                                    SizedBox(
+                                      width: Get.width * 0.02,
+                                    ),
+                                    const Text(
+                                      "view detail",
+                                      style: TextStyle(
+                                        color: Colors.black54,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildShimmerJournalCard(Message message) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: Get.height * 0.02),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment:
+                  message.uid != FirebaseAuth.instance.currentUser!.uid
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+              children: [
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: Get.width * 0.03),
+                  width: Get.width * 0.5,
+                  decoration: const BoxDecoration(
+                    color: Colors.black38,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                      bottomLeft: Radius.circular(20),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Stack(
+                        alignment: Alignment.topRight,
+                        children: [
+                          Transform(
+                            transform: Matrix4.translationValues(
+                                -Get.height * 0.01, -Get.height * 0.01, 0),
+                            child: Row(
+                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CircleAvatar(
+                                  radius: Get.width * 0.06,
+                                  backgroundColor: Colors.grey,
+                                ),
+                                SizedBox(
+                                  width: Get.width * 0.03,
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    SizedBox(
+                                      height: Get.height * 0.01,
+                                    ),
+                                    Text(
+                                      "loading",
+                                      style: TextStyle(
+                                        fontSize: Get.width * 0.025,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Check My Mood",
+                                      style:
+                                          TextStyle(fontSize: Get.width * 0.02),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: Get.width * 0.03),
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: Get.height * 0.06,
+                              child: Center(
+                                child: Text(
+                                  "loading",
+                                  textAlign: TextAlign.justify,
+                                  overflow: TextOverflow.fade,
+                                  style: TextStyle(fontSize: Get.width * 0.025),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: Get.height * 0.013,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          InkWell(
+                            onTap: () {},
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10),
+                            ),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: Get.width * 0.03,
+                                vertical: Get.height * 0.003,
+                              ),
+                              alignment: Alignment.center,
+                              decoration: const BoxDecoration(
+                                  color: Colors.black12,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                  )),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    CupertinoIcons.eye_fill,
+                                    color: Colors.black45,
+                                  ),
+                                  SizedBox(
+                                    width: Get.width * 0.02,
+                                  ),
+                                  const Text(
+                                    "view detail",
+                                    style: TextStyle(
+                                      color: Colors.black54,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,16 +1,20 @@
 import 'dart:developer';
-import 'package:timeago/timeago.dart' as timeago;
+import 'package:animated_emoji/animated_emoji.dart';
 import 'package:avatar_plus/avatar_plus.dart';
+import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/controllers/message_page_controller.dart';
 import 'package:emotion_tracker/app/controllers/online_controller.dart';
+import 'package:emotion_tracker/app/data/models/journal.dart';
+import 'package:intl/intl.dart';
+import '';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ShareSheet extends StatefulWidget {
-  const ShareSheet({Key? key}) : super(key: key);
-
+  const ShareSheet({Key? key, required this.journal}) : super(key: key);
+  final Journal journal;
   @override
   State<ShareSheet> createState() => _ShareSheetState();
 }
@@ -19,6 +23,7 @@ class _ShareSheetState extends State<ShareSheet> {
   final MessagePageController messagePageController = MessagePageController();
   final FriendsController friendsController = Get.put(FriendsController());
   final OnlineController onlineController = Get.put(OnlineController());
+  final ChatController chatController = Get.put(ChatController());
 
   @override
   void initState() {
@@ -29,22 +34,46 @@ class _ShareSheetState extends State<ShareSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(Get.width * 0.03),
-      child: SizedBox(
-        height: Get.height,
-        width: Get.width,
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return SizedBox(
+      height: Get.height,
+      width: Get.width,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Transform(
+            transform: Matrix4.translationValues(0, -Get.height * 0.03, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "Share your MOOD ",
-                  style: TextStyle(
-                    fontSize: Get.width * 0.055,
-                    fontWeight: FontWeight.w500,
+                CircleAvatar(
+                  backgroundColor: Colors.white,
+                  radius: Get.height * 0.06,
+                  child: AnimatedEmoji(
+                    widget.journal.emotion,
+                    size: Get.width * 0.2,
                   ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: Get.height * 0.03,
+                    ),
+                    Text(
+                      DateFormat('MMMM d, y').format(widget.journal.date),
+                      style: TextStyle(
+                        fontSize: Get.width * 0.04,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      "Share your emotions ",
+                      style: TextStyle(
+                        fontSize: Get.width * 0.045,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
                 IconButton(
                   onPressed: () => Get.back(),
@@ -52,41 +81,41 @@ class _ShareSheetState extends State<ShareSheet> {
                     CupertinoIcons.xmark,
                   ),
                 ),
+                const SizedBox()
               ],
             ),
-            Expanded(
-              child: Obx(
-                () {
-                  if (messagePageController.messages.isNotEmpty) {
-                    List<MapEntry> messages =
-                        messagePageController.messages.entries.toList();
-                    // Sort messages by timestamp of latest message
-                    messages.sort((a, b) {
-                      final aTimestamp = a.value.first.timestamp;
-                      final bTimestamp = b.value.first.timestamp;
-                      return bTimestamp
-                          .compareTo(aTimestamp); // Descending order
-                    });
+          ),
+          Expanded(
+            child: Obx(
+              () {
+                if (messagePageController.messages.isNotEmpty) {
+                  List<MapEntry> messages =
+                      messagePageController.messages.entries.toList();
+                  // Sort messages by timestamp of latest message
+                  messages.sort((a, b) {
+                    final aTimestamp = a.value.first.timestamp;
+                    final bTimestamp = b.value.first.timestamp;
+                    return bTimestamp.compareTo(aTimestamp); // Descending order
+                  });
 
-                    // is message empty
-                    var isMessageEmpty = true;
-                    for (var element in messages) {
-                      if (element.value.isNotEmpty) {
-                        isMessageEmpty = false;
-                      }
+                  // is message empty
+                  var isMessageEmpty = true;
+                  for (var element in messages) {
+                    if (element.value.isNotEmpty) {
+                      isMessageEmpty = false;
                     }
-                    if (isMessageEmpty) {
-                      return _noMessage();
-                    }
-                    // data widget
-                    return _message(messages);
                   }
-                  return _noMessage();
-                },
-              ),
+                  if (isMessageEmpty) {
+                    return _noMessage();
+                  }
+                  // data widget
+                  return _message(messages);
+                }
+                return _noMessage();
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -133,7 +162,9 @@ class _ShareSheetState extends State<ShareSheet> {
                   iconColor: Colors.white,
                   backgroundColor: Colors.blue,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  chatController.sendJournal(friend.uid, widget.journal);
+                },
                 icon: const Icon(CupertinoIcons.paperplane_fill),
                 label: const Text(
                   "send",
@@ -176,9 +207,11 @@ class _ShareSheetState extends State<ShareSheet> {
   }
 }
 
-void showShareSheet(String jid) {
+void showShareSheet(Journal jid) {
   Get.bottomSheet(
-    ShareSheet(),
+    ShareSheet(
+      journal: jid,
+    ),
     elevation: 1,
     backgroundColor: Colors.white,
     enableDrag: true,

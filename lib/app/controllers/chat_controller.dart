@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emotion_tracker/app/data/models/journal.dart';
 import 'package:emotion_tracker/app/data/models/message.dart';
 import 'package:emotion_tracker/app/data/services/chat_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -72,7 +73,9 @@ class ChatController extends GetxController {
     clearMessage();
   }
 
-  Future<void> sendJournal(String uid, String jid) async {
+  Future<void> sendJournal(String uid, Journal journal) async {
+    String jid = "journal_${journal.date.toString().split(" ")[0]}";
+    
     final m = Message(
       id: "${_cuid}_${uid}_${DateTime.now().microsecondsSinceEpoch}",
       uid: uid,
