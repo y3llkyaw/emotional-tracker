@@ -2,12 +2,14 @@ import 'package:animated_emoji/animated_emoji.dart';
 // import 'package:audioplayers/audioplayers.dart';
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:chat_bubbles/bubbles/bubble_normal.dart';
+import 'package:cool_dropdown/utils/extension_util.dart';
 import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/data/models/journal.dart';
 import 'package:emotion_tracker/app/data/models/message.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
+import 'package:emotion_tracker/app/ui/pages/journal_page/data_journal.v2.dart';
 import 'package:emotion_tracker/app/ui/utils/helper_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -108,6 +110,9 @@ class _ChatPageState extends State<ChatPage> {
                       if (chatController.messages[index].type == "journal") {
                         return _buildJournalWidget(message, index);
                       }
+                      if (chatController.messages[index].type == "system") {
+                        return _buildSystemMessage(message);
+                      }
                       return _buildMessageWidget(message, index);
                     },
                   ),
@@ -138,29 +143,43 @@ class _ChatPageState extends State<ChatPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        IconButton(
-                          onPressed: () {
-                            chatController.showEmoji.value =
-                                !chatController.showEmoji.value;
-                          },
-                          icon: Icon(
-                            chatController.showEmoji.value
-                                ? CupertinoIcons.keyboard
-                                : CupertinoIcons.smiley,
-                            color: Colors.grey,
-                          ),
+                        Column(
+                          children: [
+                            Text(
+                              chatController.showEmoji.value
+                                  ? "keyboard"
+                                  : "stickers",
+                              style: TextStyle(
+                                fontSize: Get.width * 0.03,
+                                color: Colors.black26,
+                              ),
+                              softWrap: true,
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                chatController.showEmoji.value =
+                                    !chatController.showEmoji.value;
+                              },
+                              icon: Icon(
+                                chatController.showEmoji.value
+                                    ? CupertinoIcons.keyboard
+                                    : CupertinoIcons.smiley,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
                         ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            chatController.showEmoji.value
-                                ? CupertinoIcons.keyboard
-                                : CupertinoIcons.photo,
-                            color: Colors.grey,
-                          ),
-                        ),
+                        // IconButton(
+                        //   onPressed: () {},
+                        //   icon: Icon(
+                        //     chatController.showEmoji.value
+                        //         ? CupertinoIcons.keyboard
+                        //         : CupertinoIcons.photo,
+                        //     color: Colors.grey,
+                        //   ),
+                        // ),
                         Container(
-                          width: Get.width * 0.53,
+                          width: Get.width * 0.73,
                           padding: EdgeInsets.only(
                             left: Get.width * 0.03,
                             right: Get.width * 0.03,
@@ -266,7 +285,10 @@ class _ChatPageState extends State<ChatPage> {
 
   // Build Journal Widget
   _buildJournalWidget(Message message, int index) {
-    if (message.uid == FirebaseAuth.instance.currentUser!.uid) {}
+    bool isNotForme = false;
+    if (message.uid != FirebaseAuth.instance.currentUser!.uid) {
+      isNotForme = true;
+    }
 
     return FutureBuilder(
       future: journalController.getJournalByUidAndJid(
@@ -287,174 +309,201 @@ class _ChatPageState extends State<ChatPage> {
 
         return Column(
           crossAxisAlignment:
-              message.uid != FirebaseAuth.instance.currentUser!.uid
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start,
+              isNotForme ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
-            Container(
-              margin: EdgeInsets.symmetric(vertical: Get.height * 0.02),
-              child: Column(
-                crossAxisAlignment:
-                    message.uid != FirebaseAuth.instance.currentUser!.uid
-                        ? CrossAxisAlignment.end
-                        : CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment:
-                        message.uid != FirebaseAuth.instance.currentUser!.uid
-                            ? MainAxisAlignment.end
-                            : MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin:
-                            EdgeInsets.symmetric(horizontal: Get.width * 0.03),
-                        width: Get.width * 0.5,
-                        decoration: BoxDecoration(
-                          color: valueToColor(journal.value),
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20),
-                            bottomLeft: Radius.circular(20),
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Stack(
-                              alignment: Alignment.topRight,
-                              children: [
-                                Transform(
-                                  transform: Matrix4.translationValues(
-                                      -Get.height * 0.01,
-                                      -Get.height * 0.01,
-                                      0),
-                                  child: Row(
-                                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          color: valueToColor(journal.value),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: CircleAvatar(
-                                          radius: Get.width * 0.06,
-                                          backgroundColor:
-                                              Colors.white.withOpacity(0.4),
-                                          child: AnimatedEmoji(
-                                            journal.emotion,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: Get.width * 0.03,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          SizedBox(
-                                            height: Get.height * 0.01,
-                                          ),
-                                          Text(
-                                            DateFormat('MMM d, yyyy')
-                                                .format(journal.date),
-                                            style: TextStyle(
-                                              fontSize: Get.width * 0.025,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          Text(
-                                            "Check My Mood",
-                                            style: TextStyle(
-                                              fontSize: Get.width * 0.02,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+            InkWell(
+              onTap: () {
+                Get.to(
+                  () => DataJournalV2(
+                    journal: journal,
+                    heroId: message.id,
+                    friProfile: widget.profile,
+                  ),
+                );
+              },
+              child: Container(
+                margin: EdgeInsets.symmetric(vertical: Get.height * 0.02),
+                child: Column(
+                  crossAxisAlignment: isNotForme
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: isNotForme
+                          ? MainAxisAlignment.end
+                          : MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.symmetric(
+                              horizontal: Get.width * 0.03),
+                          width: Get.width * 0.5,
+                          decoration: BoxDecoration(
+                            color: valueToColor(journal.value),
+                            borderRadius: BorderRadius.only(
+                              topLeft: const Radius.circular(20),
+                              topRight: const Radius.circular(20),
+                              bottomLeft: Radius.circular(isNotForme ? 20 : 0),
+                              bottomRight: Radius.circular(isNotForme ? 0 : 20),
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: Get.width * 0.03),
-                              child: Column(
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Stack(
+                                alignment: Alignment.topRight,
                                 children: [
-                                  SizedBox(
-                                    height: Get.height * 0.06,
-                                    child: Center(
-                                      child: Text(
-                                        journal.content,
-                                        textAlign: TextAlign.justify,
-                                        overflow: TextOverflow.fade,
-                                        style: TextStyle(
-                                          fontSize: Get.width * 0.032,
-                                          color: Colors.white,
+                                  Transform(
+                                    transform: Matrix4.translationValues(
+                                        isNotForme
+                                            ? -Get.height * 0.01
+                                            : Get.height * 0.01,
+                                        -Get.height * 0.01,
+                                        0),
+                                    child: Row(
+                                      mainAxisAlignment: isNotForme
+                                          ? MainAxisAlignment.start
+                                          : MainAxisAlignment.end,
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            color: valueToColor(journal.value),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: CircleAvatar(
+                                            radius: Get.width * 0.08,
+                                            backgroundColor:
+                                                Colors.white.withOpacity(0.4),
+                                            child: Hero(
+                                              tag:
+                                                  "journal_${journal.date}_${message.id}",
+                                              child: AnimatedEmoji(
+                                                journal.emotion,
+                                                size: Get.width * 0.1,
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                      ),
+                                        SizedBox(
+                                          width: Get.width * 0.03,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment: isNotForme
+                                              ? CrossAxisAlignment.start
+                                              : CrossAxisAlignment.end,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            SizedBox(
+                                              height: Get.height * 0.01,
+                                            ),
+                                            Text(
+                                              DateFormat('MMM d, yyyy')
+                                                  .format(journal.date),
+                                              style: TextStyle(
+                                                fontSize: Get.width * 0.035,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            Text(
+                                              "Check My Mood",
+                                              style: TextStyle(
+                                                fontSize: Get.width * 0.025,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ].isReverse(!isNotForme),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: Get.height * 0.013,
                                   ),
                                 ],
                               ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                InkWell(
-                                  onTap: () {},
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(10),
-                                    topRight: Radius.circular(10),
-                                  ),
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: Get.width * 0.03,
-                                      vertical: Get.height * 0.003,
-                                    ),
-                                    alignment: Alignment.center,
-                                    decoration: const BoxDecoration(
-                                        color: Colors.white30,
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(10),
-                                          topRight: Radius.circular(10),
-                                        )),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        const Icon(
-                                          CupertinoIcons.eye_fill,
-                                          color: Colors.white,
-                                        ),
-                                        SizedBox(
-                                          width: Get.width * 0.02,
-                                        ),
-                                        const Text(
-                                          "view detail",
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: Get.width * 0.03),
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height: Get.height * 0.06,
+                                      child: Center(
+                                        child: Text(
+                                          journal.content,
+                                          textAlign: TextAlign.justify,
+                                          overflow: TextOverflow.fade,
                                           style: TextStyle(
+                                            fontSize: Get.width * 0.032,
                                             color: Colors.white,
                                           ),
-                                        )
-                                      ],
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    SizedBox(
+                                      height: Get.height * 0.013,
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ],
+                              ),
+                              // Row(
+                              //   mainAxisAlignment: MainAxisAlignment.center,
+                              //   children: [
+                              //     InkWell(
+                              //       onTap: () {
+                              //         Get.to(
+                              //           () => DataJournalV2(
+                              //             journal: journal,
+                              //             heroId: message.id,
+                              //             friProfile: widget.profile,
+                              //           ),
+                              //         );
+                              //       },
+                              //       borderRadius: const BorderRadius.only(
+                              //         topLeft: Radius.circular(10),
+                              //         topRight: Radius.circular(10),
+                              //       ),
+                              //       child: Container(
+                              //         padding: EdgeInsets.symmetric(
+                              //           horizontal: Get.width * 0.03,
+                              //           vertical: Get.height * 0.003,
+                              //         ),
+                              //         alignment: Alignment.center,
+                              //         decoration: const BoxDecoration(
+                              //             color: Colors.white30,
+                              //             borderRadius: BorderRadius.only(
+                              //               topLeft: Radius.circular(10),
+                              //               topRight: Radius.circular(10),
+                              //             )),
+                              //         child: Row(
+                              //           mainAxisAlignment:
+                              //               MainAxisAlignment.center,
+                              //           children: [
+                              //             const Icon(
+                              //               CupertinoIcons.eye_fill,
+                              //               color: Colors.black54,
+                              //             ),
+                              //             SizedBox(
+                              //               width: Get.width * 0.02,
+                              //             ),
+                              //             const Text(
+                              //               "detail",
+                              //               style: TextStyle(
+                              //                 color: Colors.black54,
+                              //                 // fontWeight: FontWeight.w300,
+                              //               ),
+                              //             )
+                              //           ],
+                              //         ),
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             Container(
@@ -504,6 +553,20 @@ class _ChatPageState extends State<ChatPage> {
           ],
         );
       },
+    );
+  }
+
+  Widget _buildSystemMessage(Message message) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          message.message,
+          style: const TextStyle(
+            color: Colors.black38,
+          ),
+        )
+      ],
     );
   }
 

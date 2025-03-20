@@ -133,11 +133,9 @@ class CalendarPage extends GetView<HomeController> {
                                 topRight: Radius.circular(20),
                               ),
                               onTap: () {
-                                // "journal_${date.value.toString().split(" ")[0]}"
-                                final jid =
-                                    "journal_${journalController.journals[index].date.toString().split(" ")[0]}";
                                 showShareSheet(
-                                    journalController.journals[index]);
+                                  journalController.journals[index],
+                                );
                               },
                               child: Container(
                                 padding: const EdgeInsets.all(20),

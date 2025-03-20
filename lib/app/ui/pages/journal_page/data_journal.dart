@@ -25,7 +25,9 @@ class DataJournalPage extends StatelessWidget {
             var journalList = journalController.journals.value;
             int index = journalController.indexDataJournal.value;
             if (index < 0 || index >= journalList.length) {
-              return Center(child: Text('No journal entry available'));
+              return const Center(
+                child: Text('No journal entry available'),
+              );
             }
             return GestureDetector(
               onHorizontalDragEnd: (details) {
@@ -174,20 +176,6 @@ class DataJournalPage extends StatelessWidget {
   }
 }
 
-class Journal {
-  final String uid;
-  final DateTime date;
-  final String content;
-  final AnimatedEmojiData emotion;
-
-  Journal({
-    required this.uid,
-    required this.date,
-    required this.content,
-    required this.emotion,
-  });
-}
-
 class JournalPageView extends StatelessWidget {
   final JournalController journalController = Get.put(JournalController());
 
@@ -329,7 +317,8 @@ class JournalPageView extends StatelessWidget {
                               scrollDirection: Axis.vertical,
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: valueToColor(journalList[index].value).withOpacity(0.4),
+                                  color: valueToColor(journalList[index].value)
+                                      .withOpacity(0.4),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 height: Get.height * 0.33,

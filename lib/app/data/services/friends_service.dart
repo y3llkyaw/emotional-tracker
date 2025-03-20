@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
+import 'package:emotion_tracker/app/data/services/chat_service.dart';
 import 'package:emotion_tracker/app/data/services/notification_service.dart';
 import 'package:emotion_tracker/app/sources/enums.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,6 +13,7 @@ class FriendService {
   final _cuid = FirebaseAuth.instance.currentUser!.uid;
   final _ns = NotificationService();
   final profilePageController = ProfilePageController();
+  final _chatServices = ChatService();
 
   Future<List> searchFriendsWithName(String query) async {
     // search for friends
@@ -142,8 +144,8 @@ class FriendService {
         .collection("friends")
         .doc(_cuid)
         .set({"uid": _cuid, "timestamp": Timestamp.now()});
-    _ns.sendFriendAcceptNoti(profile);
-
+    await _ns.sendFriendAcceptNoti(profile);
+    await _chatServices.sendSystemMessage(SystemMessage.friend, profile.uid);
     log("finished", name: "friends-services");
   }
 

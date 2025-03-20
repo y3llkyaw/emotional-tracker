@@ -7,7 +7,6 @@ import 'package:emotion_tracker/app/controllers/message_page_controller.dart';
 import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/data/models/journal.dart';
 import 'package:intl/intl.dart';
-import '';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,6 +23,7 @@ class _ShareSheetState extends State<ShareSheet> {
   final FriendsController friendsController = Get.put(FriendsController());
   final OnlineController onlineController = Get.put(OnlineController());
   final ChatController chatController = Get.put(ChatController());
+  var alreadyShard = false;
 
   @override
   void initState() {
@@ -109,7 +109,9 @@ class _ShareSheetState extends State<ShareSheet> {
                     return _noMessage();
                   }
                   // data widget
-                  return _message(messages);
+                  return _message(
+                    messages,
+                  );
                 }
                 return _noMessage();
               },
@@ -163,7 +165,12 @@ class _ShareSheetState extends State<ShareSheet> {
                   backgroundColor: Colors.blue,
                 ),
                 onPressed: () {
-                  chatController.sendJournal(friend.uid, widget.journal);
+                  chatController
+                      .sendJournal(
+                        friend.uid,
+                        widget.journal,
+                      )
+                      .then((v) => {});
                 },
                 icon: const Icon(CupertinoIcons.paperplane_fill),
                 label: const Text(

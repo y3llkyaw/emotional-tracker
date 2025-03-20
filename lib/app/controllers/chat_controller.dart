@@ -69,13 +69,13 @@ class ChatController extends GetxController {
     if (m.message == "") {
       return;
     }
-    await chatService.sendSticker(m);
+    await chatService.sendMessage(m);
     clearMessage();
   }
 
   Future<void> sendJournal(String uid, Journal journal) async {
     String jid = "journal_${journal.date.toString().split(" ")[0]}";
-    
+
     final m = Message(
       id: "${_cuid}_${uid}_${DateTime.now().microsecondsSinceEpoch}",
       uid: uid,
@@ -87,7 +87,7 @@ class ChatController extends GetxController {
     if (m.message == "") {
       return;
     }
-    await chatService.sendJournal(m);
+    await chatService.sendMessage(m);
     clearMessage();
   }
 

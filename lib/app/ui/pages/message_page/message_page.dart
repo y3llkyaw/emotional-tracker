@@ -12,7 +12,7 @@ import 'package:get/get.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class MessagePage extends StatefulWidget {
-  MessagePage({Key? key}) : super(key: key);
+  const MessagePage({Key? key}) : super(key: key);
 
   @override
   State<MessagePage> createState() => _MessagePageState();
@@ -126,7 +126,11 @@ class _MessagePageState extends State<MessagePage> {
                     ),
                   ],
                 ),
-                subtitle: Text(messages[index].value.first.message),
+                subtitle: Text(messages[index].value.first.type == "journal"
+                    ? "sent a mood."
+                    : messages[index].value.first.type == "sticker"
+                        ? "sent a sticker"
+                        : messages[index].value.first.message),
                 // trailing: Text("data"),
                 trailing: Text(
                   timeago.format(
@@ -172,5 +176,4 @@ class _MessagePageState extends State<MessagePage> {
       ],
     );
   }
-
 }

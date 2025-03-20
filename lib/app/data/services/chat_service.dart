@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/data/models/message.dart';
+import 'package:emotion_tracker/app/sources/enums.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -14,6 +15,24 @@ class ChatService {
     List<String> ids = [uid1, uid2];
     ids.sort();
     return "${ids[0]}_${ids[1]}";
+  }
+
+  Future<void> sendSystemMessage(SystemMessage sysMsg, String rUid) async {
+    String msgTxt = "";
+    if (sysMsg == SystemMessage.friend) {
+      msgTxt = "you are friends, now.";
+    } else {
+      msgTxt = "you are friends, now.";
+    }
+    Message message = Message(
+      id: "${_cuid}_${rUid}_${DateTime.now().microsecondsSinceEpoch}",
+      uid: rUid,
+      read: false,
+      message: msgTxt,
+      timestamp: Timestamp.now(),
+      type: "system",
+    );
+    await sendMessage(message);
   }
 
   Future<void> sendMessage(Message message) async {
@@ -30,42 +49,6 @@ class ChatService {
           log("send");
         },
       ).onError((e, stackTrace) {
-        log(e.toString());
-      });
-    } catch (e) {
-      log(e.toString());
-    }
-  }
-
-  Future<void> sendSticker(Message message) async {
-    try {
-      String chatId = _getChatId(_cuid, message.uid);
-      await _firestore
-          .collection("chats")
-          .doc(chatId)
-          .collection("messages")
-          .doc(message.id)
-          .set(message.toDocument())
-          .then((v) => log("sent sticker successfully"))
-          .onError((e, stackTrace) {
-        log(e.toString());
-      });
-    } catch (e) {
-      log(e.toString());
-    }
-  }
-
-  Future<void> sendJournal(Message message) async {
-    try {
-      String chatId = _getChatId(_cuid, message.uid);
-      await _firestore
-          .collection("chats")
-          .doc(chatId)
-          .collection("messages")
-          .doc(message.id)
-          .set(message.toDocument())
-          .then((v) => log("sent sticker successfully"))
-          .onError((e, stackTrace) {
         log(e.toString());
       });
     } catch (e) {
