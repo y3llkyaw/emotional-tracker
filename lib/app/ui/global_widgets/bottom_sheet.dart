@@ -1,10 +1,15 @@
 import 'package:animated_emoji/animated_emoji.dart';
+import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
+import 'package:emotion_tracker/app/data/models/message.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/radio_emoji_selction.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+final ChatController chatController = Get.put(ChatController());
 final JournalController journalController = Get.put(JournalController());
 void showEmojiBottomSheet(DateTime date) {
   AnimatedEmojiData selectedEmoji = AnimatedEmojis.neutralFace;
@@ -276,5 +281,40 @@ void showProfileStatusBottomSheet(selectedEmoji) {
     elevation: 1,
     backgroundColor: Colors.black54,
     enableDrag: true,
+  );
+}
+
+void showMessageActionBottomSheet(Message message, String fid) {
+  showModalBottomSheet(
+    context: Get.context!,
+    builder: (context) {
+      return Container(
+        height: Get.height * 0.2,
+        padding: EdgeInsets.symmetric(
+          horizontal: Get.width * 0.05,
+          vertical: Get.height * 0.02,
+        ),
+        child: Column(
+          children: [
+            ListTile(
+              leading: const Icon(CupertinoIcons.delete),
+              title: const Text("Delete Message"),
+              onTap: () {
+                chatController.deleteMessage(message, fid);
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.copy),
+              title: const Text("Copy Message"),
+              onTap: () {
+                Clipboard.setData(ClipboardData(text: message.message));
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
+    },
   );
 }

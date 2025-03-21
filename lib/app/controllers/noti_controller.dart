@@ -11,13 +11,13 @@ class NotiController extends GetxController {
 
   @override
   onInit() {
-    streamNoti();
+    streamUnreadNoti();
     getAllNotification();
     super.onInit();
   }
 
   Future<void> getNotification() async {
-    notifications.value = streamNoti();
+    notifications.value = streamUnreadNoti();
   }
 
   Future<void> getAllNotification() async {
@@ -28,7 +28,7 @@ class NotiController extends GetxController {
     await ns.readNoti(nid);
   }
 
-  Stream<List<Map<String, dynamic>>> streamNoti() {
+  Stream<List<Map<String, dynamic>>> streamUnreadNoti() {
     log("stream worked");
     return FirebaseFirestore.instance
         .collection("profile")

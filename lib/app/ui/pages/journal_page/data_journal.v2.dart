@@ -2,7 +2,9 @@ import 'package:animated_emoji/emoji.dart';
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/data/models/journal.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
+import 'package:emotion_tracker/app/ui/utils/helper_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -28,7 +30,7 @@ class DataJournalV2 extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: ListTile(
-          leading: CircleAvatar(
+          trailing: CircleAvatar(
             child: AvatarPlus(
               isFriMood
                   ? friProfile.uid + friProfile.name
@@ -40,17 +42,47 @@ class DataJournalV2 extends StatelessWidget {
             "${isFriMood ? "${friProfile.name}'s" : "Your"} Mood",
             style: TextStyle(
               fontSize: Get.width * 0.04,
+              fontWeight: FontWeight.bold,
             ),
             overflow: TextOverflow.ellipsis,
           ),
           subtitle: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Icon(Icons.calendar_month),
+              Icon(
+                CupertinoIcons.smiley_fill,
+                color: valueToColor(journal.value),
+              ),
               SizedBox(
                 width: Get.width * 0.013,
               ),
-              Text(DateFormat('dd/MM/yy').format(journal.date)),
+              Text(
+                valueToString(journal.value),
+                style: TextStyle(
+                  fontSize: Get.width * 0.03,
+                  color: valueToColor(journal.value),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(
+                width: Get.width * 0.026,
+              ),
+              Icon(
+                CupertinoIcons.calendar_today,
+                color: valueToColor(journal.value),
+              ),
+              SizedBox(
+                width: Get.width * 0.013,
+              ),
+              Text(
+                DateFormat('dd/MM/yy').format(journal.date),
+                style: TextStyle(
+                  fontSize: Get.width * 0.03,
+                  color: valueToColor(journal.value),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ],
           ),
         ),
@@ -68,14 +100,28 @@ class DataJournalV2 extends StatelessWidget {
                   child: AnimatedEmoji(journal.emotion)),
             ),
           ),
-          Text(journal.content),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
+            height: Get.height * 0.3,
+            child: SingleChildScrollView(
+              child: Text(
+                journal.content +
+                    journal.content +
+                    journal.content +
+                    journal.content,
+                style: TextStyle(
+                  fontSize: Get.width * 0.04,
+                ),
+              ),
+            ),
+          ),
           const Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text("data"),
             ],
-          )
+          ),
         ],
       ),
     );

@@ -81,6 +81,21 @@ class ChatService {
     }
   }
 
+  Future<void> deleteMessage(Message message, String fid) async {
+    try {
+      String chatId = _getChatId(_cuid, fid);
+      return await _firestore
+          .collection("chats")
+          .doc(chatId)
+          .collection("messages")
+          .doc(message.id)
+          .delete()
+          .then((v) {});
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
   Stream<Map<String, List<Message>>> getFriendsMessages() {
     return _firestore
         .collection("profile")
@@ -104,6 +119,37 @@ class ChatService {
           result[uids[i]] = messages[i];
         }
         return result;
+      });
+    }).switchMap((stream) => stream);
+  }
+
+  Stream<int> getUnreadMessageCount() {
+    return _firestore
+        .collection("profile")
+        .doc(_cuid)
+        .collection("friends")
+        .snapshots()
+        .asyncMap((snapshot) async {
+      Map<String, Stream<List<Message>>> friendMessageStreams = {};
+      for (var doc in snapshot.docs) {
+        String uid = doc.data()['uid'];
+        friendMessageStreams[uid] = getUserMessages(uid);
+      }
+
+      return CombineLatestStream.combine2(
+          Stream.value(friendMessageStreams.keys.toList()),
+          CombineLatestStream.list(friendMessageStreams.values),
+          (List<String> uids, List<List<Message>> messages) {
+        int unreadCount = 0;
+        for (var message in messages) {
+          for (var msg in message) {
+            if (msg.read == false && msg.uid == _cuid) {
+              unreadCount++;
+            }
+          }
+        }
+        print(unreadCount);
+        return unreadCount;
       });
     }).switchMap((stream) => stream);
   }

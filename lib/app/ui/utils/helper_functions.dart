@@ -8,23 +8,6 @@ String splitCamelCase(String input) {
   });
 }
 
-// Color valueToColor(int value) {
-//   switch (value) {
-//     case 0:
-//       return const Color.fromARGB(255, 255, 147, 85);
-//     case 1:
-//       return const Color.fromARGB(255, 91, 133, 206);
-//     case 2:
-//       return Colors.grey;
-//     case 3:
-//       return Colors.green;
-//     case 4:
-//       return const Color.fromARGB(255, 211, 201, 61);
-//     default:
-//       return Colors.white;
-//   }
-// }
-
 Color valueToColor(int value) {
   switch (value) {
     case 0:
@@ -39,5 +22,22 @@ Color valueToColor(int value) {
       return Colors.green;
     default:
       return Colors.white;
+  }
+}
+
+String valueToString(int value) {
+  switch (value) {
+    case 0:
+      return "Super Bad";
+    case 1:
+      return "Kinda Bad";
+    case 2:
+      return "Meh";
+    case 3:
+      return "Pretty Good";
+    case 4:
+      return "Awesome";
+    default:
+      return "Nahh";
   }
 }

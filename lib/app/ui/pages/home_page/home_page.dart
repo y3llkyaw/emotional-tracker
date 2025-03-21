@@ -1,3 +1,4 @@
+import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/controllers/noti_controller.dart';
 import 'package:emotion_tracker/app/ui/pages/calendar_page/calendar_page.dart';
 import 'package:emotion_tracker/app/ui/pages/friends_pages/friends_page.dart';
@@ -15,6 +16,8 @@ class HomePage extends GetView<HomeController> {
   final HomeController homeController = Get.find();
   final noti = NotiController();
 
+  final ChatController chatController = Get.put(ChatController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +29,7 @@ class HomePage extends GetView<HomeController> {
               CalendarPage(),
               FriendsPage(),
               const NotificationPage(),
-              MessagePage(),
+              const MessagePage(),
               const ProfilePage(),
             ],
           ),
@@ -72,7 +75,7 @@ class HomePage extends GetView<HomeController> {
                     children: [
                       const Icon(CupertinoIcons.bell),
                       StreamBuilder(
-                        stream: noti.streamNoti(),
+                        stream: noti.streamUnreadNoti(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData && snapshot.data is List) {
                             if ((snapshot.data as List).isEmpty) {
@@ -89,10 +92,28 @@ class HomePage extends GetView<HomeController> {
                 ),
                 label: 'Notification',
               ),
-              const BottomNavigationBarItem(
+              BottomNavigationBarItem(
                 icon: Padding(
-                  padding: EdgeInsets.only(top: 10.0),
-                  child: Icon(CupertinoIcons.chat_bubble_2),
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Stack(
+                    children: [
+                      const Icon(CupertinoIcons.chat_bubble_2),
+                      StreamBuilder(
+                        stream: chatController.getUnreadMessageCount(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData && snapshot.data is int) {
+                            int count = snapshot.data as int;
+                            if (count == 0) {
+                              return const SizedBox();
+                            }
+                            return _redMark(snapshot.data as int);
+                          } else {
+                            return const SizedBox();
+                          }
+                        },
+                      )
+                    ],
+                  ),
                 ),
                 label: 'Messages',
               ),

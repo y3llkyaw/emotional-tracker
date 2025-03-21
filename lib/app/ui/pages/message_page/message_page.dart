@@ -2,10 +2,12 @@ import 'dart:developer';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:avatar_plus/avatar_plus.dart';
+import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/controllers/message_page_controller.dart';
 import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/ui/pages/chat_page/chat_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,10 +24,11 @@ class _MessagePageState extends State<MessagePage> {
   final MessagePageController messagePageController = MessagePageController();
   final FriendsController friendsController = Get.put(FriendsController());
   final OnlineController onlineController = Get.put(OnlineController());
-
+  final ChatController chatController = Get.put(ChatController());
   @override
   void initState() {
     friendsController.getFriends();
+    chatController.getUnreadMessageCount();
     messagePageController.getFriendsMessages();
     super.initState();
   }
@@ -97,6 +100,14 @@ class _MessagePageState extends State<MessagePage> {
             (e) => e.uid == messages[index].key,
             orElse: () => null, // Avoids errors if no match is found
           );
+          int count = 0;
+          final message = messages[index].value;
+          for (var msg in message) {
+            if (msg.uid == FirebaseAuth.instance.currentUser!.uid &&
+                msg.read == false) {
+              count++;
+            }
+          }
 
           if (friend != null && messages[index].value.isNotEmpty) {
             return InkWell(
@@ -111,8 +122,34 @@ class _MessagePageState extends State<MessagePage> {
               child: ListTile(
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: Get.width * 0.08),
-                leading: CircleAvatar(
-                  child: AvatarPlus("${messages[index].key}${friend.name}"),
+                leading: Stack(
+                  alignment: Alignment.topRight,
+                  children: [
+                    CircleAvatar(
+                      child: AvatarPlus("${messages[index].key}${friend.name}"),
+                    ),
+                    count == 0
+                        ? const SizedBox.shrink()
+                        : Container(
+                            padding: EdgeInsets.all(Get.width * 0.001),
+                            height: Get.width * 0.05,
+                            width: Get.width * 0.04,
+                            decoration: const BoxDecoration(
+                                color: Colors.red, shape: BoxShape.circle),
+                            child: Center(
+                              child: Text(
+                                count.toString(),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  textBaseline: TextBaseline.ideographic,
+                                  fontSize: Get.width * 0.03,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                  ],
                 ),
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -126,12 +163,16 @@ class _MessagePageState extends State<MessagePage> {
                     ),
                   ],
                 ),
-                subtitle: Text(messages[index].value.first.type == "journal"
-                    ? "sent a mood."
-                    : messages[index].value.first.type == "sticker"
-                        ? "sent a sticker"
-                        : messages[index].value.first.message),
-                // trailing: Text("data"),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(messages[index].value.first.type == "journal"
+                        ? "sent a mood."
+                        : messages[index].value.first.type == "sticker"
+                            ? "sent a sticker"
+                            : messages[index].value.first.message),
+                  ],
+                ),
                 trailing: Text(
                   timeago.format(
                     onlineController.friendsOnlineStatus[friend.uid]
@@ -139,7 +180,7 @@ class _MessagePageState extends State<MessagePage> {
                         DateTime.now(),
                   ),
                   style: TextStyle(
-                    fontSize: Get.width * 0.03,
+                    fontSize: Get.width * 0.025,
                     color: Colors.green,
                   ),
                 ),

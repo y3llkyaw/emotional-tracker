@@ -41,7 +41,7 @@ class DependecyInjection {
         ),
       );
     });
-
+    
     Get.put<NavigationController>(NavigationController());
     Get.put<MainController>(MainController());
   }

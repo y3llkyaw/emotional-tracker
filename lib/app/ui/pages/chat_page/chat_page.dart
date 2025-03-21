@@ -9,6 +9,7 @@ import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/data/models/journal.dart';
 import 'package:emotion_tracker/app/data/models/message.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/data_journal.v2.dart';
 import 'package:emotion_tracker/app/ui/utils/helper_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -153,7 +154,6 @@ class _ChatPageState extends State<ChatPage> {
                                 fontSize: Get.width * 0.03,
                                 color: Colors.black26,
                               ),
-                              softWrap: true,
                             ),
                             IconButton(
                               onPressed: () {
@@ -280,48 +280,79 @@ class _ChatPageState extends State<ChatPage> {
           ),
         ],
       ),
+      // floatingActionButton: Obx(
+      //   () => AnimatedSwitcher(
+      //     duration: const Duration(milliseconds: 500),
+      //     transitionBuilder: (Widget child, Animation<double> animation) {
+      //       return FadeTransition(
+      //         opacity: animation,
+      //         child: SlideTransition(
+      //           position: Tween<Offset>(
+      //             begin: const Offset(0.0, 0.5),
+      //             end: Offset.zero,
+      //           ).animate(animation),
+      //           child: child,
+      //         ),
+      //       );
+      //     },
+      //     child: chatController.isDeleting.value
+      //         ? Align(
+      //             key: const ValueKey('delete_button'),
+      //             alignment: Alignment.bottomCenter,
+      //             child: ElevatedButton.icon(
+      //               style: ElevatedButton.styleFrom(
+      //                 backgroundColor: Colors.blueAccent,
+      //                 foregroundColor: Colors.white,
+      //                 elevation: 0,
+      //               ),
+      //               onPressed: () async {
+      //                 chatController.isDeleting.value = false;
+      //               },
+      //               label: const Text("undo deleting meesage"),
+      //               icon: const Icon(
+      //                 CupertinoIcons.arrow_clockwise_circle,
+      //               ),
+      //             ),
+      //           )
+      //         : const SizedBox.shrink(key: ValueKey('empty')),
+      //   ),
+      // ),
     );
   }
 
   // Build Journal Widget
-  _buildJournalWidget(Message message, int index) {
+  Widget _buildJournalWidget(Message message, int index) {
     bool isNotForme = false;
     if (message.uid != FirebaseAuth.instance.currentUser!.uid) {
       isNotForme = true;
     }
 
-    return FutureBuilder(
-      future: journalController.getJournalByUidAndJid(
-          message.uid == FirebaseAuth.instance.currentUser!.uid
-              ? widget.profile.uid
-              : FirebaseAuth.instance.currentUser!.uid,
-          message.message),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _buildShimmerJournalCard(message);
-        }
-        // return _buildShimmerJournalCard(message);
+    return InkWell(
+      onLongPress: () {
+        showMessageActionBottomSheet(message, widget.profile.uid);
+      },
+      child: FutureBuilder(
+        future: journalController.getJournalByUidAndJid(
+            message.uid == FirebaseAuth.instance.currentUser!.uid
+                ? widget.profile.uid
+                : FirebaseAuth.instance.currentUser!.uid,
+            message.message),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return _buildShimmerJournalCard(message);
+          }
+          // return _buildShimmerJournalCard(message);
 
-        if (!snapshot.hasData) {
-          return const SizedBox();
-        }
-        final journal = snapshot.data! as Journal;
+          if (!snapshot.hasData) {
+            return const SizedBox();
+          }
+          final journal = snapshot.data! as Journal;
 
-        return Column(
-          crossAxisAlignment:
-              isNotForme ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          children: [
-            InkWell(
-              onTap: () {
-                Get.to(
-                  () => DataJournalV2(
-                    journal: journal,
-                    heroId: message.id,
-                    friProfile: widget.profile,
-                  ),
-                );
-              },
-              child: Container(
+          return Column(
+            crossAxisAlignment:
+                isNotForme ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              Container(
                 margin: EdgeInsets.symmetric(vertical: Get.height * 0.02),
                 child: Column(
                   crossAxisAlignment: isNotForme
@@ -333,171 +364,146 @@ class _ChatPageState extends State<ChatPage> {
                           ? MainAxisAlignment.end
                           : MainAxisAlignment.start,
                       children: [
-                        Container(
-                          margin: EdgeInsets.symmetric(
-                              horizontal: Get.width * 0.03),
-                          width: Get.width * 0.5,
-                          decoration: BoxDecoration(
-                            color: valueToColor(journal.value),
-                            borderRadius: BorderRadius.only(
-                              topLeft: const Radius.circular(20),
-                              topRight: const Radius.circular(20),
-                              bottomLeft: Radius.circular(isNotForme ? 20 : 0),
-                              bottomRight: Radius.circular(isNotForme ? 0 : 20),
-                            ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Stack(
-                                alignment: Alignment.topRight,
-                                children: [
-                                  Transform(
-                                    transform: Matrix4.translationValues(
-                                        isNotForme
-                                            ? -Get.height * 0.01
-                                            : Get.height * 0.01,
-                                        -Get.height * 0.01,
-                                        0),
-                                    child: Row(
-                                      mainAxisAlignment: isNotForme
-                                          ? MainAxisAlignment.start
-                                          : MainAxisAlignment.end,
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: valueToColor(journal.value),
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: CircleAvatar(
-                                            radius: Get.width * 0.08,
-                                            backgroundColor:
-                                                Colors.white.withOpacity(0.4),
-                                            child: Hero(
-                                              tag:
-                                                  "journal_${journal.date}_${message.id}",
-                                              child: AnimatedEmoji(
-                                                journal.emotion,
-                                                size: Get.width * 0.1,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: Get.width * 0.03,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment: isNotForme
-                                              ? CrossAxisAlignment.start
-                                              : CrossAxisAlignment.end,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          children: [
-                                            SizedBox(
-                                              height: Get.height * 0.01,
-                                            ),
-                                            Text(
-                                              DateFormat('MMM d, yyyy')
-                                                  .format(journal.date),
-                                              style: TextStyle(
-                                                fontSize: Get.width * 0.035,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            Text(
-                                              "Check My Mood",
-                                              style: TextStyle(
-                                                fontSize: Get.width * 0.025,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ].isReverse(!isNotForme),
-                                    ),
-                                  ),
-                                ],
+                        InkWell(
+                          onTap: () {
+                            Get.to(
+                              () => DataJournalV2(
+                                journal: journal,
+                                heroId: message.id,
+                                friProfile: widget.profile,
                               ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: Get.width * 0.03),
-                                child: Column(
+                              transition: Transition.rightToLeft,
+                            );
+                          },
+                          child: Container(
+                            margin: EdgeInsets.symmetric(
+                                horizontal: Get.width * 0.03),
+                            width: Get.width * 0.5,
+                            decoration: BoxDecoration(
+                              color: valueToColor(journal.value),
+                              borderRadius: BorderRadius.only(
+                                topLeft: const Radius.circular(20),
+                                topRight: const Radius.circular(20),
+                                bottomLeft:
+                                    Radius.circular(isNotForme ? 20 : 0),
+                                bottomRight:
+                                    Radius.circular(isNotForme ? 0 : 20),
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Stack(
+                                  alignment: Alignment.topRight,
                                   children: [
-                                    SizedBox(
-                                      height: Get.height * 0.06,
-                                      child: Center(
-                                        child: Text(
-                                          journal.content,
-                                          textAlign: TextAlign.justify,
-                                          overflow: TextOverflow.fade,
-                                          style: TextStyle(
-                                            fontSize: Get.width * 0.032,
-                                            color: Colors.white,
+                                    Transform(
+                                      transform: Matrix4.translationValues(
+                                          isNotForme
+                                              ? -Get.height * 0.01
+                                              : Get.height * 0.01,
+                                          -Get.height * 0.01,
+                                          0),
+                                      child: Row(
+                                        mainAxisAlignment: isNotForme
+                                            ? MainAxisAlignment.start
+                                            : MainAxisAlignment.end,
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  valueToColor(journal.value),
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: CircleAvatar(
+                                              radius: Get.width * 0.08,
+                                              backgroundColor:
+                                                  Colors.white.withOpacity(0.4),
+                                              child: Hero(
+                                                tag:
+                                                    "journal_${journal.date}_${message.id}",
+                                                child: AnimatedEmoji(
+                                                  journal.emotion,
+                                                  size: Get.width * 0.16,
+                                                ),
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                          SizedBox(
+                                            width: Get.width * 0.03,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment: isNotForme
+                                                ? CrossAxisAlignment.start
+                                                : CrossAxisAlignment.end,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            children: [
+                                              SizedBox(
+                                                height: Get.height * 0.01,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    DateFormat('MMM d, yyyy')
+                                                        .format(journal.date),
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          Get.width * 0.035,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: Get.width * 0.02,
+                                                  ),
+                                                  const Icon(
+                                                    CupertinoIcons.calendar,
+                                                    color: Colors.white,
+                                                  ),
+                                                ].isReverse(isNotForme),
+                                              ),
+                                              Text(
+                                                "Check My Mood",
+                                                style: TextStyle(
+                                                  fontSize: Get.width * 0.025,
+                                                  color: Colors.white38,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ].isReverse(!isNotForme),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: Get.height * 0.013,
                                     ),
                                   ],
                                 ),
-                              ),
-                              // Row(
-                              //   mainAxisAlignment: MainAxisAlignment.center,
-                              //   children: [
-                              //     InkWell(
-                              //       onTap: () {
-                              //         Get.to(
-                              //           () => DataJournalV2(
-                              //             journal: journal,
-                              //             heroId: message.id,
-                              //             friProfile: widget.profile,
-                              //           ),
-                              //         );
-                              //       },
-                              //       borderRadius: const BorderRadius.only(
-                              //         topLeft: Radius.circular(10),
-                              //         topRight: Radius.circular(10),
-                              //       ),
-                              //       child: Container(
-                              //         padding: EdgeInsets.symmetric(
-                              //           horizontal: Get.width * 0.03,
-                              //           vertical: Get.height * 0.003,
-                              //         ),
-                              //         alignment: Alignment.center,
-                              //         decoration: const BoxDecoration(
-                              //             color: Colors.white30,
-                              //             borderRadius: BorderRadius.only(
-                              //               topLeft: Radius.circular(10),
-                              //               topRight: Radius.circular(10),
-                              //             )),
-                              //         child: Row(
-                              //           mainAxisAlignment:
-                              //               MainAxisAlignment.center,
-                              //           children: [
-                              //             const Icon(
-                              //               CupertinoIcons.eye_fill,
-                              //               color: Colors.black54,
-                              //             ),
-                              //             SizedBox(
-                              //               width: Get.width * 0.02,
-                              //             ),
-                              //             const Text(
-                              //               "detail",
-                              //               style: TextStyle(
-                              //                 color: Colors.black54,
-                              //                 // fontWeight: FontWeight.w300,
-                              //               ),
-                              //             )
-                              //           ],
-                              //         ),
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ),
-                            ],
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: Get.width * 0.03),
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        height: Get.height * 0.06,
+                                        child: Center(
+                                          child: Text(
+                                            journal.content,
+                                            textAlign: TextAlign.justify,
+                                            overflow: TextOverflow.fade,
+                                            style: TextStyle(
+                                              fontSize: Get.width * 0.032,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: Get.height * 0.013,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         )
                       ],
@@ -505,57 +511,58 @@ class _ChatPageState extends State<ChatPage> {
                   ],
                 ),
               ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(right: 20, left: 20),
-              child: Row(
-                mainAxisAlignment: chatController.messages[index].uid ==
-                        FirebaseAuth.instance.currentUser!.uid
-                    ? MainAxisAlignment.start
-                    : MainAxisAlignment.end,
-                children: [
-                  chatController.messages[index].uid ==
+              Container(
+                margin: const EdgeInsets.only(right: 20, left: 20),
+                child: Row(
+                  mainAxisAlignment: chatController.messages[index].uid ==
                           FirebaseAuth.instance.currentUser!.uid
-                      ? Icon(
-                          Icons.done_all,
-                          size: Get.width * 0.03,
-                          color: message.read ? Colors.green : Colors.black12,
-                        )
-                      : Container(),
-                  SizedBox(
-                    width: Get.width * 0.014,
-                  ),
-                  Text(
-                    timeago.format(
-                      chatController.messages[index].timestamp.toDate(),
-                      // locale:
-                      //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
+                      ? MainAxisAlignment.start
+                      : MainAxisAlignment.end,
+                  children: [
+                    chatController.messages[index].uid ==
+                            FirebaseAuth.instance.currentUser!.uid
+                        ? Icon(
+                            Icons.done_all,
+                            size: Get.width * 0.03,
+                            color: message.read ? Colors.green : Colors.black12,
+                          )
+                        : Container(),
+                    SizedBox(
+                      width: Get.width * 0.014,
                     ),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
+                    Text(
+                      timeago.format(
+                        chatController.messages[index].timestamp.toDate(),
+                        // locale:
+                        //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
+                      ),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    width: Get.width * 0.014,
-                  ),
-                  chatController.messages[index].uid ==
-                          FirebaseAuth.instance.currentUser!.uid
-                      ? Container()
-                      : Icon(
-                          Icons.done_all,
-                          size: Get.width * 0.03,
-                          color: message.read ? Colors.green : Colors.black12,
-                        ),
-                ],
+                    SizedBox(
+                      width: Get.width * 0.014,
+                    ),
+                    chatController.messages[index].uid ==
+                            FirebaseAuth.instance.currentUser!.uid
+                        ? Container()
+                        : Icon(
+                            Icons.done_all,
+                            size: Get.width * 0.03,
+                            color: message.read ? Colors.green : Colors.black12,
+                          ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        );
-      },
+            ],
+          );
+        },
+      ),
     );
   }
 
+  // Build System Message Widget
   Widget _buildSystemMessage(Message message) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -570,6 +577,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
+  // Build Laoding Shimmer effect
   Widget _buildShimmerJournalCard(Message message) {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
@@ -719,109 +727,114 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   //Sticker widget
-  _buildStickerWidget(Message message, int index) {
+  Widget _buildStickerWidget(Message message, int index) {
     if (message.message.toString() == "") {
       return const Column();
     }
-    return Column(
-      crossAxisAlignment: message.uid != FirebaseAuth.instance.currentUser!.uid
-          ? CrossAxisAlignment.end
-          : CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment:
-              message.uid != FirebaseAuth.instance.currentUser!.uid
-                  ? MainAxisAlignment.end
-                  : MainAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              margin: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.black12,
-                borderRadius: BorderRadius.only(
-                  bottomLeft:
-                      message.uid != FirebaseAuth.instance.currentUser!.uid
-                          ? const Radius.circular(20)
-                          : const Radius.circular(0),
-                  bottomRight:
-                      message.uid != FirebaseAuth.instance.currentUser!.uid
-                          ? const Radius.circular(0)
-                          : const Radius.circular(20),
-                  topRight: const Radius.circular(20),
-                  topLeft: const Radius.circular(20),
-                ),
-              ),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: Get.height * 0.15,
-                    width: Get.width * 0.3,
-                    child: AnimatedEmoji(
-                      AnimatedEmojis.fromEmojiString(
-                        message.message,
-                      )!, // Add null check operator to handle nullable AnimatedEmojiData
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        Container(
-          margin: const EdgeInsets.only(right: 20, left: 20),
-          child: Row(
-            mainAxisAlignment: chatController.messages[index].uid ==
-                    FirebaseAuth.instance.currentUser!.uid
-                ? MainAxisAlignment.start
-                : MainAxisAlignment.end,
+    return InkWell(
+      onLongPress: () {
+        showMessageActionBottomSheet(message, widget.profile.uid);
+      },
+      child: Column(
+        crossAxisAlignment:
+            message.uid != FirebaseAuth.instance.currentUser!.uid
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment:
+                message.uid != FirebaseAuth.instance.currentUser!.uid
+                    ? MainAxisAlignment.end
+                    : MainAxisAlignment.start,
             children: [
-              chatController.messages[index].uid ==
-                      FirebaseAuth.instance.currentUser!.uid
-                  ? Icon(
-                      Icons.done_all,
-                      size: Get.width * 0.03,
-                      color: message.read ? Colors.green : Colors.black12,
-                    )
-                  : Container(),
-              SizedBox(
-                width: Get.width * 0.014,
-              ),
-              Text(
-                timeago.format(
-                  chatController.messages[index].timestamp.toDate(),
-                  // locale:
-                  //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
+              Container(
+                padding: const EdgeInsets.all(20),
+                margin: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.black12,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft:
+                        message.uid != FirebaseAuth.instance.currentUser!.uid
+                            ? const Radius.circular(20)
+                            : const Radius.circular(0),
+                    bottomRight:
+                        message.uid != FirebaseAuth.instance.currentUser!.uid
+                            ? const Radius.circular(0)
+                            : const Radius.circular(20),
+                    topRight: const Radius.circular(20),
+                    topLeft: const Radius.circular(20),
+                  ),
                 ),
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              ),
-              SizedBox(
-                width: Get.width * 0.014,
-              ),
-              chatController.messages[index].uid ==
-                      FirebaseAuth.instance.currentUser!.uid
-                  ? Container()
-                  : Icon(
-                      Icons.done_all,
-                      size: Get.width * 0.03,
-                      color: message.read ? Colors.green : Colors.black12,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: Get.height * 0.15,
+                      width: Get.width * 0.3,
+                      child: AnimatedEmoji(
+                        AnimatedEmojis.fromEmojiString(
+                          message.message,
+                        )!, // Add null check operator to handle nullable AnimatedEmojiData
+                      ),
                     ),
+                  ],
+                ),
+              ),
             ],
           ),
-        ),
-      ],
+          Container(
+            margin: const EdgeInsets.only(right: 20, left: 20),
+            child: Row(
+              mainAxisAlignment: chatController.messages[index].uid ==
+                      FirebaseAuth.instance.currentUser!.uid
+                  ? MainAxisAlignment.start
+                  : MainAxisAlignment.end,
+              children: [
+                chatController.messages[index].uid ==
+                        FirebaseAuth.instance.currentUser!.uid
+                    ? Icon(
+                        Icons.done_all,
+                        size: Get.width * 0.03,
+                        color: message.read ? Colors.green : Colors.black12,
+                      )
+                    : Container(),
+                SizedBox(
+                  width: Get.width * 0.014,
+                ),
+                Text(
+                  timeago.format(
+                    chatController.messages[index].timestamp.toDate(),
+                    // locale:
+                    //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
+                  ),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                SizedBox(
+                  width: Get.width * 0.014,
+                ),
+                chatController.messages[index].uid ==
+                        FirebaseAuth.instance.currentUser!.uid
+                    ? Container()
+                    : Icon(
+                        Icons.done_all,
+                        size: Get.width * 0.03,
+                        color: message.read ? Colors.green : Colors.black12,
+                      ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   // Message widget
-  _buildMessageWidget(Message message, int index) {
+  Widget _buildMessageWidget(Message message, int index) {
     return InkWell(
-      onLongPress: () {},
-      onTap: () async {
-        await chatController.readMessage(message, widget.profile.uid);
+      onLongPress: () {
+        showMessageActionBottomSheet(message, widget.profile.uid);
       },
       child: Container(
         padding: EdgeInsets.symmetric(vertical: Get.height * .01),

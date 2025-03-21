@@ -64,7 +64,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return ScreenUtilInit(
       builder: (_, __) {
         return GetMaterialApp(
-          title: 'Emotion_tracker',
+          title: 'MoodMate',
           debugShowCheckedModeBanner: false,
           theme: Themes().lightTheme,
           darkTheme: Themes().darkTheme,

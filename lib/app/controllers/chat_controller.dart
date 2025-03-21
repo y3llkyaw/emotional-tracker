@@ -11,10 +11,12 @@ class ChatController extends GetxController {
   final ChatService chatService = ChatService();
   final message = ''.obs;
   final showEmoji = false.obs;
+  final isDeleting = false.obs;
+
   final RxList<Message> messages = <Message>[].obs;
   Stream<List<Message>>? messageStream;
+
   final _cuid = FirebaseAuth.instance.currentUser!.uid;
-  var shareList = [].obs;
   var isLoading = false.obs;
 
   void getUserMessages(String uid) {
@@ -22,6 +24,10 @@ class ChatController extends GetxController {
     messageStream!.listen((newMessages) {
       messages.value = newMessages;
     });
+  }
+
+  Stream<int> getUnreadMessageCount() {
+    return chatService.getUnreadMessageCount();
   }
 
   void loadMoreMessages(String uid) async {
@@ -55,6 +61,10 @@ class ChatController extends GetxController {
     }
     await chatService.sendMessage(m).onError((error, stack) {});
     clearMessage();
+  }
+
+  Future<void> deleteMessage(Message message, String fid) async {
+    await chatService.deleteMessage(message, fid);
   }
 
   Future<void> sendSticker(String uid, String stickerData) async {
@@ -91,7 +101,7 @@ class ChatController extends GetxController {
     clearMessage();
   }
 
-  Future<void> readMessage(Message message, String uid) async {
+Future<void> readMessage(Message message, String uid) async {
     await chatService.readMessage(message, uid).then((v) {});
   }
 }
