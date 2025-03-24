@@ -19,8 +19,6 @@ class ProfilePageController extends GetxController {
     await getCurrentUserProfile();
   }
 
-
-
   List<String> newEmojiList() {
     final original = userProfile.value!.recentEmojis.map((e) => e.id).toList();
     if (!original.contains(journalController.emotion.value.id)) {
@@ -53,6 +51,7 @@ class ProfilePageController extends GetxController {
         return Profile(
           uid: "",
           name: "",
+          nameLowerCase: "",
           gender: Gender.Others,
           dob: Timestamp.now(),
           recentEmojis: [],

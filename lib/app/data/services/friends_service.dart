@@ -16,18 +16,21 @@ class FriendService {
   final _chatServices = ChatService();
 
   Future<List> searchFriendsWithName(String query) async {
+    final end = '$query\uf8ff'; // Unicode trick
     // search for friends
     var searchResults = [];
-    await _firestore.collection('profile').get().then((value) {
-      searchResults.clear();
-      for (var element in value.docs) {
-        var profile = Profile.fromDocument(element.data());
-        if (profile.uid != _cuid &&
-            profile.name.toLowerCase().contains(query.toLowerCase())) {
-          searchResults.add(profile);
-        }
+    final result = await _firestore
+        .collection('profile')
+        .where("name_lowercase", isGreaterThanOrEqualTo: query.toLowerCase())
+        .where("name_lowercase", isLessThan: end)
+        .get();
+
+    for (var r in result.docs) {
+      if (r.data()['uid'] != _cuid) {
+        searchResults.add(Profile.fromDocument(r.data()));
       }
-    });
+    }
+
     if (query.isEmpty) {
       searchResults.clear();
     }

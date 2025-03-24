@@ -5,6 +5,7 @@ import 'package:emotion_tracker/app/ui/global_widgets/outline_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -126,7 +127,12 @@ class LoginPage extends StatelessWidget {
               OutlineButtonWidget(
                 asset: "assets/image/google.svg",
                 text: "Login with Google",
-                onPressed: () {},
+                onPressed: () async {
+                  final GoogleSignIn _googleSignIn = GoogleSignIn();
+                  final GoogleSignInAccount? googleSignInAccount =
+                      await _googleSignIn.signIn();
+                  print(googleSignInAccount);
+                },
               ),
               const SizedBox(
                 height: 20,

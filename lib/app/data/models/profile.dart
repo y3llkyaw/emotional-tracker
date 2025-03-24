@@ -5,6 +5,7 @@ import 'package:emotion_tracker/app/sources/enums.dart';
 class Profile {
   final String uid;
   final String name;
+  final String nameLowerCase;
   final Gender gender;
   final Timestamp dob;
   final AnimatedEmojiData? emoji;
@@ -15,6 +16,7 @@ class Profile {
   Profile({
     required this.uid,
     required this.name,
+    required this.nameLowerCase,
     required this.gender,
     required this.dob,
     required this.recentEmojis,
@@ -26,6 +28,7 @@ class Profile {
     return {
       "uid": uid,
       "name": name,
+      "name_lowercase": nameLowerCase,
       "gender": gender.toString(),
       "dob": dob.toString(),
       "emoji": emoji?.toUnicodeEmoji() ?? "",
@@ -38,6 +41,7 @@ class Profile {
     return Profile(
       uid: json['uid'],
       name: json['name'],
+      nameLowerCase: json['name_lowercase'],
       gender: Gender.values
           .firstWhere((element) => element.toString() == json['gender']),
       dob: Timestamp.fromDate(DateTime.parse(json['dob'])),
@@ -46,6 +50,7 @@ class Profile {
       recentEmojis: _getEmojiList(json),
     );
   }
+
   static AnimatedEmojiData? _getEmojiFromJson(Map<String, dynamic> json) {
     try {
       return json['emotion'] != null

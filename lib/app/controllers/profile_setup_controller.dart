@@ -34,6 +34,7 @@ class ProfileSetupController extends GetxController {
       await firestore.collection("profile").doc(auth.currentUser?.uid).set({
         "uid": auth.currentUser?.uid,
         "name": name.value,
+        "name_lowercase": name.value.toLowerCase(),
         "gender": gender.value.toString(),
         "dob": dob.value.toIso8601String(),
         "recentEmojis": [
