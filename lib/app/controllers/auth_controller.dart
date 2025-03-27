@@ -1,10 +1,15 @@
+import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthController extends GetxController {
   // FirebaseAuth instance
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final ProfilePageController profilePageController = ProfilePageController();
   var isLoading = false.obs;
+
   // Reactive user object
   Rx<User?> firebaseUser = Rx<User?>(null);
 
@@ -13,6 +18,34 @@ class AuthController extends GetxController {
   void onInit() {
     super.onInit();
     firebaseUser.bindStream(_auth.authStateChanges());
+  }
+
+  Future<User?> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) return null; // User canceled login
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+      await profilePageController.getCurrentUserProfile().then((v) {
+        Get.toNamed("/home");
+      }).onError((error, stacTrace) {
+        Get.toNamed("/profile/name");
+      });
+      // Get.snackbar("Success", "Logged in successfully!");
+
+      return userCredential.user;
+    } catch (e) {
+      print("Google Sign-In Error: $e");
+      return null;
+    }
   }
 
   // Sign In with Email and Password

@@ -7,10 +7,10 @@ import 'package:get/get.dart';
 
 class ProfileSetupController extends GetxController {
   final RxBool loading = false.obs;
-  final FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  var name = "".obs;
+  var name = (FirebaseAuth.instance.currentUser!.displayName ?? "").obs;
   var gender = Gender.Male.obs;
   var day = DateTime.now().day.obs;
   var month = DateTime.now().month.obs;

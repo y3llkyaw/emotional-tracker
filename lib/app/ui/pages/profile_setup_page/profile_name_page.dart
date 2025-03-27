@@ -1,5 +1,6 @@
 import 'package:cool_dropdown/cool_dropdown.dart';
 import 'package:cool_dropdown/models/cool_dropdown_item.dart';
+import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_setup_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/form_container_widget.dart';
@@ -17,6 +18,8 @@ class ProfileNamePage extends StatefulWidget {
 
 class _ProfileNamePageState extends State<ProfileNamePage> {
   final ProfileSetupController profileSetupController = Get.find();
+  final ProfilePageController profilePageController = ProfilePageController();
+
   final nameController = TextEditingController();
   final DropdownController<int> dayController = DropdownController();
   final DropdownController<int> monthController = DropdownController();

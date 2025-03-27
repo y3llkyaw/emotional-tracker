@@ -48,130 +48,20 @@ class CalendarPage extends GetView<HomeController> {
                 scrollDirection: Axis.horizontal,
                 itemCount: journalController.journals.length,
                 itemBuilder: (context, index) {
-                  return Container(
-                    margin: EdgeInsets.all(Get.height * 0.02),
-                    child: Card(
-                      color:
-                          valueToColor(journalController.journals[index].value),
-                      shadowColor: Colors.transparent,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Transform(
-                                alignment: Alignment.center,
-                                transform: Matrix4.translationValues(
-                                    -Get.width * 0.02, -Get.height * 0.022, 0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      color: valueToColor(journalController
-                                          .journals[index].value),
-                                      shape: BoxShape.circle),
-                                  child: CircleAvatar(
-                                    radius: 30,
-                                    backgroundColor:
-                                        Colors.white.withOpacity(0.4),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: AnimatedEmoji(
-                                        journalController
-                                            .journals[index].emotion,
-                                        size: 50,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Transform(
-                                alignment: Alignment.center,
-                                transform: Matrix4.translationValues(
-                                    Get.width * 0.009, -Get.height * 0.012, 0),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: Get.width * 0.03),
-                                  child: Text(
-                                    DateFormat('MMMM d, y').format(
-                                      journalController.journals[index].date,
-                                    ),
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: Get.width * 0.05,
-                            ),
-                            child: SizedBox(
-                              width: 200,
-                              height: 100,
-                              child: Center(
-                                child: Text(
-                                  journalController.journals[index].content,
-                                  maxLines: 4,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const Spacer(),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: Get.width * 0.05,
-                            ),
-                            child: InkWell(
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(20),
-                                topRight: Radius.circular(20),
-                              ),
-                              onTap: () {
-                                showShareSheet(
-                                  journalController.journals[index],
-                                );
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(20),
-                                width: 200,
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.4),
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(20),
-                                    topRight: Radius.circular(20),
-                                  ),
-                                ),
-                                child: const Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                    Icon(
-                                      Icons.share,
-                                    ),
-                                    Text(
-                                      "share",
-                                      style: TextStyle(
-                                        color: Colors.black54,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                  return SizedBox(
+                    height: Get.height * 0.001,
+                    width: 240,
+                    child: Container(
+                      margin: EdgeInsets.all(Get.width * 0.03),
+                      color: Colors.blue,
+                      width: Get.height * 0.06, // Control the width
+                      height: Get.height *
+                          0.0003, // Now we directly set the height for the container
+                      child: Center(
+                        child: Text(
+                          "Item $index", // Example content
+                          style: const TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                   );

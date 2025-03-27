@@ -64,18 +64,26 @@ class ProfilePageController extends GetxController {
   }
 
   Future<void> getCurrentUserProfile() async {
-    final user = FirebaseAuth.instance.currentUser;
-    // await Future.delayed(const Duration(seconds: 5));
-    return await FirebaseFirestore.instance
-        .collection("profile")
-        .doc(user!.uid)
-        .get()
-        .then((value) {
-      if (value.exists) {
-        final profile = value.data() as Map<String, dynamic>;
-        userProfile.value = Profile.fromDocument(profile);
-      }
-    });
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      // await Future.delayed(const Duration(seconds: 5));
+      return await FirebaseFirestore.instance
+          .collection("profile")
+          .doc(user!.uid)
+          .get()
+          .then((value) {
+        if (value.exists) {
+          final profile = value.data() as Map<String, dynamic>;
+          print(profile);
+          log(profile.toString(), name: "profile-page-controller-log");
+          userProfile.value = Profile.fromDocument(profile);
+        } else {
+          Get.toNamed("profile/name");
+        }
+      });
+    } catch (e) {
+      log(e.toString(), name: "profile-page-controller-error");
+    }
   }
 
   Future<void> updateDisplayName(String name) async {

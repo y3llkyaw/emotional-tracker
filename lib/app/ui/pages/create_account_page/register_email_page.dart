@@ -24,7 +24,16 @@ class _RegisterEmailPageState extends State<RegisterEmailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        centerTitle: false,
+        title: const Text(
+          'Register With Email',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         physics: const ScrollPhysics(parent: BouncingScrollPhysics()),
         child: SizedBox(
@@ -32,35 +41,43 @@ class _RegisterEmailPageState extends State<RegisterEmailPage> {
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              // mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Sign Up With Email',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                SizedBox(
+                  height: Get.height * 0.001,
                 ),
                 SizedBox(
-                  height: 240,
+                  height: Get.height * 0.3,
                   width: double.infinity,
                   child: SvgPicture.asset(
                       "assets/image/undraw_access-account_aydp.svg"),
                 ),
+                SizedBox(
+                  height: Get.height * 0.03,
+                ),
                 FormContainerWidget(
                   controller: emailController,
                   hintText: 'Email Address',
+                ),
+                SizedBox(
+                  height: Get.height * 0.03,
                 ),
                 FormContainerWidget(
                   controller: passwordController,
                   hintText: 'Password',
                   isPasswordField: true,
                 ),
+                SizedBox(
+                  height: Get.height * 0.03,
+                ),
                 FormContainerWidget(
                   controller: confirmPasswordController,
                   hintText: 'Confirm Password',
                   isPasswordField: true,
+                ),
+                SizedBox(
+                  height: Get.height * 0.03,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -75,9 +92,13 @@ class _RegisterEmailPageState extends State<RegisterEmailPage> {
                     const Text("I agree to terms & conditions"),
                   ],
                 ),
+
                 const Text(
                   "By continuing, I agree to Alan Mind's Terms of Service. I also consent to the use of my app usage data to improve MindPeers and the relevancy of advertising campaigns for the app. Alan Mind will never use your journal entries: only you can read them. See our Privacy Policy for more information",
                   style: TextStyle(fontSize: 12),
+                ),
+                SizedBox(
+                  height: Get.height * 0.03,
                 ),
                 Obx(
                   () => CustomButton(

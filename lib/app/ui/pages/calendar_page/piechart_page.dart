@@ -147,6 +147,20 @@ class PiechartPage extends StatelessWidget {
                   _labelWidget(Colors.grey, "Meh"),
                   _labelWidget(Colors.lightGreen, "Pretty Good"),
                   _labelWidget(Colors.green, "Awsome"),
+                  SizedBox(
+                    height: Get.height * 0.02,
+                  ),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueAccent,
+                      ),
+                      onPressed: () {},
+                      child: const Text(
+                        "view all data",
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ))
                 ],
               )
             ],

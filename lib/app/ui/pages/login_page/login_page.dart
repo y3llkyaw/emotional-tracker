@@ -5,7 +5,6 @@ import 'package:emotion_tracker/app/ui/global_widgets/outline_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -17,17 +16,18 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text(
+          'Login ',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Login ',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
               SizedBox(
                 height: MediaQuery.of(context).size.height / 4,
                 width: double.infinity,
@@ -41,16 +41,16 @@ class LoginPage extends StatelessWidget {
                 hintText: 'Email Address',
                 controller: emailController,
               ),
-              const SizedBox(
-                height: 20,
+              SizedBox(
+                height: Get.height * 0.03,
               ),
               FormContainerWidget(
                 hintText: 'Password',
                 isPasswordField: true,
                 controller: passwordController,
               ),
-              const SizedBox(
-                height: 20,
+              SizedBox(
+                height: Get.height * 0.03,
               ),
               Obx(
                 () => CustomButton(
@@ -83,23 +83,8 @@ class LoginPage extends StatelessWidget {
                   },
                 ),
               ),
-              const SizedBox(
-                height: 5,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Text('Don\'t have an account?'),
-                  TextButton(
-                    onPressed: () {
-                      Get.toNamed('/register');
-                    },
-                    child: const Text('Sign Up'),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 5,
+              SizedBox(
+                height: Get.height * 0.03,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -121,26 +106,24 @@ class LoginPage extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(
-                height: 20,
+              SizedBox(
+                height: Get.height * 0.03,
               ),
               OutlineButtonWidget(
                 asset: "assets/image/google.svg",
-                text: "Login with Google",
+                text: "Sign Up with Google",
                 onPressed: () async {
-                  final GoogleSignIn _googleSignIn = GoogleSignIn();
-                  final GoogleSignInAccount? googleSignInAccount =
-                      await _googleSignIn.signIn();
-                  print(googleSignInAccount);
+                  authController.signInWithGoogle();
                 },
               ),
-              const SizedBox(
-                height: 20,
+              SizedBox(
+                height: Get.height * 0.03,
               ),
               OutlineButtonWidget(
-                asset: "assets/image/facebook.svg",
-                text: "Login with Facebook",
-                onPressed: () {},
+                text: "Register with Email",
+                onPressed: () {
+                  Get.toNamed("/register/email");
+                },
               ),
             ],
           ),

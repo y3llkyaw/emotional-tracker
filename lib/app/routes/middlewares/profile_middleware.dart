@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,6 +9,10 @@ class ProfileMiddleware extends GetMiddleware {
   @override
   RouteSettings? redirect(String? route) {
     bool isSetupped;
+    final ProfilePageController profilePageController = ProfilePageController();
+    profilePageController.getCurrentUserProfile().onError(
+          (error, stackTrace) => Get.toNamed("profile/name"),
+        );
     if (FirebaseAuth.instance.currentUser?.displayName != null) {
       isSetupped = true;
     } else {
