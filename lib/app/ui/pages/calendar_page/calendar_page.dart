@@ -3,16 +3,14 @@ import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
-import 'package:emotion_tracker/app/ui/global_widgets/share_sheet.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/mood_card.dart';
 import 'package:emotion_tracker/app/ui/pages/calendar_page/full_calendar_page.dart';
 import 'package:emotion_tracker/app/ui/pages/calendar_page/piechart_page.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/data_journal.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/new_journal.dart';
 import 'package:emotion_tracker/app/ui/utils/helper_functions.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:emotion_tracker/app/controllers/home_controller.dart';
 
@@ -48,22 +46,9 @@ class CalendarPage extends GetView<HomeController> {
                 scrollDirection: Axis.horizontal,
                 itemCount: journalController.journals.length,
                 itemBuilder: (context, index) {
-                  return SizedBox(
-                    height: Get.height * 0.001,
-                    width: 240,
-                    child: Container(
-                      margin: EdgeInsets.all(Get.width * 0.03),
-                      color: Colors.blue,
-                      width: Get.height * 0.06, // Control the width
-                      height: Get.height *
-                          0.0003, // Now we directly set the height for the container
-                      child: Center(
-                        child: Text(
-                          "Item $index", // Example content
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
+                  final jounalModel = journalController.journals[index];
+                  return MoodCard(
+                    journal: jounalModel,
                   );
                 },
               ),
