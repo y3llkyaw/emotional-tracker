@@ -41,10 +41,10 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-        
-      - name: Check Keystore SHA-1 & SHA-256
-        run: keytool -list -v -keystore android/app/release.keystore -alias ${{ secrets.KEY_ALIAS }} -storepass ${{ secrets.KEYSTORE_PASSWORD }}
+      - name: Decode Keystore
+        run: echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > android/app/release.keystore
 
+     
       # Build Release APK
       - name: Build Release APK
         run: flutter build apk --release
