@@ -34,6 +34,7 @@ class AuthController extends GetxController {
 
       UserCredential userCredential =
           await _auth.signInWithCredential(credential);
+
       await profilePageController.getCurrentUserProfile().then((v) {
         Get.toNamed("/home");
       }).onError((error, stacTrace) {
@@ -43,7 +44,8 @@ class AuthController extends GetxController {
 
       return userCredential.user;
     } catch (e) {
-      print("Google Sign-In Error: $e");
+      Get.snackbar("Error", e.toString());
+
       return null;
     }
   }
