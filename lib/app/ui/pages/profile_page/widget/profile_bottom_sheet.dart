@@ -20,12 +20,6 @@ void showRequestedProfileBottomSheet(BuildContext context, Profile profile) {
   );
 }
 
-void showProfileFriendBottomSheet(BuildContext context, Profile profile) {
-  showModalBottomSheet(
-    context: context,
-    builder: (context) => ProfileFriendBottomSheet(profile: profile),
-  );
-}
 
 class ProfileBottomSheet extends StatelessWidget {
   final Profile profile;

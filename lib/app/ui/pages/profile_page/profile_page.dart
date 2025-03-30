@@ -146,6 +146,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
+        leading: null,
         title: Padding(
           padding: EdgeInsets.symmetric(horizontal: Get.width * 0.04),
           child: const Text(

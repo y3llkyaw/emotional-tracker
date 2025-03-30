@@ -46,18 +46,21 @@ class CreateAccountPage extends StatelessWidget {
               style: TextStyle(fontSize: 18),
             ),
             OutlineButtonWidget(
+              isLoading: false,
               text: "Sign up with Google",
               onPressed: () {},
               height: 60,
               asset: "assets/image/google.svg",
             ),
             OutlineButtonWidget(
+              isLoading: false,
               text: "Sign up with Facebook",
               onPressed: () {},
               height: 60,
               asset: "assets/image/facebook.svg",
             ),
             OutlineButtonWidget(
+              isLoading: false,
               text: "Sign up with Email",
               onPressed: () {
                 Get.toNamed("/register/email");

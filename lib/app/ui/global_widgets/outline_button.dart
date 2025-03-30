@@ -5,11 +5,12 @@ class OutlineButtonWidget extends StatelessWidget {
   const OutlineButtonWidget(
       {Key? key,
       required this.text,
+      required this.isLoading,
       this.asset,
       this.height,
       required this.onPressed})
       : super(key: key);
-
+  final bool isLoading;
   final String text;
   final String? asset;
   final double? height;
@@ -32,7 +33,16 @@ class OutlineButtonWidget extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            asset != null ? SvgPicture.asset(asset!) : const SizedBox(),
+            isLoading
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 1,
+                      color: Colors.black,
+                    ),
+                  )
+                : (asset != null ? SvgPicture.asset(asset!) : const SizedBox()),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 15),
               child: Text(

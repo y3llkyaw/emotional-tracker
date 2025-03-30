@@ -2,6 +2,7 @@
 
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/share_sheet.dart';
 import 'package:emotion_tracker/app/ui/pages/journal_page/new_journal.dart';
 import 'package:emotion_tracker/app/ui/utils/helper_functions.dart';
 import 'package:flutter/cupertino.dart';
@@ -239,6 +240,12 @@ class JournalPageView extends StatelessWidget {
                                   );
                                 },
                                 icon: const Icon(CupertinoIcons.pen),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  showShareSheet(journalList[index]);
+                                },
+                                icon: const Icon(CupertinoIcons.share),
                               ),
                             ],
                           ),

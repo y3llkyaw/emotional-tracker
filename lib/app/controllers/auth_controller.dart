@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -21,6 +23,7 @@ class AuthController extends GetxController {
   }
 
   Future<User?> signInWithGoogle() async {
+    isLoading.value = true;
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) return null; // User canceled login
@@ -41,11 +44,11 @@ class AuthController extends GetxController {
         Get.toNamed("/profile/name");
       });
       // Get.snackbar("Success", "Logged in successfully!");
-
+      isLoading.value = false;
       return userCredential.user;
     } catch (e) {
       Get.snackbar("Error", e.toString());
-
+      isLoading.value = false;
       return null;
     }
   }
@@ -54,10 +57,52 @@ class AuthController extends GetxController {
   Future<void> signInWithEmail(String email, String password) async {
     isLoading.value = true;
     try {
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
-      Get.snackbar("Success", "Logged in successfully!");
-      Get.offAllNamed("/home");
+      await _auth
+          .signInWithEmailAndPassword(email: email, password: password)
+          .then((v) {
+        Get.snackbar("Success", "Logged in successfully!");
+        Get.offAllNamed("/home");
+      }).onError((e, stacktrace) {
+        // Firebase error handling
+        String errorMessage = "An unknown error occurred.";
+
+        // Handle specific Firebase errors
+        if (e is FirebaseAuthException) {
+          log(e.code);
+          switch (e.code) {
+            case 'invalid-credential':
+              errorMessage = "Email or Password is incorrect!";
+              break;
+            case 'user-not-found':
+              errorMessage = "No user found with this email.";
+              break;
+            case 'wrong-password':
+              errorMessage = "Incorrect password. Please try again.";
+              break;
+            case 'invalid-email':
+              errorMessage = "The email address is not valid.";
+              break;
+            case 'user-disabled':
+              errorMessage = "This account has been disabled.";
+              break;
+            case 'too-many-requests':
+              errorMessage = "Too many requests. Please try again later.";
+              break;
+            case 'operation-not-allowed':
+              errorMessage = "Email/password sign-in is not enabled.";
+              break;
+            default:
+              errorMessage =
+                  e.message ?? "An error occurred. Please try again.";
+          }
+        } else {
+          // Handle any other errors (non-Firebase errors)
+          errorMessage = e.toString();
+        }
+        Get.snackbar("Error", errorMessage);
+      });
     } catch (e) {
+      // General catch for any unexpected errors
       Get.snackbar("Error", e.toString());
     }
     isLoading.value = false;

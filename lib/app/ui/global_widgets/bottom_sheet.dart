@@ -243,47 +243,6 @@ void showDataBottomSheet(
   );
 }
 
-void showProfileStatusBottomSheet(selectedEmoji) {
-  Get.bottomSheet(
-    StatefulBuilder(
-      builder: (context, setState) {
-        return Column(
-          children: [
-            ListTile(
-              leading: Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: AnimatedEmoji(
-                  selectedEmoji,
-                  size: 50,
-                ),
-              ),
-              title: const Text(
-                "Select Emoji",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            Expanded(
-              child: RadioEmojiSelection(
-                selectedEmoji: selectedEmoji,
-                onEmojiSelected: (emoji) {
-                  setState(() => selectedEmoji = emoji);
-                },
-                isVertical: true, // Display emojis vertically
-              ),
-            ),
-          ],
-        );
-      },
-    ),
-    elevation: 1,
-    backgroundColor: Colors.black54,
-    enableDrag: true,
-  );
-}
-
 void showMessageActionBottomSheet(Message message, String fid) {
   showModalBottomSheet(
     context: Get.context!,
@@ -310,6 +269,47 @@ void showMessageActionBottomSheet(Message message, String fid) {
               onTap: () {
                 Clipboard.setData(ClipboardData(text: message.message));
                 Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+void showProfileFriendBottomSheet() {
+  showModalBottomSheet(
+    context: Get.context!,
+    builder: (context) {
+      return Container(
+        height: Get.height * 0.2,
+        padding: EdgeInsets.symmetric(
+          horizontal: Get.width * 0.05,
+          vertical: Get.height * 0.02,
+        ),
+        child: Column(
+          children: [
+            ListTile(
+              iconColor: Colors.redAccent,
+              leading: const Icon(CupertinoIcons.person_badge_minus),
+              title: const Text(
+                "Unfriend this person",
+                style: TextStyle(color: Colors.redAccent),
+              ),
+              onTap: () {
+                Get.back();
+              },
+            ),
+            ListTile(
+              title: const Text(
+                "Cancel",
+                style: TextStyle(
+                  color: Colors.blueAccent,
+                ),
+              ),
+              onTap: () {
+                Get.back();
               },
             ),
           ],

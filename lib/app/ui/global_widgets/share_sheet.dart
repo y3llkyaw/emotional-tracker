@@ -195,13 +195,13 @@ class _ShareSheetState extends State<ShareSheet> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(
-          CupertinoIcons.chat_bubble_2_fill,
+          CupertinoIcons.person_2_fill,
           color: Colors.black26,
           size: Get.width * 0.5,
         ),
         Center(
           child: Text(
-            "you have no messages right now !",
+            "you have no friends yet to share your mood.",
             style: TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: Get.width * 0.036,

@@ -1,6 +1,7 @@
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/sources/enums.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/widget/profile_bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -171,10 +172,11 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
               children: [
                 ElevatedButton.icon(
                   onPressed: () => {
-                    showProfileFriendBottomSheet(
-                      Get.context!,
-                      widget.profile,
-                    ),
+                    // showProfileFriendBottomSheet(
+                    //   Get.context!,
+                    //   widget.profile,
+                    // ),
+                    showProfileFriendBottomSheet()
                   },
                   icon: const Icon(
                       CupertinoIcons.person_crop_circle_badge_checkmark),

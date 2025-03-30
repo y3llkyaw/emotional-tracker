@@ -72,6 +72,7 @@ class MoodCard extends StatelessWidget {
                               CupertinoIcons.smiley_fill,
                               color: Colors.white,
                             ),
+                            const SizedBox(width: 4),
                             Text(
                               valueToString(journal.value),
                               style: const TextStyle(

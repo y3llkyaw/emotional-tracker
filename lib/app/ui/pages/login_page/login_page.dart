@@ -109,21 +109,27 @@ class LoginPage extends StatelessWidget {
               SizedBox(
                 height: Get.height * 0.03,
               ),
-              OutlineButtonWidget(
-                asset: "assets/image/google.svg",
-                text: "Sign Up with Google",
-                onPressed: () async {
-                  authController.signInWithGoogle();
-                },
+              Obx(
+                () => OutlineButtonWidget(
+                  isLoading: authController.isLoading.value,
+                  asset: "assets/image/google.svg",
+                  text: "Sign Up with Google",
+                  onPressed: () async {
+                    authController.signInWithGoogle();
+                  },
+                ),
               ),
               SizedBox(
                 height: Get.height * 0.03,
               ),
-              OutlineButtonWidget(
-                text: "Register with Email",
-                onPressed: () {
-                  Get.toNamed("/register/email");
-                },
+              Obx(
+                () => OutlineButtonWidget(
+                  isLoading: authController.isLoading.value,
+                  text: "Register with Email",
+                  onPressed: () {
+                    Get.toNamed("/register/email");
+                  },
+                ),
               ),
             ],
           ),

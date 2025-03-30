@@ -5,12 +5,11 @@ import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/controllers/other_profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/sources/enums.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
 import 'package:emotion_tracker/app/ui/pages/chat_page/chat_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/widget/friend_piechart.dart';
-import 'package:emotion_tracker/app/ui/pages/profile_page/widget/profile_bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class FriendProfilePage extends StatelessWidget {
@@ -106,10 +105,7 @@ class FriendProfilePage extends StatelessWidget {
                         ),
                         ElevatedButton.icon(
                           onPressed: () {
-                            showProfileFriendBottomSheet(
-                              Get.context!,
-                              profile,
-                            );
+                            showProfileFriendBottomSheet();
                           },
                           style: ButtonStyle(
                             backgroundColor:
