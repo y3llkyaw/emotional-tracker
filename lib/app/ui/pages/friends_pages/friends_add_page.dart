@@ -72,6 +72,7 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
     return FutureBuilder(
       future: addFriendsController.checkFriendStatus(profile),
       builder: (context, snapshot) {
+        print(snapshot.data);
         var icon = const Icon(
           CupertinoIcons.person_crop_circle_badge_plus,
           color: Colors.blue,
@@ -88,8 +89,10 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
             );
             statusText = "click button to remove request";
             action = () async {
-              _handleFriendStatusAction(snapshot.data as String?, profile);
-
+              _handleFriendStatusAction(
+                snapshot.data as String?,
+                profile,
+              );
               await Get.to(() => OtherProfilePage(profile: profile));
               setState(() {});
             };

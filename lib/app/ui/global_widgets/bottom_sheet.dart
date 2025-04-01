@@ -1,7 +1,9 @@
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/controllers/chat_controller.dart';
+import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/data/models/message.dart';
+import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/radio_emoji_selction.dart';
 import 'package:flutter/cupertino.dart';
@@ -278,12 +280,13 @@ void showMessageActionBottomSheet(Message message, String fid) {
   );
 }
 
-void showProfileFriendBottomSheet() {
+void showProfileFriendBottomSheet(Profile profile) {
+  final FriendsController friendsController = FriendsController();
   showModalBottomSheet(
     context: Get.context!,
     builder: (context) {
       return Container(
-        height: Get.height * 0.2,
+        height: Get.height * 0.24,
         padding: EdgeInsets.symmetric(
           horizontal: Get.width * 0.05,
           vertical: Get.height * 0.02,
@@ -292,20 +295,41 @@ void showProfileFriendBottomSheet() {
           children: [
             ListTile(
               iconColor: Colors.redAccent,
-              leading: const Icon(CupertinoIcons.person_badge_minus),
+              leading: const Icon(CupertinoIcons.person_badge_minus_fill),
               title: const Text(
                 "Unfriend this person",
                 style: TextStyle(color: Colors.redAccent),
+              ),
+              onTap: () async {
+                await friendsController.unfriend(profile).then((v) {
+                  Get.back();
+                });
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                CupertinoIcons.person_crop_circle_fill_badge_xmark,
+                color: Colors.red,
+              ),
+              title: const Text(
+                "Block this person",
+                style: TextStyle(
+                  color: Colors.redAccent,
+                ),
               ),
               onTap: () {
                 Get.back();
               },
             ),
             ListTile(
+              leading: const Icon(
+                CupertinoIcons.xmark_circle,
+                color: Colors.blue,
+              ),
               title: const Text(
-                "Cancel",
+                "close",
                 style: TextStyle(
-                  color: Colors.blueAccent,
+                  color: Colors.blue,
                 ),
               ),
               onTap: () {

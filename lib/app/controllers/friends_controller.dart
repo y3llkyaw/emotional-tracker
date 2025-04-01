@@ -3,17 +3,19 @@ import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/data/services/friends_service.dart';
+import 'package:emotion_tracker/app/data/services/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
 class FriendsController extends GetxController {
   RxBool isLoading = false.obs;
   var searchResults = [].obs;
-  final cuid = FirebaseAuth.instance.currentUser!.uid;
+  final _cuid = FirebaseAuth.instance.currentUser!.uid;
   final _friendService = FriendService();
   final notificationController = NotiController();
   final profilePageController = ProfilePageController();
   final onlineController = OnlineController();
+  final _ns = NotificationService();
 
   var friends = [].obs;
 
@@ -37,9 +39,9 @@ class FriendsController extends GetxController {
     await _friendService.removeFriendRequest(profile);
   }
 
-  Future<String?> checkFriendStatus(Profile profile) async {
+  Future<String> checkFriendStatus(Profile profile) async {
     // check friend status
-    final status = await _friendService.checkFriendStatus(profile);
+    final status = await _friendService.checkFriendStatus(profile.uid);
     return status;
   }
 
@@ -49,6 +51,14 @@ class FriendsController extends GetxController {
       await notificationController.getNotification();
     });
     isLoading.value = false;
+  }
+
+  Future<void> unfriend(Profile profile) async {
+    await _friendService.deleteFriends(_cuid, profile.uid);
+    await _friendService.deleteFriends(profile.uid, _cuid);
+
+    await _ns.deleteNoti(profile.uid, _cuid);
+    await _ns.deleteNoti(_cuid, profile.uid);
   }
 
   Future<void> getFriends() async {

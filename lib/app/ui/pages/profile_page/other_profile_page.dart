@@ -1,7 +1,8 @@
+import 'dart:developer';
+
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/sources/enums.dart';
-import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/widget/profile_bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -112,18 +113,17 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
                         height: Get.height * 0.02,
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _buildFriendButton(),
-                          SizedBox(
-                            width: Get.width * 0.04,
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.more_horiz,
-                            ),
-                          ),
+                          FutureBuilder(
+                              future:
+                                  controller.checkFriendStatus(widget.profile),
+                              builder: (context, snapshot) {
+                                log(snapshot.data.toString(),
+                                    name: "other-profile-page");
+                                return Container(
+                                  child: Text(controller.journals.toString()),
+                                );
+                              })
                         ],
                       ),
                     ],
@@ -134,77 +134,6 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildFriendButton() {
-    return AnimatedContainer(
-      duration: Durations.short1,
-      child: Obx(() {
-        if (controller.isLoading.value) {
-          return const ElevatedButton(
-            onPressed: null,
-            child: Text("Loading..."),
-          );
-        }
-        final status = controller.friendStatus.value;
-        switch (status) {
-          case "FriendStatus.pending":
-            return ElevatedButton.icon(
-              onPressed: () => showPendingProfileBottomSheet(
-                Get.context!,
-                widget.profile,
-              ),
-              icon: const Icon(CupertinoIcons.clock),
-              label: const Text("Pending"),
-              style: _buttonStyle(Colors.orange),
-            );
-          case "FriendStatus.fr":
-            return ElevatedButton.icon(
-              onPressed: () =>
-                  showRequestedProfileBottomSheet(Get.context!, widget.profile),
-              icon: const Icon(Icons.person_outline),
-              label: const Text("requested"),
-              style: _buttonStyle(Colors.blue),
-            );
-          case "FriendStatus.friend":
-            return Row(
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () => {
-                    // showProfileFriendBottomSheet(
-                    //   Get.context!,
-                    //   widget.profile,
-                    // ),
-                    showProfileFriendBottomSheet()
-                  },
-                  icon: const Icon(
-                      CupertinoIcons.person_crop_circle_badge_checkmark),
-                  label: const Text("Friend"),
-                  style: _buttonStyle(Colors.grey),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () => {},
-                  icon: const Icon(CupertinoIcons.chat_bubble_fill),
-                  label: const Text("Message"),
-                  style: _buttonStyle(Colors.blue),
-                ),
-              ],
-            );
-          case "FriendStatus.none":
-            return ElevatedButton.icon(
-              onPressed: () => controller.addFriend(widget.profile),
-              icon: const Icon(CupertinoIcons.person_crop_circle_badge_plus),
-              label: const Text("Add Friend"),
-              style: _buttonStyle(Colors.blue),
-            );
-          default:
-            return const ElevatedButton(
-              onPressed: null,
-              child: Text("Loading...."),
-            );
-        }
-      }),
     );
   }
 

@@ -100,12 +100,9 @@ class FriendProfilePage extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(
-                          width: Get.width * 0.1,
-                        ),
                         ElevatedButton.icon(
                           onPressed: () {
-                            showProfileFriendBottomSheet();
+                            showProfileFriendBottomSheet(profile);
                           },
                           style: ButtonStyle(
                             backgroundColor:
@@ -151,43 +148,21 @@ class FriendProfilePage extends StatelessWidget {
                             color: Colors.white,
                           ),
                         ),
-                        // SizedBox(
-                        //   width: Get.width * 0.03,
-                        // ),
-                        // ElevatedButton.icon(
-                        //   onPressed: () {},
-                        //   style: ButtonStyle(
-                        //     backgroundColor:
-                        //         WidgetStateProperty.all(Colors.grey),
-                        //   ),
-                        //   label: const Text(
-                        //     "More",
-                        //     style: TextStyle(
-                        //       color: Colors.white,
-                        //     ),
-                        //   ),
-                        //   icon: const Icon(
-                        //     Icons.more_horiz,
-                        //     color: Colors.white,
-                        //   ),
-                        // ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.more_horiz),
-                        ),
                       ],
                     ),
                     const Padding(
                       padding: EdgeInsets.all(10),
                       child: Divider(),
                     ),
-                    Obx(() {
-                      if (controller.journals.isEmpty) {
-                        return FriendPiechart();
-                      } else {
-                        return FriendPiechart();
-                      }
-                    }),
+                    Obx(
+                      () {
+                        if (controller.journals.isEmpty) {
+                          return FriendPiechart();
+                        } else {
+                          return FriendPiechart();
+                        }
+                      },
+                    ),
                   ],
                 ),
               )

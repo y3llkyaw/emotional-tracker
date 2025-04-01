@@ -46,7 +46,7 @@ class _NotificationPageState extends State<NotificationPage> {
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.all(Get.width * 0.05),
+        padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
         child: Obx(() {
           return StreamBuilder<List<Map<String, dynamic>>>(
             stream: nc.notifications.value,

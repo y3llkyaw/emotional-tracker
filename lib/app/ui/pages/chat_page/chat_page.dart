@@ -75,15 +75,20 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ),
         ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: Get.width * 0.02),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(CupertinoIcons.info),
-            ),
-          ),
-        ],
+        // actions: [
+        //   Padding(
+        //     padding: EdgeInsets.only(right: Get.width * 0.02),
+        //     child: IconButton(
+        //       onPressed: () {
+        //         Get.to(
+        //           () => ChatInfoPage(),
+        //           transition: Transition.rightToLeft,
+        //         );
+        //       },
+        //       icon: const Icon(CupertinoIcons.info),
+        //     ),
+        //   ),
+        // ],
       ),
       body: Column(
         children: [
@@ -837,7 +842,7 @@ class _ChatPageState extends State<ChatPage> {
         showMessageActionBottomSheet(message, widget.profile.uid);
       },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: Get.height * .01),
+        padding: EdgeInsets.symmetric(vertical: Get.height * .03),
         child: Column(
           crossAxisAlignment:
               message.uid != FirebaseAuth.instance.currentUser!.uid
@@ -851,8 +856,6 @@ class _ChatPageState extends State<ChatPage> {
                       FirebaseAuth.instance.currentUser!.uid
                   ? false
                   : true,
-              // seen: message.read ? true : false,
-              // delivered: false,
               text: chatController.messages[index].message,
             ),
             Container(

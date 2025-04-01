@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 class NotificationService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final _cuid = FirebaseAuth.instance.currentUser!.uid;
-  
+
   Stream<List<Map<String, dynamic>>> getNoti() {
     return _firestore
         .collection('profile')
@@ -23,7 +25,21 @@ class NotificationService {
         .doc(_cuid)
         .collection('notifications')
         .doc(nid)
-        .update({"read": true});
+        .update({
+      "read": true,
+    });
+  }
+
+  Future<void> deleteNoti(String profileId, String nid) async {
+    await _firestore
+        .collection('profile')
+        .doc(profileId)
+        .collection('notifications')
+        .doc(nid)
+        .delete()
+        .then((v) {
+      log("delete notifications from $profileId where id is $nid");
+    });
   }
 
   Future<void> sendFriendRequstNoti(Profile profile) async {

@@ -1,4 +1,3 @@
-import 'package:animated_emoji/animated_emoji.dart';
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/controllers/online_controller.dart';
@@ -30,7 +29,7 @@ class UserCard extends StatelessWidget {
       ),
       child: Container(
         width: Get.width * 0.35,
-        height: Get.width * 0.5,
+        height: Get.width * 0.4,
         padding: EdgeInsets.symmetric(
           vertical: Get.width * 0.03,
         ),
@@ -50,9 +49,6 @@ class UserCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(
-              height: Get.width * 0.07,
-            ),
             Stack(
               alignment: Alignment.center,
               children: [
@@ -62,15 +58,15 @@ class UserCard extends StatelessWidget {
                     "${profile!.uid.toString()}${profile!.name}",
                   ),
                 ),
-                Transform(
-                  transform: Matrix4.translationValues(40, -60, 0),
-                  child: CircleAvatar(
-                    backgroundColor: Colors.grey.shade300,
-                    child: profile!.emoji != null
-                        ? AnimatedEmoji(profile!.emoji!)
-                        : const Text(""),
-                  ),
-                )
+                // Transform(
+                //   transform: Matrix4.translationValues(40, -60, 0),
+                //   child: CircleAvatar(
+                //     backgroundColor: Colors.grey.shade300,
+                //     child: profile!.emoji != null
+                //         ? AnimatedEmoji(profile!.emoji!)
+                //         : const Text(""),
+                //   ),
+                // )
               ],
             ),
             Text(
@@ -82,7 +78,6 @@ class UserCard extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(),
             Text(
               timeago
                   .format(onlineController.friendsOnlineStatus[profile!.uid]
