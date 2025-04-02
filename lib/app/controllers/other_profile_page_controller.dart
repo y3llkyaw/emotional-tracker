@@ -77,7 +77,7 @@ class OtherProfilePageController extends GetxController {
   Future<void> confirmRequest(Profile profile) async {
     await handleFriendAction(
       profile,
-      () => _friendsController.confirmFriendRequest(profile),
+      () => _friendsController.acceptFriendRequest(profile),
     );
   }
 }

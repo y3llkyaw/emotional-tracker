@@ -1,4 +1,5 @@
 import 'package:emotion_tracker/app/controllers/chat_controller.dart';
+import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/controllers/noti_controller.dart';
 import 'package:emotion_tracker/app/ui/pages/calendar_page/calendar_page.dart';
 import 'package:emotion_tracker/app/ui/pages/friends_pages/friends_page.dart';
@@ -15,7 +16,7 @@ class HomePage extends GetView<HomeController> {
   HomePage({Key? key}) : super(key: key);
   final HomeController homeController = Get.find();
   final noti = NotiController();
-
+  final friendController = FriendsController();
   final ChatController chatController = Get.put(ChatController());
 
   @override
@@ -61,10 +62,21 @@ class HomePage extends GetView<HomeController> {
                 ),
                 label: 'Home',
               ),
-              const BottomNavigationBarItem(
+              BottomNavigationBarItem(
                 icon: Padding(
-                  padding: EdgeInsets.only(top: 10.0),
-                  child: Icon(CupertinoIcons.person_2),
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Stack(
+                    children: [
+                      const Icon(CupertinoIcons.person_2),
+                      StreamBuilder<int>(
+                          stream: friendController.friendRequestStream(),
+                          builder: (context, snapshot) {
+                            return snapshot.data == 0
+                                ? const SizedBox()
+                                : _redMark(friendController.noFriReq.value);
+                          })
+                    ],
+                  ),
                 ),
                 label: 'Friends',
               ),

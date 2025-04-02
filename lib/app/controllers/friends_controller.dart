@@ -4,8 +4,9 @@ import 'package:emotion_tracker/app/controllers/noti_controller.dart';
 import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
+import 'package:emotion_tracker/app/data/services/chat_service.dart';
 import 'package:emotion_tracker/app/data/services/friends_service.dart';
-import 'package:emotion_tracker/app/data/services/notification_service.dart';
+import 'package:emotion_tracker/app/sources/enums.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
@@ -17,12 +18,13 @@ class FriendsController extends GetxController {
   final notificationController = NotiController();
   final profilePageController = ProfilePageController();
   final onlineController = OnlineController();
-  final _ns = NotificationService();
-
+  final _chatService = ChatService();
   var friends = [].obs;
+  final noFriReq = 0.obs;
 
   @override
   onInit() {
+    friendRequestStream();
     getFriends();
     super.onInit();
   }
@@ -48,12 +50,12 @@ class FriendsController extends GetxController {
   Future<void> acceptFriendRequest(Profile profile) async {
     await _friendService.createFriendsData(_cuid, profile.uid, "friend");
     await _friendService.createFriendsData(profile.uid, _cuid, "friend");
+    await _chatService.sendSystemMessage(SystemMessage.friend, profile.uid);
   }
 
   Future<String> checkFriendStatus(Profile profile) async {
     // check friend status
     final status = await _friendService.checkFriendStatus(profile.uid);
-
     return status;
   }
 
@@ -61,20 +63,17 @@ class FriendsController extends GetxController {
     return _friendService.friendStatusStream(uid);
   }
 
-  Future<void> confirmFriendRequest(Profile profile) async {
-    isLoading.value = true;
-    // await _friendService.confirmFriendRequest(profile).then((value) async {
-    //   await notificationController.getNotification();
-    // });
-    isLoading.value = false;
+  Stream<int> friendRequestStream() {
+    _friendService.friendRequestStream().listen((data) {
+      log(data.toString(), name: "friend-request-stream");
+      noFriReq.value = data;
+    });
+    return _friendService.friendRequestStream();
   }
 
   Future<void> unfriend(Profile profile) async {
-    // await _friendService.deleteFriends(_cuid, profile.uid);
-    // await _friendService.deleteFriends(profile.uid, _cuid);
-
-    await _ns.deleteNoti(profile.uid, _cuid);
-    await _ns.deleteNoti(_cuid, profile.uid);
+    await _friendService.deleteFriendsData(_cuid, profile.uid);
+    await _friendService.deleteFriendsData(profile.uid, _cuid);
   }
 
   Future<void> getFriends() async {

@@ -168,7 +168,7 @@ class _NotificationPageState extends State<NotificationPage> {
           children: [
             InkWell(
               onTap: () async {
-                await afc.confirmFriendRequest(profile!);
+                await afc.acceptFriendRequest(profile!);
                 setState(() {});
               },
               child: afc.isLoading.value
@@ -212,7 +212,7 @@ class _NotificationPageState extends State<NotificationPage> {
             children: [
               InkWell(
                 onTap: () async {
-                  await afc.confirmFriendRequest(profile!);
+                  await afc.acceptFriendRequest(profile!);
                   setState(() {});
                 },
                 child: afc.isLoading.value

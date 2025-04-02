@@ -52,6 +52,69 @@ void showCancelRequest(Profile profile) {
   );
 }
 
+void showUnfriend(Profile profile) {
+  final FriendsController friendsController = FriendsController();
+  showModalBottomSheet(
+    context: Get.context!,
+    builder: (context) {
+      return Container(
+        height: Get.height * 0.24,
+        padding: EdgeInsets.symmetric(
+          horizontal: Get.width * 0.05,
+          vertical: Get.height * 0.02,
+        ),
+        child: Column(
+          children: [
+            ListTile(
+              iconColor: Colors.redAccent,
+              leading: const Icon(CupertinoIcons.person_badge_minus_fill),
+              title: const Text(
+                "Unfriend this person",
+                style: TextStyle(color: Colors.redAccent),
+              ),
+              onTap: () async {
+                await friendsController.unfriend(profile).then((v) {
+                  Get.back();
+                });
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                CupertinoIcons.person_crop_circle_fill_badge_xmark,
+                color: Colors.red,
+              ),
+              title: const Text(
+                "Block this person",
+                style: TextStyle(
+                  color: Colors.redAccent,
+                ),
+              ),
+              onTap: () {
+                Get.back();
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                CupertinoIcons.xmark_circle,
+                color: Colors.blue,
+              ),
+              title: const Text(
+                "close",
+                style: TextStyle(
+                  color: Colors.blue,
+                ),
+              ),
+              onTap: () {
+                Get.back();
+              },
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
 void showFriendAccept(Profile profile) {
   final FriendsController friendsController = FriendsController();
   showModalBottomSheet(
@@ -76,7 +139,7 @@ void showFriendAccept(Profile profile) {
                 style: TextStyle(color: Colors.blue),
               ),
               onTap: () async {
-                await friendsController.removeFriendRequest(profile).then((v) {
+                await friendsController.acceptFriendRequest(profile).then((v) {
                   Get.back();
                 });
               },

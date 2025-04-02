@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/friend_profile_page.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_page/other_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -17,7 +18,7 @@ class UserCard extends StatelessWidget {
       onTap: () {
         if (profile != null) {
           Get.to(
-            () => FriendProfilePage(
+            () => OtherProfilePage(
               profile: profile!,
             ),
             transition: Transition.downToUp,
@@ -29,7 +30,7 @@ class UserCard extends StatelessWidget {
       ),
       child: Container(
         width: Get.width * 0.35,
-        height: Get.width * 0.4,
+        height: Get.height * 0.227,
         padding: EdgeInsets.symmetric(
           vertical: Get.width * 0.03,
         ),
@@ -49,6 +50,7 @@ class UserCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            const SizedBox(),
             Stack(
               alignment: Alignment.center,
               children: [

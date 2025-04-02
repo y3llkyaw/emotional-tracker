@@ -1,6 +1,8 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/sources/enums.dart';
+import 'package:emotion_tracker/app/ui/pages/chat_page/chat_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/widget/friend_piechart.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/widget/profile_bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
@@ -132,8 +134,9 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
 
         switch (controller.friendStatus.value) {
           case "friend":
+            controller.fetchJournals(profile.uid.toString());
             buttonIcon = CupertinoIcons.person_crop_circle_fill_badge_checkmark;
-            buttonText = "friend";
+            buttonText = "Friend";
             btnColor = Colors.blueAccent;
             break;
           case "requested":
@@ -157,6 +160,7 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
         void onClick() async {
           switch (controller.friendStatus.value) {
             case "friend":
+              showUnfriend(profile);
               break;
             case "requested":
               showCancelRequest(profile);
@@ -195,12 +199,38 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
                   color: Colors.white,
                 ),
               ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.more_horiz_sharp,
-                ),
+              SizedBox(
+                width: Get.width * 0.02,
               ),
+              controller.friendStatus.value == "friend"
+                  ? ElevatedButton.icon(
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all(
+                          Colors.blueAccent,
+                        ),
+                      ),
+                      onPressed: () {
+                        final player = AudioPlayer();
+                        player.play(AssetSource("audio/swoosh.mp3"));
+                        Get.to(
+                          () => ChatPage(
+                            profile: profile,
+                          ),
+                          transition: Transition.rightToLeft,
+                        );
+                      },
+                      label: const Text(
+                        "Message",
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                      icon: const Icon(
+                        CupertinoIcons.chat_bubble_2_fill,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Container(),
             ],
           ),
         );

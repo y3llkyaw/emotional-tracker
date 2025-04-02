@@ -1,7 +1,6 @@
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/search_widget.dart';
-import 'package:emotion_tracker/app/ui/pages/profile_page/friend_profile_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/other_profile_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +16,7 @@ class FriendsAddPage extends StatefulWidget {
 class _FriendsAddPageState extends State<FriendsAddPage> {
   final FriendsController addFriendsController = Get.find();
   final textController = TextEditingController();
+  
   @override
   void dispose() {
     textController.dispose();
@@ -69,18 +69,18 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
   }
 
   Widget _buildFriendTile(profile) {
-    return FutureBuilder(
-      future: addFriendsController.checkFriendStatus(profile),
+    return StreamBuilder(
+      stream: addFriendsController.friendStatusStream(profile.uid),
       builder: (context, snapshot) {
-
         var icon = const Icon(
           CupertinoIcons.person_crop_circle_badge_plus,
           color: Colors.blue,
         );
         String statusText = "click button to send request";
-        Function action = () {
+        Function action = () async {
+          await addFriendsController.addFriend(profile);
           setState(() {
-            addFriendsController.addFriend(profile);
+            setState(() {});
           });
         };
         switch (snapshot.data) {
@@ -91,10 +91,6 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
             );
             statusText = "click button to remove request";
             action = () async {
-              // _handleFriendStatusAction(
-              //   snapshot.data as String?,
-              //   profile,
-              // );
               await Get.to(() => OtherProfilePage(profile: profile));
               setState(() {});
             };
@@ -106,7 +102,7 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
             );
             statusText = "already friend";
             action = () async {
-              await Get.to(() => FriendProfilePage(profile: profile));
+              await Get.to(() => OtherProfilePage(profile: profile));
               setState(() {});
             };
             break;
@@ -140,6 +136,7 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
               alignment: Alignment.centerRight,
               icon: icon,
               onPressed: () {
+                action;
                 // _handleFriendStatusAction(snapshot.data as String?, profile);
               },
             ),

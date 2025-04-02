@@ -60,7 +60,38 @@ class FriendsPage extends StatelessWidget {
                     onPressed: () {
                       Get.toNamed('/add-friends');
                     },
-                    icon: const Icon(Icons.person_add_alt_1_outlined),
+                    icon: Stack(
+                      alignment: Alignment.topRight,
+                      children: [
+                        const Icon(CupertinoIcons.person_fill),
+                        Transform(
+                          transform:
+                              Matrix4.translationValues(Get.width * 0.02, 0, 0),
+                          child: const Icon(
+                            CupertinoIcons.bell_fill,
+                            size: 15,
+                          ),
+                        ),
+                        Transform(
+                          transform: Matrix4.translationValues(
+                              Get.width * 0.04, Get.height * 0.015, 0),
+                          child: Obx(
+                            () => friendsController.noFriReq != 0
+                                ? CircleAvatar(
+                                    radius: Get.width * 0.02,
+                                    foregroundColor: Colors.white,
+                                    backgroundColor: Colors.redAccent,
+                                    child: Text(
+                                      friendsController.noFriReq.toString(),
+                                      style:
+                                          TextStyle(fontSize: Get.width * 0.02),
+                                    ),
+                                  )
+                                : const SizedBox(),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

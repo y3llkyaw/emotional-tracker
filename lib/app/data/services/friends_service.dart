@@ -1,19 +1,13 @@
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
-import 'package:emotion_tracker/app/data/services/chat_service.dart';
-import 'package:emotion_tracker/app/data/services/notification_service.dart';
-import 'package:emotion_tracker/app/sources/enums.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FriendService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final _cuid = FirebaseAuth.instance.currentUser!.uid;
-  final _ns = NotificationService();
   final profilePageController = ProfilePageController();
-  final _chatServices = ChatService();
 
   Future<void> deleteFriendsData(String ownerUid, String uid) async {
     await _firestore
@@ -63,6 +57,20 @@ class FriendService {
     }
   }
 
+  Stream<int> friendRequestStream() {
+    return _firestore
+        .collection("profile")
+        .doc(_cuid)
+        .collection("friends")
+        .where("status", isEqualTo: "pending")
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length)
+        .handleError((error) {
+      print("Error fetching friend requests: $error");
+      return 0; // Return 0 in case of an error
+    });
+  }
+
   Stream<String> friendStatusStream(String uid) {
     return _firestore
         .collection("profile")
@@ -78,13 +86,12 @@ class FriendService {
       }
     }).handleError((error) {
       // Handle any errors that might occur
-      print("Error fetching friend status: $error");
       return "error";
     });
   }
 
   Future<List> searchFriendsWithName(String query) async {
-    final end = '$query\uf8ff'; // Unicode trick
+    final end = '${query.toLowerCase()}\uf8ff'; // Unicode trick
     // search for friends
     var searchResults = [];
     final result = await _firestore
