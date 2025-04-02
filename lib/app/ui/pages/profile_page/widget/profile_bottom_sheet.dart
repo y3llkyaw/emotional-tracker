@@ -30,21 +30,6 @@ void showCancelRequest(Profile profile) {
                 });
               },
             ),
-            // ListTile(
-            //   leading: const Icon(
-            //     CupertinoIcons.person_crop_circle_fill_badge_xmark,
-            //     color: Colors.red,
-            //   ),
-            //   title: const Text(
-            //     "Block this person",
-            //     style: TextStyle(
-            //       color: Colors.redAccent,
-            //     ),
-            //   ),
-            //   onTap: () {
-            //     Get.back();
-            //   },
-            // ),
             ListTile(
               leading: const Icon(
                 CupertinoIcons.xmark_circle,
@@ -54,6 +39,58 @@ void showCancelRequest(Profile profile) {
                 "close",
                 style: TextStyle(
                   color: Colors.blue,
+                ),
+              ),
+              onTap: () {
+                Get.back();
+              },
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+void showFriendAccept(Profile profile) {
+  final FriendsController friendsController = FriendsController();
+  showModalBottomSheet(
+    context: Get.context!,
+    builder: (context) {
+      return Container(
+        height: Get.height * 0.18,
+        padding: EdgeInsets.symmetric(
+          horizontal: Get.width * 0.05,
+          vertical: Get.height * 0.02,
+        ),
+        child: Column(
+          children: [
+            ListTile(
+              iconColor: Colors.blue,
+              leading: const Icon(
+                CupertinoIcons.person_crop_circle_badge_checkmark,
+                size: 30,
+              ),
+              title: const Text(
+                "Confirm the friend Request",
+                style: TextStyle(color: Colors.blue),
+              ),
+              onTap: () async {
+                await friendsController.removeFriendRequest(profile).then((v) {
+                  Get.back();
+                });
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                CupertinoIcons.xmark_circle,
+                size: 30,
+                color: Colors.black,
+              ),
+              title: const Text(
+                "close",
+                style: TextStyle(
+                  color: Colors.black,
                 ),
               ),
               onTap: () {

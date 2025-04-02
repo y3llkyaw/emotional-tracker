@@ -15,15 +15,71 @@ class FriendService {
   final profilePageController = ProfilePageController();
   final _chatServices = ChatService();
 
-  Future<void> deleteFriends(profileId, uid) async {
+  Future<void> deleteFriendsData(String ownerUid, String uid) async {
     await _firestore
         .collection("profile")
-        .doc(profileId)
+        .doc(ownerUid)
         .collection("friends")
         .doc(uid)
         .delete()
         .then((v) {
-      log("delete friend $uid from profile $profileId");
+      log("delete friend $uid from profile $ownerUid");
+    });
+  }
+
+  Future<void> createFriendsData(
+      String ownerUid, String uid, String status) async {
+    try {
+      await _firestore
+          .collection("profile")
+          .doc(ownerUid)
+          .collection("friends")
+          .doc(uid)
+          .set({
+        "timestamp": Timestamp.now(),
+        "uid": uid,
+        "status": status,
+      });
+    } catch (e) {
+      log(e.toString(), name: "created-friend-data");
+    }
+  }
+
+  Future<String> checkFriendStatus(String uid) async {
+    try {
+      final doc = await _firestore
+          .collection("profile")
+          .doc(_cuid)
+          .collection("friends")
+          .doc(uid)
+          .get();
+      if (doc.exists) {
+        return doc.data()!['status'];
+      } else {
+        return "none";
+      }
+    } catch (e) {
+      return "error";
+    }
+  }
+
+  Stream<String> friendStatusStream(String uid) {
+    return _firestore
+        .collection("profile")
+        .doc(_cuid)
+        .collection("friends")
+        .doc(uid)
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.exists && snapshot.data() != null) {
+        return snapshot.data()!['status'] as String;
+      } else {
+        return "none";
+      }
+    }).handleError((error) {
+      // Handle any errors that might occur
+      print("Error fetching friend status: $error");
+      return "error";
     });
   }
 
@@ -49,96 +105,6 @@ class FriendService {
     return searchResults;
   }
 
-  Future<void> addFriend(Profile profile) async {
-    await _firestore
-        .collection('profile')
-        .doc(_cuid)
-        .collection('friends')
-        .doc(profile.uid)
-        .set({
-      "uid": profile.uid,
-      "status": "requested",
-      "timestamp": Timestamp.now(),
-    });
-
-    await _firestore
-        .collection('profile')
-        .doc(profile.uid)
-        .collection('friends')
-        .doc(_cuid)
-        .set({
-      "uid": _cuid,
-      "status": "pending",
-      "timestamp": Timestamp.now(),
-    });
-    _ns.sendFriendRequstNoti(profile);
-  }
-
-  Future<void> removeFriendRequest(Profile profile) async {
-    await _firestore
-        .collection('profile')
-        .doc(_cuid)
-        .collection('friends')
-        .doc(profile.uid)
-        .delete();
-
-    await _firestore
-        .collection('profile')
-        .doc(profile.uid)
-        .collection('friends')
-        .doc(_cuid)
-        .delete();
-    _ns.deleteFriendRequestNotification(profile.uid);
-  }
-
-  Future<String> checkFriendStatus(String uid) async {
-    final data = await _firestore
-        .collection("profile")
-        .doc(_cuid)
-        .collection("friends")
-        .doc(uid)
-        .get();
-
-    if (data.exists) {
-      log(data.data()!['status'].toString());
-      return "FriendStatus.none";
-    } else {
-      return "FriendStatus.none";
-    }
-  }
-
-  Future<void> confirmFriendRequest(Profile profile) async {
-    // check friend status
-    await _firestore
-        .collection("profile")
-        .doc(profile.uid)
-        .collection("friends_request")
-        .doc(_cuid)
-        .delete();
-    await _firestore
-        .collection("profile")
-        .doc(_cuid)
-        .collection("friends_request")
-        .doc(profile.uid)
-        .delete();
-    await _ns.deleteFriendRequestNotification(profile.uid);
-    await _firestore
-        .collection("profile")
-        .doc(_cuid)
-        .collection("friends")
-        .doc(profile.uid)
-        .set({"uid": profile.uid, "timestamp": Timestamp.now()});
-    await _firestore
-        .collection("profile")
-        .doc(profile.uid)
-        .collection("friends")
-        .doc(_cuid)
-        .set({"uid": _cuid, "timestamp": Timestamp.now()});
-    await _ns.sendFriendAcceptNoti(profile);
-    await _chatServices.sendSystemMessage(SystemMessage.friend, profile.uid);
-    log("finished", name: "friends-services");
-  }
-
   Future<List<Profile>> getFriends() async {
     log("getting friends", name: "friends-services");
     var friends = <Profile>[];
@@ -146,6 +112,7 @@ class FriendService {
         .collection("profile")
         .doc(_cuid)
         .collection('friends')
+        .where("status", isEqualTo: "friend")
         .get()
         .then((value) async {
       for (var element in value.docs) {

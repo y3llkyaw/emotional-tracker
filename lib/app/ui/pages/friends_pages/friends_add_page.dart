@@ -72,32 +72,34 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
     return FutureBuilder(
       future: addFriendsController.checkFriendStatus(profile),
       builder: (context, snapshot) {
-        print(snapshot.data);
+
         var icon = const Icon(
           CupertinoIcons.person_crop_circle_badge_plus,
           color: Colors.blue,
         );
         String statusText = "click button to send request";
         Function action = () {
-          setState(() {});
+          setState(() {
+            addFriendsController.addFriend(profile);
+          });
         };
         switch (snapshot.data) {
-          case "FriendStatus.pending":
+          case "requested":
             icon = const Icon(
               CupertinoIcons.person_crop_circle_badge_minus,
               color: Colors.orangeAccent,
             );
             statusText = "click button to remove request";
             action = () async {
-              _handleFriendStatusAction(
-                snapshot.data as String?,
-                profile,
-              );
+              // _handleFriendStatusAction(
+              //   snapshot.data as String?,
+              //   profile,
+              // );
               await Get.to(() => OtherProfilePage(profile: profile));
               setState(() {});
             };
             break;
-          case "FriendStatus.friend":
+          case "friend":
             icon = const Icon(
               CupertinoIcons.person_crop_circle_badge_checkmark,
               color: Colors.green,
@@ -107,14 +109,6 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
               await Get.to(() => FriendProfilePage(profile: profile));
               setState(() {});
             };
-            break;
-          case "FriendStatus.blocked":
-            icon = const Icon(
-              CupertinoIcons.person_crop_circle_badge_xmark,
-              color: Colors.red,
-            );
-            statusText = "you blocked this person";
-            action = () {};
             break;
           default:
             action = () async {
@@ -146,7 +140,7 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
               alignment: Alignment.centerRight,
               icon: icon,
               onPressed: () {
-                _handleFriendStatusAction(snapshot.data as String?, profile);
+                // _handleFriendStatusAction(snapshot.data as String?, profile);
               },
             ),
             subtitle: Text(
@@ -159,21 +153,5 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
         );
       },
     );
-  }
-
-  void _handleFriendStatusAction(String? status, profile) {
-    switch (status) {
-      case "FriendStatus.none":
-        addFriendsController.addFriend(profile).then((value) {
-          setState(() {});
-        });
-        break;
-      case "FriendStatus.pending":
-        addFriendsController.removeFriendRequest(profile).then((value) {
-          setState(() {});
-        });
-        break;
-      default:
-    }
   }
 }

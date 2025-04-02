@@ -37,6 +37,14 @@ class OtherProfilePageController extends GetxController {
     }
   }
 
+  Stream<String> friendStatusStream(String uid) {
+    _friendsController.friendStatusStream(uid).listen((data) {
+      log(data, name: "fri-status-stream");
+      friendStatus.value = data;
+    });
+    return _friendsController.friendStatusStream(uid);
+  }
+
   Future<void> handleFriendAction(
     Profile profile,
     Future<void> Function() action,

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:emotion_tracker/app/controllers/noti_controller.dart';
 import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
@@ -30,32 +32,46 @@ class FriendsController extends GetxController {
   }
 
   Future<void> addFriend(Profile profile) async {
-    // add friend
-    await _friendService.addFriend(profile);
+    try {
+      await _friendService.createFriendsData(_cuid, profile.uid, "requested");
+      await _friendService.createFriendsData(profile.uid, _cuid, "pending");
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   Future<void> removeFriendRequest(Profile profile) async {
-    // add friend
-    await _friendService.removeFriendRequest(profile);
+    await _friendService.deleteFriendsData(profile.uid, _cuid);
+    await _friendService.deleteFriendsData(_cuid, profile.uid);
+  }
+
+  Future<void> acceptFriendRequest(Profile profile) async {
+    await _friendService.createFriendsData(_cuid, profile.uid, "friend");
+    await _friendService.createFriendsData(profile.uid, _cuid, "friend");
   }
 
   Future<String> checkFriendStatus(Profile profile) async {
     // check friend status
     final status = await _friendService.checkFriendStatus(profile.uid);
+
     return status;
+  }
+
+  Stream<String> friendStatusStream(String uid) {
+    return _friendService.friendStatusStream(uid);
   }
 
   Future<void> confirmFriendRequest(Profile profile) async {
     isLoading.value = true;
-    await _friendService.confirmFriendRequest(profile).then((value) async {
-      await notificationController.getNotification();
-    });
+    // await _friendService.confirmFriendRequest(profile).then((value) async {
+    //   await notificationController.getNotification();
+    // });
     isLoading.value = false;
   }
 
   Future<void> unfriend(Profile profile) async {
-    await _friendService.deleteFriends(_cuid, profile.uid);
-    await _friendService.deleteFriends(profile.uid, _cuid);
+    // await _friendService.deleteFriends(_cuid, profile.uid);
+    // await _friendService.deleteFriends(profile.uid, _cuid);
 
     await _ns.deleteNoti(profile.uid, _cuid);
     await _ns.deleteNoti(_cuid, profile.uid);
