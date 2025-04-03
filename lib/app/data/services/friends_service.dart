@@ -43,6 +43,25 @@ class FriendService {
     }
   }
 
+  Future<void> readFriendRequest(String uid) async {
+    try {
+      await _firestore
+          .collection("profile")
+          .doc(_cuid)
+          .collection("friends")
+          .doc(uid)
+          .update({
+        "read": true,
+      }).then((v) {
+        print("read");
+      }).onError((e, stackTrace) {
+        print(e.toString());
+      });
+    } catch (e) {
+      log("", name: "friend-end");
+    }
+  }
+
   Future<String> checkFriendStatus(String uid) async {
     try {
       final doc = await _firestore
@@ -67,7 +86,6 @@ class FriendService {
         .doc(_cuid)
         .collection("friends")
         .where("status", isEqualTo: "pending")
-        .where("read", isEqualTo: false)
         .snapshots()
         .map((snapshot) {
       var profiles = <String>[];

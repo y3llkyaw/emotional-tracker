@@ -64,7 +64,7 @@ class FriendsRequestPage extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final profile = snapshot.data as Profile;
-                    
+                    friendsController.readFriendRequest(profile.uid);
                     return InkWell(
                       onTap: () {
                         Get.to(() => OtherProfilePage(profile: profile));

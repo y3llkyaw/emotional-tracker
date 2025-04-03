@@ -30,6 +30,7 @@ class _MessagePageState extends State<MessagePage> {
     friendsController.getFriends();
     chatController.getUnreadMessageCount();
     messagePageController.getFriendsMessages();
+
     super.initState();
   }
 
@@ -58,6 +59,7 @@ class _MessagePageState extends State<MessagePage> {
       ),
       body: Obx(
         () {
+          log("obx");
           if (messagePageController.messages.isNotEmpty) {
             List<MapEntry> messages =
                 messagePageController.messages.entries.toList();
@@ -75,9 +77,12 @@ class _MessagePageState extends State<MessagePage> {
                 isMessageEmpty = false;
               }
             }
+            log(isMessageEmpty.toString());
+
             if (isMessageEmpty) {
               return _noMessage();
             }
+
             // data widget
             return _message(messages);
           }
@@ -128,6 +133,50 @@ class _MessagePageState extends State<MessagePage> {
                     CircleAvatar(
                       child: AvatarPlus("${messages[index].key}${friend.name}"),
                     ),
+                  ],
+                ),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      friend.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 20,
+                      child: Text(
+                        messages[index].value.first.type == "journal"
+                            ? "sent a mood."
+                            : messages[index].value.first.type == "sticker"
+                                ? "sent a sticker"
+                                : messages[index].value.first.message,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                trailing: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      timeago.format(
+                        onlineController.friendsOnlineStatus[friend.uid]
+                                ?.toDate() ??
+                            DateTime.now(),
+                      ),
+                      style: TextStyle(
+                        fontSize: Get.width * 0.025,
+                        color: Colors.green,
+                      ),
+                    ),
                     count == 0
                         ? const SizedBox.shrink()
                         : Container(
@@ -150,39 +199,6 @@ class _MessagePageState extends State<MessagePage> {
                             ),
                           ),
                   ],
-                ),
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      friend.name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ],
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(messages[index].value.first.type == "journal"
-                        ? "sent a mood."
-                        : messages[index].value.first.type == "sticker"
-                            ? "sent a sticker"
-                            : messages[index].value.first.message),
-                  ],
-                ),
-                trailing: Text(
-                  timeago.format(
-                    onlineController.friendsOnlineStatus[friend.uid]
-                            ?.toDate() ??
-                        DateTime.now(),
-                  ),
-                  style: TextStyle(
-                    fontSize: Get.width * 0.025,
-                    color: Colors.green,
-                  ),
                 ),
               ),
             );

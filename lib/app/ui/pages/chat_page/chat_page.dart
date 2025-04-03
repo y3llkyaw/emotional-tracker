@@ -569,16 +569,19 @@ class _ChatPageState extends State<ChatPage> {
 
   // Build System Message Widget
   Widget _buildSystemMessage(Message message) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          message.message,
-          style: const TextStyle(
-            color: Colors.black38,
-          ),
-        )
-      ],
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            message.message,
+            style: const TextStyle(
+              color: Colors.black38,
+            ),
+          )
+        ],
+      ),
     );
   }
 
@@ -842,7 +845,7 @@ class _ChatPageState extends State<ChatPage> {
         showMessageActionBottomSheet(message, widget.profile.uid);
       },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: Get.height * .03),
+        padding: EdgeInsets.symmetric(vertical: Get.height * .005),
         child: Column(
           crossAxisAlignment:
               message.uid != FirebaseAuth.instance.currentUser!.uid

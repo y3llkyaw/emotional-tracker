@@ -3,15 +3,23 @@ import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/search_widget.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/user_card.dart';
 import 'package:emotion_tracker/app/ui/pages/friends_pages/friends_request_page.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_page/other_profile_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class FriendsPage extends StatelessWidget {
-  FriendsPage({Key? key}) : super(key: key);
+class FriendsPage extends StatefulWidget {
+  const FriendsPage({Key? key}) : super(key: key);
 
+  @override
+  State<FriendsPage> createState() => _FriendsPageState();
+}
+
+class _FriendsPageState extends State<FriendsPage> {
   final FriendsController friendsController = Get.put(FriendsController());
+
   final OnlineController onlineController = Get.put(OnlineController());
+
   @override
   Widget build(BuildContext context) {
     friendsController.getFriends();
@@ -58,9 +66,10 @@ class FriendsPage extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {
+                    onPressed: () async {
                       // Get.toNamed('/add-friends');
-                      Get.to(() => FriendsRequestPage());
+                      await Get.to(() => FriendsRequestPage());
+                      friendsController.getFriends();
                     },
                     icon: Stack(
                       alignment: Alignment.topRight,
@@ -112,7 +121,19 @@ class FriendsPage extends StatelessWidget {
                             friendsController.friends.map<Widget>((friend) {
                               onlineController
                                   .getFriendsOnlineStatus(friend.uid);
-                              return UserCard(profile: friend);
+                              return InkWell(
+                                  onTap: () async {
+                                    if (friend != null) {
+                                      await Get.to(
+                                        () => OtherProfilePage(
+                                          profile: friend!,
+                                        ),
+                                        transition: Transition.downToUp,
+                                      );
+                                    }
+                                    friendsController.getFriends();
+                                  },
+                                  child: UserCard(profile: friend));
                             }).toList(),
                       ),
                     );
@@ -136,8 +157,9 @@ class FriendsPage extends StatelessWidget {
       ),
       radius: 2000,
       splashColor: Colors.grey.shade400.withOpacity(0.5),
-      onTap: () {
-        Get.toNamed('/add-friends');
+      onTap: () async {
+        await Get.toNamed('/add-friends');
+        friendsController.getFriends();
       },
       child: Container(
         width: Get.width * 0.35,

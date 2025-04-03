@@ -101,6 +101,7 @@ class ChatService {
         .collection("profile")
         .doc(_cuid)
         .collection("friends")
+        .where("status", isEqualTo: "friend")
         .snapshots()
         .asyncMap((snapshot) async {
       Map<String, Stream<List<Message>>> friendMessageStreams = {};
@@ -128,9 +129,11 @@ class ChatService {
         .collection("profile")
         .doc(_cuid)
         .collection("friends")
+        .where("status", isEqualTo: "friend")
         .snapshots()
         .asyncMap((snapshot) async {
       Map<String, Stream<List<Message>>> friendMessageStreams = {};
+      
       for (var doc in snapshot.docs) {
         String uid = doc.data()['uid'];
         friendMessageStreams[uid] = getUserMessages(uid);

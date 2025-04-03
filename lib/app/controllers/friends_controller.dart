@@ -45,6 +45,10 @@ class FriendsController extends GetxController {
     }
   }
 
+  Future<void> readFriendRequest(String uid) async {
+    await _friendService.readFriendRequest(uid);
+  }
+
   Future<void> removeFriendRequest(Profile profile) async {
     await _friendService.deleteFriendsData(profile.uid, _cuid);
     await _friendService.deleteFriendsData(_cuid, profile.uid);
