@@ -4,7 +4,6 @@ import 'package:emotion_tracker/app/controllers/noti_controller.dart';
 import 'package:emotion_tracker/app/ui/pages/calendar_page/calendar_page.dart';
 import 'package:emotion_tracker/app/ui/pages/friends_pages/friends_page.dart';
 import 'package:emotion_tracker/app/ui/pages/message_page/message_page.dart';
-import 'package:emotion_tracker/app/ui/pages/notification_page/notification_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/profile_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +28,7 @@ class HomePage extends GetView<HomeController> {
             children: [
               CalendarPage(),
               FriendsPage(),
-              const NotificationPage(),
+              // const NotificationPage(),
               const MessagePage(),
               const ProfilePage(),
             ],
@@ -69,7 +68,7 @@ class HomePage extends GetView<HomeController> {
                     children: [
                       const Icon(CupertinoIcons.person_2),
                       StreamBuilder<int>(
-                          stream: friendController.friendRequestStream(),
+                          stream: friendController.noOfFriendRequestStream(),
                           builder: (context, snapshot) {
                             return snapshot.data == 0
                                 ? const SizedBox()
@@ -80,30 +79,30 @@ class HomePage extends GetView<HomeController> {
                 ),
                 label: 'Friends',
               ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Stack(
-                    children: [
-                      const Icon(CupertinoIcons.bell),
-                      StreamBuilder(
-                        stream: noti.streamUnreadNoti(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData && snapshot.data is List) {
-                            if ((snapshot.data as List).isEmpty) {
-                              return const SizedBox();
-                            }
-                            return _redMark((snapshot.data as List).length);
-                          } else {
-                            return const SizedBox();
-                          }
-                        },
-                      )
-                    ],
-                  ),
-                ),
-                label: 'Notification',
-              ),
+              // BottomNavigationBarItem(
+              //   icon: Padding(
+              //     padding: const EdgeInsets.only(top: 10.0),
+              //     child: Stack(
+              //       children: [
+              //         const Icon(CupertinoIcons.bell),
+              //         StreamBuilder(
+              //           stream: noti.streamUnreadNoti(),
+              //           builder: (context, snapshot) {
+              //             if (snapshot.hasData && snapshot.data is List) {
+              //               if ((snapshot.data as List).isEmpty) {
+              //                 return const SizedBox();
+              //               }
+              //               return _redMark((snapshot.data as List).length);
+              //             } else {
+              //               return const SizedBox();
+              //             }
+              //           },
+              //         )
+              //       ],
+              //     ),
+              //   ),
+              //   label: 'Notification',
+              // ),
               BottomNavigationBarItem(
                 icon: Padding(
                   padding: const EdgeInsets.only(top: 10.0),

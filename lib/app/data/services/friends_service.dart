@@ -22,7 +22,10 @@ class FriendService {
   }
 
   Future<void> createFriendsData(
-      String ownerUid, String uid, String status) async {
+    String ownerUid,
+    String uid,
+    String status,
+  ) async {
     try {
       await _firestore
           .collection("profile")
@@ -33,6 +36,7 @@ class FriendService {
         "timestamp": Timestamp.now(),
         "uid": uid,
         "status": status,
+        "read": status == "pending" ? false : true,
       });
     } catch (e) {
       log(e.toString(), name: "created-friend-data");
@@ -57,15 +61,37 @@ class FriendService {
     }
   }
 
-  Stream<int> friendRequestStream() {
+  Stream<List<String>> friendRequestStream() {
     return _firestore
         .collection("profile")
         .doc(_cuid)
         .collection("friends")
         .where("status", isEqualTo: "pending")
+        .where("read", isEqualTo: false)
         .snapshots()
-        .map((snapshot) => snapshot.docs.length)
-        .handleError((error) {
+        .map((snapshot) {
+      var profiles = <String>[];
+      for (var doc in snapshot.docs) {
+        profiles.add(doc.data()['uid']);
+      }
+      return profiles;
+    }).handleError((error) {
+      print("Error fetching friend requests: $error");
+      return 0; // Return 0 in case of an error
+    });
+  }
+
+  Stream<int> noOfFriendRequestStream() {
+    return _firestore
+        .collection("profile")
+        .doc(_cuid)
+        .collection("friends")
+        .where("status", isEqualTo: "pending")
+        .where("read", isEqualTo: false)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.length;
+    }).handleError((error) {
       print("Error fetching friend requests: $error");
       return 0; // Return 0 in case of an error
     });

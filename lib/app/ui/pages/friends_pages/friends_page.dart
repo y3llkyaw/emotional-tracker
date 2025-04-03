@@ -2,6 +2,7 @@ import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/search_widget.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/user_card.dart';
+import 'package:emotion_tracker/app/ui/pages/friends_pages/friends_request_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -58,7 +59,8 @@ class FriendsPage extends StatelessWidget {
                   ),
                   IconButton(
                     onPressed: () {
-                      Get.toNamed('/add-friends');
+                      // Get.toNamed('/add-friends');
+                      Get.to(() => FriendsRequestPage());
                     },
                     icon: Stack(
                       alignment: Alignment.topRight,
@@ -67,9 +69,9 @@ class FriendsPage extends StatelessWidget {
                         Transform(
                           transform:
                               Matrix4.translationValues(Get.width * 0.02, 0, 0),
-                          child: const Icon(
+                          child: Icon(
                             CupertinoIcons.bell_fill,
-                            size: 15,
+                            size: Get.width * 0.03,
                           ),
                         ),
                         Transform(

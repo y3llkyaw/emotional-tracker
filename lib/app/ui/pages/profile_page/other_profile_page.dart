@@ -137,7 +137,7 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
             controller.fetchJournals(profile.uid.toString());
             buttonIcon = CupertinoIcons.person_crop_circle_fill_badge_checkmark;
             buttonText = "Friend";
-            btnColor = Colors.blueAccent;
+            btnColor = Colors.grey;
             break;
           case "requested":
             buttonIcon = CupertinoIcons.clock_fill;

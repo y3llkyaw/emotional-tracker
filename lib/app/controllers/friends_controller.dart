@@ -20,11 +20,14 @@ class FriendsController extends GetxController {
   final onlineController = OnlineController();
   final _chatService = ChatService();
   var friends = [].obs;
+  var friendRequest = [].obs;
   final noFriReq = 0.obs;
 
   @override
   onInit() {
     friendRequestStream();
+    noOfFriendRequestStream();
+
     getFriends();
     super.onInit();
   }
@@ -63,10 +66,17 @@ class FriendsController extends GetxController {
     return _friendService.friendStatusStream(uid);
   }
 
-  Stream<int> friendRequestStream() {
-    _friendService.friendRequestStream().listen((data) {
+  Stream<int> noOfFriendRequestStream() {
+    _friendService.noOfFriendRequestStream().listen((data) {
       log(data.toString(), name: "friend-request-stream");
       noFriReq.value = data;
+    });
+    return _friendService.noOfFriendRequestStream();
+  }
+
+  Stream<List<String>> friendRequestStream() {
+    _friendService.friendRequestStream().listen((data) {
+      friendRequest.value = data;
     });
     return _friendService.friendRequestStream();
   }
