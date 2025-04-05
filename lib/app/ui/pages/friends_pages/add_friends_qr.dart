@@ -1,29 +1,32 @@
-import 'dart:io';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
+import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-class QRViewExample extends StatefulWidget {
-  const QRViewExample({Key? key}) : super(key: key);
-
+class QRScannerPage extends StatefulWidget {
   @override
-  State<QRViewExample> createState() => _QRViewExampleState();
+  _QRScannerPageState createState() => _QRScannerPageState();
 }
 
-class _QRViewExampleState extends State<QRViewExample> {
+class _QRScannerPageState extends State<QRScannerPage> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  Barcode? result;
   QRViewController? controller;
+  String? scannedData;
 
-  // In order to get hot reload to work we need to pause the camera if the platform
-  // is android, or resume the camera if the platform is iOS.
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // requestCameraPermission();
+
+    _checkPermissionsAndStart();
+  }
+
   @override
   void reassemble() {
     super.reassemble();
-    if (Platform.isAndroid) {
+    if (controller != null) {
       controller!.pauseCamera();
-    } else if (Platform.isIOS) {
       controller!.resumeCamera();
     }
   }
@@ -33,34 +36,71 @@ class _QRViewExampleState extends State<QRViewExample> {
     return Scaffold(
       appBar: AppBar(),
       body: Column(
-        children: <Widget>[
+        children: [
           Expanded(
-            flex: 5,
+            flex: 4,
             child: QRView(
               key: qrKey,
               onQRViewCreated: _onQRViewCreated,
+              overlay: QrScannerOverlayShape(
+                borderColor: Colors.green,
+                borderRadius: 10,
+                borderLength: 30,
+                borderWidth: 10,
+                cutOutSize: 250,
+              ),
             ),
           ),
-          Expanded(
-            flex: 1,
-            child: Center(
-              child: (result != null)
-                  ? Text(
-                      'Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}')
-                  : Text('Scan a code'),
+          if (scannedData != null)
+            Expanded(
+              child: Center(
+                child: Text(
+                  'Scanned: $scannedData',
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
             ),
-          )
         ],
       ),
     );
   }
 
+  void _checkPermissionsAndStart() async {
+    bool granted = await requestCameraPermission();
+    if (!granted) {
+      Get.snackbar(
+          "Permission Denied", "Camera access is required to scan QR codes.");
+    }
+  }
+
+  Future<bool> requestCameraPermission() async {
+    final status = await Permission.camera.request();
+
+    if (status.isGranted) {
+      return true;
+    } else if (status.isPermanentlyDenied) {
+      // Open settings
+      await openAppSettings();
+    }
+    return false;
+  }
+
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
+      controller.pauseCamera(); // Optional: stop scanning after first result
       setState(() {
-        result = scanData;
+        scannedData = scanData.code;
       });
+
+      // You can also do navigation or logic here
+      print("QR Code Data: ${scanData.code}");
     });
+  }
+
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
   }
 }

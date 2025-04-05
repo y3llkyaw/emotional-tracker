@@ -371,7 +371,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         _buildListTile(
           onTap: () {
-            Get.to(() => QRViewExample());
+            Get.to(() => QRScannerPage());
           },
           leading: const Icon(CupertinoIcons.qrcode),
           title: "Scan QR Code",
