@@ -8,10 +8,13 @@ import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/sources/enums.dart';
+import 'package:emotion_tracker/app/ui/pages/friends_pages/add_friends_qr.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_page/profile_qr_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -189,23 +192,26 @@ class _ProfilePageState extends State<ProfilePage> {
           alignment: Alignment.center,
           children: [
             Center(
-              child: SizedBox(
-                height: Get.width * 0.3,
-                width: Get.width * 0.3,
-                child: Obx(
-                  () => profilePageController.userProfile.value != null
-                      ? InkWell(
-                          borderRadius: BorderRadius.circular(80),
-                          onTap: _onAvatarTap,
-                          child: AvatarPlus(
-                            "${FirebaseAuth.instance.currentUser!.uid}${profilePageController.userProfile.value!.name}",
+              child: Hero(
+                tag: "profile_${FirebaseAuth.instance.currentUser!.uid}",
+                child: SizedBox(
+                  height: Get.width * 0.3,
+                  width: Get.width * 0.3,
+                  child: Obx(
+                    () => profilePageController.userProfile.value != null
+                        ? InkWell(
+                            borderRadius: BorderRadius.circular(80),
+                            onTap: _onAvatarTap,
+                            child: AvatarPlus(
+                              "${FirebaseAuth.instance.currentUser!.uid}${profilePageController.userProfile.value!.name}",
+                            ),
+                          )
+                        : InkWell(
+                            borderRadius: BorderRadius.circular(80),
+                            onTap: _onAvatarTap,
+                            child: SvgPicture.asset('assets/image/avatar.svg'),
                           ),
-                        )
-                      : InkWell(
-                          borderRadius: BorderRadius.circular(80),
-                          onTap: _onAvatarTap,
-                          child: SvgPicture.asset('assets/image/avatar.svg'),
-                        ),
+                  ),
                 ),
               ),
             ),
@@ -355,6 +361,20 @@ class _ProfilePageState extends State<ProfilePage> {
           onTap: () {},
           leading: SvgPicture.asset('assets/image/file.svg'),
           title: "Terms & Conditions",
+        ),
+        _buildListTile(
+          onTap: () {
+            Get.to(() => const QrCodePage());
+          },
+          leading: const Icon(CupertinoIcons.qrcode),
+          title: "Show QR Code",
+        ),
+        _buildListTile(
+          onTap: () {
+            Get.to(() => QRViewExample());
+          },
+          leading: const Icon(CupertinoIcons.qrcode),
+          title: "Scan QR Code",
         ),
         _buildLogoutTile(),
       ],

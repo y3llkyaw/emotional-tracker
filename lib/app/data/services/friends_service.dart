@@ -134,8 +134,11 @@ class FriendService {
     });
   }
 
-  Future<List> searchFriendsWithName(String query) async {
-    final end = '${query.toLowerCase()}\uf8ff'; // Unicode trick
+  Future<List> searchFriendsWithName(String? query) async {
+    if (query == null) {
+      return [];
+    }
+    final end = '${query}\uf8ff'; // Unicode trick
     // search for friends
     var searchResults = [];
     final result = await _firestore
@@ -153,28 +156,39 @@ class FriendService {
     if (query.isEmpty) {
       searchResults.clear();
     }
+
     return searchResults;
   }
 
-  Future<List<Profile>> getFriends() async {
+  Future<List<Profile?>> getFriends() async {
     log("getting friends", name: "friends-services");
-    var friends = <Profile>[];
-    await _firestore
-        .collection("profile")
-        .doc(_cuid)
-        .collection('friends')
-        .where("status", isEqualTo: "friend")
-        .get()
-        .then((value) async {
-      for (var element in value.docs) {
-        final friend =
-            await profilePageController.getProfileByUid(element.data()["uid"]);
-        friends.add(friend);
-      }
+    var friends = <Profile?>[];
+    try {
+      await _firestore
+          .collection("profile")
+          .doc(_cuid)
+          .collection('friends')
+          .where("status", isEqualTo: "friend")
+          .get()
+          .then((value) async {
+        if (value.docs.isEmpty) {
+          return [];
+        }
+        for (var element in value.docs) {
+          final friend = await profilePageController
+              .getProfileByUid(element.data()["uid"]);
+          friends.add(friend);
+        }
+        return friends;
+      }).onError((error, stackTrace) {
+        log(error.toString(), error: error.toString(), name: "error ouccur");
+        print(friends);
+        return friends;
+      });
       return friends;
-    }).onError((error, stackTrace) {
+    } catch (e) {
+      print(e.toString());
       return friends;
-    });
-    return friends;
+    }
   }
 }

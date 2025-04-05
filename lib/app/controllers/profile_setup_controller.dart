@@ -12,10 +12,18 @@ class ProfileSetupController extends GetxController {
 
   var name = (FirebaseAuth.instance.currentUser!.displayName ?? "").obs;
   var gender = Gender.Male.obs;
-  var day = DateTime.now().day.obs;
-  var month = DateTime.now().month.obs;
-  var year = (DateTime.now().year - 18).obs;
+  var day = 0.obs;
+  var month = 0.obs;
+  var year = 0.obs;
   var dob = DateTime(DateTime.now().year - 18).obs;
+
+  bool is16OrOlder(DateTime birthDate) {
+    print(birthDate);
+    final today = DateTime.now();
+    final sixteenYearsAgo = DateTime(today.year - 16, today.month, today.day);
+    return birthDate.isBefore(sixteenYearsAgo) ||
+        birthDate.isAtSameMomentAs(sixteenYearsAgo);
+  }
 
   Future<void> setupProfile() async {
     loading.value = true;
@@ -27,10 +35,13 @@ class ProfileSetupController extends GetxController {
     }
 
     dob.value = DateTime(year.value, month.value, day.value);
-
+    if (!is16OrOlder(dob.value)) {
+      loading.value = false;
+      Get.snackbar("Error", "User should be 16 years old or older");
+      return;
+    }
     try {
       await auth.currentUser?.updateDisplayName(name.value);
-
       await firestore.collection("profile").doc(auth.currentUser?.uid).set({
         "uid": auth.currentUser?.uid,
         "name": name.value,
@@ -44,10 +55,10 @@ class ProfileSetupController extends GetxController {
           AnimatedEmojis.smile.id,
           AnimatedEmojis.joy.id,
         ],
+      }).then((v) {
+        Get.snackbar("Success", "Profile setup successfully!");
+        Get.offAllNamed("/home");
       });
-
-      Get.snackbar("Success", "Profile setup successfully!");
-      Get.offAllNamed("/home");
     } catch (error, stackTrace) {
       log("Error setting up profile: $error", stackTrace: stackTrace);
       Get.snackbar("Error", "Failed to setup profile. Please try again.");
@@ -57,7 +68,10 @@ class ProfileSetupController extends GetxController {
   }
 
   bool isProfileValid() {
-    if (name.value.isEmpty) return false;
-    return true;
+    if (name.value.isNotEmpty &&
+        day.value > 0 &&
+        month.value > 0 &&
+        year.value > 0) return true;
+    return false;
   }
 }

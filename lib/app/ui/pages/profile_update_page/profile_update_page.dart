@@ -25,7 +25,7 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
 
   @override
   Widget build(BuildContext context) {
-    nameController.text = controller.userProfile.value!.name.toString();
+    // nameController.text = controller.userProfile.value!.name.toString();
 
     return Scaffold(
       appBar: AppBar(

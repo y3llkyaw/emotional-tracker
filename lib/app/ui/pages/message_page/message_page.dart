@@ -30,7 +30,6 @@ class _MessagePageState extends State<MessagePage> {
     friendsController.getFriends();
     chatController.getUnreadMessageCount();
     messagePageController.getFriendsMessages();
-
     super.initState();
   }
 

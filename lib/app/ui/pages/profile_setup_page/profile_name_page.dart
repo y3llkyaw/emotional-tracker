@@ -77,19 +77,19 @@ class _ProfileNamePageState extends State<ProfileNamePage> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 30,
-            vertical: 20,
+          padding: EdgeInsets.symmetric(
+            horizontal: Get.width * 0.06,
+            // vertical: Get.height * 0.03,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               // title goes here
-              const Center(
+              Center(
                 child: Text(
                   'Tell me about yourself ?',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: Get.width * 0.04,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -99,18 +99,16 @@ class _ProfileNamePageState extends State<ProfileNamePage> {
                   'Name, Genders, Date of Birth. That information will help us better understand you.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: Get.size.height / 60,
-                    // fontWeight: FontWeight.bold,
+                    fontSize: Get.size.width * 0.03,
                   ),
                 ),
               ),
-
               // Image goes here
               Center(
                 child: Image(
                   image: const AssetImage('assets/image/detective.png'),
-                  height: Get.height / 4,
-                  width: Get.width / 2,
+                  height: Get.width * 0.4,
+                  width: Get.width * 0.4,
                 ),
               ),
               GenderPickerWithImage(
@@ -140,26 +138,27 @@ class _ProfileNamePageState extends State<ProfileNamePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   SizedBox(
-                    width: Get.width / 3 - 40,
+                    width: Get.width * 0.25,
                     child: CoolDropdown(
-                        resultOptions: const ResultOptions(
-                          placeholder: "Year",
-                        ),
-                        dropdownList: years.map((month) {
-                          return CoolDropdownItem<String>(
-                            label: month["label"],
-                            value: month["value"],
-                          );
-                        }).toList(),
-                        controller: DropdownController(),
-                        onChange: (value) {
-                          // print(value.runtimeType);
-                          profileSetupController.year.value =
-                              int.parse(value.toString());
-                        }),
+                      resultOptions: const ResultOptions(
+                        placeholder: "Year",
+                      ),
+                      dropdownList: years.map((month) {
+                        return CoolDropdownItem<String>(
+                          label: month["label"],
+                          value: month["value"],
+                        );
+                      }).toList(),
+                      controller: DropdownController(),
+                      onChange: (value) {
+                        // print(value.runtimeType);
+                        profileSetupController.year.value =
+                            int.parse(value.toString());
+                      },
+                    ),
                   ),
                   SizedBox(
-                    width: Get.width / 3 - 20,
+                    width: Get.width * 0.25,
                     child: CoolDropdown(
                         resultOptions: const ResultOptions(
                           placeholder: "Month",
@@ -177,7 +176,7 @@ class _ProfileNamePageState extends State<ProfileNamePage> {
                         }),
                   ),
                   SizedBox(
-                    width: Get.width / 3 - 20,
+                    width: Get.width * 0.25,
                     child: CoolDropdown(
                         resultOptions: const ResultOptions(
                           placeholder: "Date",

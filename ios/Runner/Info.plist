@@ -50,7 +50,8 @@
 			<dict>
 				<key>CFBundleURLSchemes</key>
 				<array>
-					<string>com.googleusercontent.apps.52163657696-smsv37ff54i8lhurhp2fhg1l92c4gb0d.apps.googleusercontent.com</string>
+					<string>
+						com.googleusercontent.apps.52163657696-smsv37ff54i8lhurhp2fhg1l92c4gb0d.apps.googleusercontent.com</string>
 				</array>
 			</dict>
 		</array>
@@ -60,6 +61,11 @@
 			<string>googlechrome</string>
 			<string>googlechrome-x-callback</string>
 		</array>
+
+		<key>io.flutter.embedded_views_preview</key>
+		<true />
+		<key>NSCameraUsageDescription</key>
+		<string>This app needs camera access to scan QR codes</string>
 
 	</dict>
 </plist>

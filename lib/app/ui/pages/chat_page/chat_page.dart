@@ -579,7 +579,7 @@ class _ChatPageState extends State<ChatPage> {
             style: const TextStyle(
               color: Colors.black38,
             ),
-          )
+          ),
         ],
       ),
     );

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/controllers/noti_controller.dart';
 import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
@@ -18,6 +19,7 @@ class FriendsController extends GetxController {
   final notificationController = NotiController();
   final profilePageController = ProfilePageController();
   final onlineController = OnlineController();
+  final chatController = ChatController();
   final _chatService = ChatService();
   var friends = [].obs;
   var friendRequest = [].obs;
@@ -27,13 +29,16 @@ class FriendsController extends GetxController {
   onInit() {
     friendRequestStream();
     noOfFriendRequestStream();
-
     getFriends();
     super.onInit();
   }
 
-  Future<void> searchFriendsWithName(String query) async {
-    searchResults.value = await _friendService.searchFriendsWithName(query);
+  Future<void> searchFriendsWithName(String? query) async {
+    try {
+      searchResults.value = await _friendService.searchFriendsWithName(query);
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   Future<void> addFriend(Profile profile) async {
