@@ -1,3 +1,5 @@
+import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_page/other_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -12,13 +14,12 @@ class _QRScannerPageState extends State<QRScannerPage> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
   String? scannedData;
+  final ProfilePageController profilePageController =
+      Get.put(ProfilePageController());
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    // requestCameraPermission();
-
     _checkPermissionsAndStart();
   }
 
@@ -34,7 +35,14 @@ class _QRScannerPageState extends State<QRScannerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text(
+          "Scan QR code",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: Column(
         children: [
           Expanded(
@@ -51,15 +59,6 @@ class _QRScannerPageState extends State<QRScannerPage> {
               ),
             ),
           ),
-          if (scannedData != null)
-            Expanded(
-              child: Center(
-                child: Text(
-                  'Scanned: $scannedData',
-                  style: const TextStyle(fontSize: 16),
-                ),
-              ),
-            ),
         ],
       ),
     );
@@ -87,14 +86,20 @@ class _QRScannerPageState extends State<QRScannerPage> {
 
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
-    controller.scannedDataStream.listen((scanData) {
+    controller.scannedDataStream.listen((scanData) async {
       controller.pauseCamera(); // Optional: stop scanning after first result
       setState(() {
         scannedData = scanData.code;
       });
-
-      // You can also do navigation or logic here
-      print("QR Code Data: ${scanData.code}");
+      if (scannedData != null) {
+        await profilePageController
+            .getProfileByUid(scannedData!)
+            .then((v) async {
+          await Get.to(() => OtherProfilePage(profile: v),
+              transition: Transition.downToUp);
+        });
+      }
+      controller.resumeCamera();
     });
   }
 

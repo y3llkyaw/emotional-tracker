@@ -19,6 +19,7 @@ class _FriendsPageState extends State<FriendsPage> {
   final FriendsController friendsController = Get.put(FriendsController());
 
   final OnlineController onlineController = Get.put(OnlineController());
+  final TextEditingController searchBarController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -61,13 +62,14 @@ class _FriendsPageState extends State<FriendsPage> {
                       onSearch: (value) async {
                         // addFriendsController.searchFriends(value);
                       },
-                      controller: TextEditingController(),
+                      controller: searchBarController,
                       hintText: "Search for friends",
                     ),
                   ),
                   IconButton(
                     onPressed: () async {
                       // Get.toNamed('/add-friends');
+                      FocusManager.instance.primaryFocus?.unfocus();
                       await Get.to(() => FriendsRequestPage());
                       friendsController.getFriends();
                     },
@@ -124,6 +126,8 @@ class _FriendsPageState extends State<FriendsPage> {
                               return InkWell(
                                   onTap: () async {
                                     if (friend != null) {
+                                      FocusManager.instance.primaryFocus
+                                          ?.unfocus();
                                       await Get.to(
                                         () => OtherProfilePage(
                                           profile: friend!,
@@ -147,6 +151,7 @@ class _FriendsPageState extends State<FriendsPage> {
           ),
         ),
       ),
+      resizeToAvoidBottomInset: false,
     );
   }
 
@@ -158,6 +163,7 @@ class _FriendsPageState extends State<FriendsPage> {
       radius: 2000,
       splashColor: Colors.grey.shade400.withOpacity(0.5),
       onTap: () async {
+        FocusManager.instance.primaryFocus?.unfocus();
         await Get.toNamed('/add-friends');
         friendsController.getFriends();
       },
@@ -202,5 +208,11 @@ class _FriendsPageState extends State<FriendsPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    searchBarController.dispose();
   }
 }

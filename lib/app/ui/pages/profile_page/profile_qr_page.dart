@@ -64,7 +64,7 @@ class QrCodePage extends StatelessWidget {
                         SizedBox(
                           height: Get.width * 0.5,
                           child: PrettyQrView.data(
-                            data: avatar,
+                            data: uid,
                             decoration: const PrettyQrDecoration(
                               background: Colors.white,
                             ),

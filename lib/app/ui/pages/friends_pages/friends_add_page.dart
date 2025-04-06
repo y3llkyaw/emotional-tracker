@@ -1,6 +1,7 @@
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/search_widget.dart';
+import 'package:emotion_tracker/app/ui/pages/friends_pages/add_friends_qr.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/other_profile_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ class FriendsAddPage extends StatefulWidget {
 class _FriendsAddPageState extends State<FriendsAddPage> {
   final FriendsController addFriendsController = Get.find();
   final textController = TextEditingController();
-  
+
   @override
   void dispose() {
     textController.dispose();
@@ -28,7 +29,7 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
+        centerTitle: true,  
         title: const Text(
           'Add Friends',
           style: TextStyle(fontWeight: FontWeight.w600),
@@ -39,13 +40,32 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: Get.width * 0.04),
-            child: SearchWidget(
-              controller: textController,
-              onSearch: (value) async {
-                addFriendsController.searchFriendsWithName(value);
-              },
-              hintText: 'Search for New friends',
+            padding: EdgeInsets.symmetric(horizontal: Get.width * 0.005),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: Get.width * 0.8,
+                  child: SearchWidget(
+                    controller: textController,
+                    onSearch: (value) async {
+                      addFriendsController.searchFriendsWithName(value);
+                    },
+                    hintText: 'Search for New friends',
+                  ),
+                ),
+                SizedBox(
+                  width: Get.width * 0.1,
+                  child: IconButton(
+                    onPressed: () {
+                      Get.to(() => QRScannerPage());
+                    },
+                    icon: Icon(
+                      CupertinoIcons.qrcode_viewfinder,
+                      size: Get.width * 0.08,
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
           SizedBox(height: Get.height * 0.02),
