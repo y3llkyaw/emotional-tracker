@@ -68,7 +68,6 @@ class _FriendsPageState extends State<FriendsPage> {
                   ),
                   IconButton(
                     onPressed: () async {
-                      // Get.toNamed('/add-friends');
                       FocusManager.instance.primaryFocus?.unfocus();
                       await Get.to(() => FriendsRequestPage());
                       friendsController.getFriends();

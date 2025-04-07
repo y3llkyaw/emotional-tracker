@@ -42,6 +42,7 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: Get.width * 0.005),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
                   width: Get.width * 0.8,
