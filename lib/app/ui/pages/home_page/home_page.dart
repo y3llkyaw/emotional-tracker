@@ -50,7 +50,7 @@ class HomePage extends GetView<HomeController> {
             type: BottomNavigationBarType.fixed,
             selectedItemColor: Get.theme.primaryColorDark,
             unselectedItemColor: Colors.grey,
-            backgroundColor: Get.isDarkMode ? Colors.black : Colors.grey[200],
+            backgroundColor: Get.theme.canvasColor,
             showSelectedLabels: false,
             showUnselectedLabels: false,
             items: [

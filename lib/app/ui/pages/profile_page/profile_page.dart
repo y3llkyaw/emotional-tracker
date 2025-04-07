@@ -350,14 +350,14 @@ class _ProfilePageState extends State<ProfilePage> {
       children: [
         _buildListTile(
           onTap: () => Get.toNamed('/profile/edit'),
-          leading: SvgPicture.asset('assets/image/profile.svg'),
+          leading: const Icon(CupertinoIcons.person),
           title: "Profile",
         ),
         _buildAlarmTile(),
         if (isOn) _buildSetAlarmTile(),
         _buildListTile(
           onTap: () {},
-          leading: SvgPicture.asset('assets/image/file.svg'),
+          leading: const Icon(CupertinoIcons.doc),
           title: "Terms & Conditions",
         ),
         _buildListTile(
@@ -401,7 +401,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _buildAlarmTile() {
     return ListTile(
       isThreeLine: false,
-      leading: SvgPicture.asset('assets/image/bell.svg'),
+      leading: const Icon(CupertinoIcons.bell),
       title: const Text(
         "Daily Alarm",
         style: TextStyle(
@@ -528,10 +528,10 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         );
       },
-      child: ListTile(
+      child: const ListTile(
         isThreeLine: false,
-        leading: SvgPicture.asset('assets/image/quit.svg'),
-        title: const Text(
+        leading: Icon(Icons.logout),
+        title: Text(
           "Log out",
           style: TextStyle(
             fontSize: 16,

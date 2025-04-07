@@ -9,15 +9,15 @@ String splitCamelCase(String input) {
 Color valueToColor(int value) {
   switch (value) {
     case 0:
-      return Colors.red.shade400;
+      return Colors.red.shade800;
     case 1:
-      return Colors.orange;
+      return Colors.orange.shade800;
     case 2:
-      return Colors.grey;
+      return Colors.grey.shade800;
     case 3:
-      return Colors.lightGreen;
+      return Colors.lightGreen.shade800;
     case 4:
-      return Colors.green;
+      return Colors.green.shade800;
     default:
       return Colors.white;
   }

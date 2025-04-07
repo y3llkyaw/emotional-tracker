@@ -191,15 +191,18 @@ class _FriendsPageState extends State<FriendsPage> {
             SizedBox(
               height: Get.width * 0.2,
               child: const CircleAvatar(
-                backgroundColor: Colors.white,
-                child: Icon(Icons.add),
+                // backgroundColor: Colors.grey,
+                child: Icon(
+                  Icons.add,
+                  color: Colors.black,
+                ),
               ),
             ),
             const Text(
               "Add New Friends",
               style: TextStyle(
-                color: Colors.black26,
-                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
               ),
             ),
             const SizedBox(),

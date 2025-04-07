@@ -18,14 +18,13 @@ class SearchWidget extends StatefulWidget {
 
 class _SearchWidgetState extends State<SearchWidget> {
   @override
- 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.grey.shade200, // Background color
+          color: Get.theme.colorScheme.onSecondary,
           borderRadius: BorderRadius.circular(24.0), // Rounded corners
         ),
         child: TextField(

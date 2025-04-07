@@ -33,11 +33,11 @@ class CalendarPage extends GetView<HomeController> {
           children: [
             calendar(),
             Divider(
-              color: Colors.grey.shade300,
+              color: Get.theme.colorScheme.onSecondary,
             ),
             PiechartPage(),
             Divider(
-              color: Colors.grey.shade300,
+              color: Get.theme.colorScheme.onSecondary,
             ),
             Expanded(
               child: ListView.builder(

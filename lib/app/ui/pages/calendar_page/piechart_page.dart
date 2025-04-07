@@ -47,7 +47,6 @@ class PiechartPage extends StatelessWidget {
                               backgroundColor: Colors.blue.withOpacity(0.2),
                               child: Text(
                                 journalController.journals.length.toString(),
-                                style: const TextStyle(color: Colors.black54),
                               ),
                             );
                           },
@@ -150,17 +149,17 @@ class PiechartPage extends StatelessWidget {
                   SizedBox(
                     height: Get.height * 0.02,
                   ),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
-                      ),
-                      onPressed: () {},
-                      child: const Text(
-                        "view all data",
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ))
+                  // ElevatedButton(
+                  //     style: ElevatedButton.styleFrom(
+                  //       backgroundColor: Colors.blueAccent,
+                  //     ),
+                  //     onPressed: () {},
+                  //     child: const Text(
+                  //       "view all data",
+                  //       style: TextStyle(
+                  //         color: Colors.white,
+                  //       ),
+                  //     ),)
                 ],
               )
             ],

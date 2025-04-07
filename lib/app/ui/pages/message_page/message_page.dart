@@ -44,7 +44,9 @@ class _MessagePageState extends State<MessagePage> {
             children: [
               Text(
                 "Messages",
-                style: TextStyle(fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               Padding(
                 padding: EdgeInsets.all(8.0),
@@ -141,7 +143,6 @@ class _MessagePageState extends State<MessagePage> {
                       friend.name,
                       style: const TextStyle(
                         fontWeight: FontWeight.w500,
-                        color: Colors.black87,
                       ),
                     ),
                   ],

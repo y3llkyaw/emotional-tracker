@@ -29,7 +29,7 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,  
+        centerTitle: true,
         title: const Text(
           'Add Friends',
           style: TextStyle(fontWeight: FontWeight.w600),

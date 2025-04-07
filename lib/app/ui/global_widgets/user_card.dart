@@ -60,11 +60,6 @@ class UserCard extends StatelessWidget {
           Text(
             profile!.name,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: Get.width * 0.03,
-              fontWeight: FontWeight.bold,
-            ),
           ),
           Text(
             timeago
@@ -72,9 +67,8 @@ class UserCard extends StatelessWidget {
                         ?.toDate() ??
                     Timestamp.now().toDate())
                 .toString(),
-            style: TextStyle(
-              fontSize: Get.width * 0.02,
-              color: Colors.black45,
+            style: const TextStyle(
+              fontSize: 12,
             ),
           ),
         ],

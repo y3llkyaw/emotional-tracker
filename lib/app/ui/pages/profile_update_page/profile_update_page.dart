@@ -77,7 +77,6 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
                 isThreeLine: false,
                 leading: const Icon(
                   CupertinoIcons.mail,
-                  color: Colors.black,
                 ),
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.start,

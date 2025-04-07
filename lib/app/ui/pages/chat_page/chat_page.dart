@@ -48,7 +48,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Get.theme.canvasColor,
         title: ListTile(
           leading: Stack(
             children: [
@@ -129,7 +129,7 @@ class _ChatPageState extends State<ChatPage> {
           Center(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Get.theme.canvasColor,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
@@ -285,43 +285,6 @@ class _ChatPageState extends State<ChatPage> {
           ),
         ],
       ),
-      // floatingActionButton: Obx(
-      //   () => AnimatedSwitcher(
-      //     duration: const Duration(milliseconds: 500),
-      //     transitionBuilder: (Widget child, Animation<double> animation) {
-      //       return FadeTransition(
-      //         opacity: animation,
-      //         child: SlideTransition(
-      //           position: Tween<Offset>(
-      //             begin: const Offset(0.0, 0.5),
-      //             end: Offset.zero,
-      //           ).animate(animation),
-      //           child: child,
-      //         ),
-      //       );
-      //     },
-      //     child: chatController.isDeleting.value
-      //         ? Align(
-      //             key: const ValueKey('delete_button'),
-      //             alignment: Alignment.bottomCenter,
-      //             child: ElevatedButton.icon(
-      //               style: ElevatedButton.styleFrom(
-      //                 backgroundColor: Colors.blueAccent,
-      //                 foregroundColor: Colors.white,
-      //                 elevation: 0,
-      //               ),
-      //               onPressed: () async {
-      //                 chatController.isDeleting.value = false;
-      //               },
-      //               label: const Text("undo deleting meesage"),
-      //               icon: const Icon(
-      //                 CupertinoIcons.arrow_clockwise_circle,
-      //               ),
-      //             ),
-      //           )
-      //         : const SizedBox.shrink(key: ValueKey('empty')),
-      //   ),
-      // ),
     );
   }
 
@@ -577,8 +540,9 @@ class _ChatPageState extends State<ChatPage> {
           Text(
             message.message,
             style: const TextStyle(
-              color: Colors.black38,
+              fontWeight: FontWeight.w400,
             ),
+            // style: Get.textTheme.titleSmall,
           ),
         ],
       ),
@@ -759,7 +723,8 @@ class _ChatPageState extends State<ChatPage> {
                 padding: const EdgeInsets.all(20),
                 margin: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.black12,
+                  // color: Colors.black12,
+                  color: Colors.grey.withOpacity(0.5),
                   borderRadius: BorderRadius.only(
                     bottomLeft:
                         message.uid != FirebaseAuth.instance.currentUser!.uid
@@ -854,7 +819,11 @@ class _ChatPageState extends State<ChatPage> {
           children: [
             BubbleNormal(
               onLongPress: () {},
-              color: Colors.black12,
+              color: Colors.grey.withOpacity(0.5),
+              // color: Get.theme.cardColor,
+              textStyle: const TextStyle(
+                fontWeight: FontWeight.w500,
+              ),
               isSender: chatController.messages[index].uid ==
                       FirebaseAuth.instance.currentUser!.uid
                   ? false
@@ -880,6 +849,7 @@ class _ChatPageState extends State<ChatPage> {
                   Text(
                     timeago.format(
                       chatController.messages[index].timestamp.toDate(),
+
                       // locale:
                       //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
                     ),

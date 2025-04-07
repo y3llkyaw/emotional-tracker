@@ -49,16 +49,16 @@ class MoodCard extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            const Icon(
+                            Icon(
                               CupertinoIcons.calendar,
-                              color: Colors.white70,
+                              color: Get.theme.colorScheme.onError,
                             ),
                             const SizedBox(width: 4),
                             Text(
                               DateFormat('dd/MM/yy').format(journal.date),
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
                                 fontWeight: FontWeight.w600,
+                                color: Get.theme.colorScheme.onError,
                               ),
                             ),
                           ],
@@ -68,15 +68,15 @@ class MoodCard extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                            const Icon(
+                            Icon(
                               CupertinoIcons.smiley_fill,
-                              color: Colors.white,
+                              color: Get.theme.colorScheme.onError,
                             ),
                             const SizedBox(width: 4),
                             Text(
                               valueToString(journal.value),
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: Get.theme.colorScheme.onError,
                               ),
                             ),
                           ],
@@ -100,7 +100,6 @@ class MoodCard extends StatelessWidget {
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.fade,
                 style: const TextStyle(
-                  color: Colors.white,
                   fontWeight: FontWeight.w500,
                 ),
               ),

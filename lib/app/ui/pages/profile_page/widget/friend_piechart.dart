@@ -33,10 +33,6 @@ class FriendPiechart extends StatelessWidget {
                       children: [
                         Text(
                           "Mood Count",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: Get.width * 0.04,
-                          ),
                         ),
                         SizedBox(
                           height: Get.height * 0.01,
@@ -48,7 +44,6 @@ class FriendPiechart extends StatelessWidget {
                               backgroundColor: Colors.blue.withOpacity(0.2),
                               child: Text(
                                 controller.journals.length.toString(),
-                                style: const TextStyle(color: Colors.black54),
                               ),
                             );
                           },

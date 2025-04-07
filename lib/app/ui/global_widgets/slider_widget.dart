@@ -44,7 +44,7 @@ class _MoodSliderWidgetState extends State<MoodSliderWidget> {
                       fontWeight: FontWeight.bold,
                       color: moodSliderController.sliderValue.value == index
                           ? valueToColor(index)
-                          : Colors.black12,
+                          : Colors.grey.shade600,
                     ),
                   );
                 },

@@ -179,7 +179,7 @@ class _NewJournalPageState extends State<NewJournalPage> {
                             () => Container(
                               padding: EdgeInsets.all(Get.width * 0.04),
                               decoration: BoxDecoration(
-                                color: Colors.white60,
+                                // color: Colors.white60,
                                 borderRadius: const BorderRadius.all(
                                   Radius.circular(20),
                                 ),

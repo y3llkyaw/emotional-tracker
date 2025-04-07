@@ -72,7 +72,6 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
                       widget.profile.name,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Colors.black,
                         fontSize: Get.width * 0.045,
                         fontWeight: FontWeight.bold,
                       ),
