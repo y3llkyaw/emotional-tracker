@@ -79,30 +79,6 @@ class HomePage extends GetView<HomeController> {
                 ),
                 label: 'Friends',
               ),
-              // BottomNavigationBarItem(
-              //   icon: Padding(
-              //     padding: const EdgeInsets.only(top: 10.0),
-              //     child: Stack(
-              //       children: [
-              //         const Icon(CupertinoIcons.bell),
-              //         StreamBuilder(
-              //           stream: noti.streamUnreadNoti(),
-              //           builder: (context, snapshot) {
-              //             if (snapshot.hasData && snapshot.data is List) {
-              //               if ((snapshot.data as List).isEmpty) {
-              //                 return const SizedBox();
-              //               }
-              //               return _redMark((snapshot.data as List).length);
-              //             } else {
-              //               return const SizedBox();
-              //             }
-              //           },
-              //         )
-              //       ],
-              //     ),
-              //   ),
-              //   label: 'Notification',
-              // ),
               BottomNavigationBarItem(
                 icon: Padding(
                   padding: const EdgeInsets.only(top: 10.0),

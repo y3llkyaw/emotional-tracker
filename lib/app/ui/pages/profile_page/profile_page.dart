@@ -365,7 +365,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Get.to(() => const QrCodePage());
           },
           leading: const Icon(CupertinoIcons.qrcode),
-          title: "Show QR Code",
+          title: "QR Code",
         ),
         _buildLogoutTile(),
       ],

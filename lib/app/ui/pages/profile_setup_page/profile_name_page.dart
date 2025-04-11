@@ -78,7 +78,7 @@ class _ProfileNamePageState extends State<ProfileNamePage> {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: Get.width * 0.06,
+          horizontal: Get.width * 0.06,
             // vertical: Get.height * 0.03,
           ),
           child: Column(

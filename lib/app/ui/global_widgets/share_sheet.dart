@@ -34,9 +34,14 @@ class _ShareSheetState extends State<ShareSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: Get.height,
-      width: Get.width,
+    return Container(
+      decoration: BoxDecoration(
+        color: Get.theme.colorScheme.primary,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -46,7 +51,7 @@ class _ShareSheetState extends State<ShareSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CircleAvatar(
-                  backgroundColor: Colors.white,
+                  // backgroundColor: Colors.white,
                   radius: Get.height * 0.06,
                   child: AnimatedEmoji(
                     widget.journal.emotion,
@@ -150,7 +155,6 @@ class _ShareSheetState extends State<ShareSheet> {
                     friend.name,
                     style: const TextStyle(
                       fontWeight: FontWeight.w500,
-                      color: Colors.black87,
                     ),
                   ),
                 ],

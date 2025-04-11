@@ -1,12 +1,19 @@
 import 'package:avatar_plus/avatar_plus.dart';
+import 'package:emotion_tracker/app/ui/pages/friends_pages/add_friends_qr.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 
-class QrCodePage extends StatelessWidget {
+class QrCodePage extends StatefulWidget {
   const QrCodePage({Key? key}) : super(key: key);
+
+  @override
+  State<QrCodePage> createState() => _QrCodePageState();
+}
+
+class _QrCodePageState extends State<QrCodePage> {
   @override
   Widget build(BuildContext context) {
     final uid = FirebaseAuth.instance.currentUser!.uid;
@@ -14,11 +21,29 @@ class QrCodePage extends StatelessWidget {
     final avatar = "$uid$displayName";
 
     return Scaffold(
-      backgroundColor: Colors.amberAccent,
+      backgroundColor: Get.isDarkMode
+          ? const Color.fromARGB(255, 66, 37, 0)
+          : Colors.amberAccent,
       appBar: AppBar(
-        backgroundColor: Colors.amberAccent,
+        backgroundColor: Get.isDarkMode
+            ? const Color.fromARGB(255, 66, 37, 0)
+            : Colors.amberAccent,
         actions: [
-          const Icon(Icons.more_horiz),
+          ElevatedButton.icon(
+            onPressed: () {
+              Get.to(() => QRScannerPage());
+            },
+            label: Text(
+              "scan QR code",
+              style: TextStyle(
+                color: Get.theme.colorScheme.secondary,
+              ),
+            ),
+            icon: Icon(
+              Icons.qr_code_scanner,
+              color: Get.theme.colorScheme.secondary,
+            ),
+          ),
           SizedBox(
             width: Get.width * 0.05,
           ),
@@ -35,9 +60,9 @@ class QrCodePage extends StatelessWidget {
                 children: [
                   Container(
                     width: Get.width * 0.8,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(
+                    decoration: BoxDecoration(
+                      color: Get.isDarkMode ? Colors.grey : Colors.white,
+                      borderRadius: const BorderRadius.all(
                         Radius.circular(20),
                       ),
                     ),
@@ -65,8 +90,9 @@ class QrCodePage extends StatelessWidget {
                           height: Get.width * 0.5,
                           child: PrettyQrView.data(
                             data: uid,
-                            decoration: const PrettyQrDecoration(
-                              background: Colors.white,
+                            decoration: PrettyQrDecoration(
+                              background:
+                                  Get.isDarkMode ? Colors.grey : Colors.white,
                             ),
                           ),
                         ),
@@ -94,7 +120,8 @@ class QrCodePage extends StatelessWidget {
                       transform:
                           Matrix4.translationValues(0, -Get.height * 0.05, 0),
                       child: CircleAvatar(
-                        backgroundColor: Colors.white,
+                        backgroundColor:
+                            Get.isDarkMode ? Colors.grey : Colors.white,
                         radius: Get.width * 0.11,
                         child: AvatarPlus(
                           avatar,
