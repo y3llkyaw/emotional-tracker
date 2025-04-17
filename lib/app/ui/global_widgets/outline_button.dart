@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 
 class OutlineButtonWidget extends StatelessWidget {
   const OutlineButtonWidget(
@@ -47,8 +48,9 @@ class OutlineButtonWidget extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 15),
               child: Text(
                 text,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 15,
+                  color: Get.theme.colorScheme.onSurface,
                 ),
               ),
             ),

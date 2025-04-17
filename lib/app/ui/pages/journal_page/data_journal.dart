@@ -197,7 +197,7 @@ class JournalPageView extends StatelessWidget {
           },
           itemBuilder: (context, index) {
             return Scaffold(
-              backgroundColor: valueToColor(journalList[index].value),
+              // backgroundColor: valueToColor(journalList[index].value),
               body: SafeArea(
                 child: Column(
                   children: [
@@ -289,24 +289,66 @@ class JournalPageView extends StatelessWidget {
                                     },
                                     icon: const Icon(
                                       CupertinoIcons.left_chevron,
-                                      color: Colors.black54,
                                     ),
                                   ),
-                                  Title(
-                                    color: Colors.black,
-                                    child: Text(
-                                      DateFormat('EEEE, MMMM d, y')
-                                          .format(journalList[journalController
-                                                  .indexDataJournal.value]
-                                              .date)
-                                          .toUpperCase(),
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        wordSpacing: 0,
-                                        color: Colors.black54,
+                                  Column(
+                                    children: [
+                                      Title(
+                                        color: Colors.black,
+                                        child: Text(
+                                          DateFormat('EEEE, MMMM d, y')
+                                              .format(journalList[
+                                                      journalController
+                                                          .indexDataJournal
+                                                          .value]
+                                                  .date)
+                                              .toUpperCase(),
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            wordSpacing: 0,
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                      SizedBox(
+                                        height: Get.height * 0.01,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            CupertinoIcons.smiley,
+                                            color: valueToColor(
+                                              journalList[journalController
+                                                      .indexDataJournal.value]
+                                                  .value,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: Get.width * 0.02,
+                                          ),
+                                          Text(
+                                            valueToString(journalList[
+                                                    journalController
+                                                        .indexDataJournal.value]
+                                                .value),
+                                            style: TextStyle(
+                                              color: valueToColor(
+                                                journalList[journalController
+                                                        .indexDataJournal.value]
+                                                    .value,
+                                              ),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: Get.width * 0.04,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: Get.width * 0.02,
+                                          ),
+                                        ],
+                                      )
+                                    ],
                                   ),
                                   IconButton(
                                     onPressed: () {
@@ -314,7 +356,6 @@ class JournalPageView extends StatelessWidget {
                                     },
                                     icon: const Icon(
                                       CupertinoIcons.right_chevron,
-                                      color: Colors.black54,
                                     ),
                                   ),
                                 ],
@@ -323,9 +364,10 @@ class JournalPageView extends StatelessWidget {
                             SingleChildScrollView(
                               scrollDirection: Axis.vertical,
                               child: Container(
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: Get.width * 0.03),
                                 decoration: BoxDecoration(
-                                  color: valueToColor(journalList[index].value)
-                                      .withOpacity(0.4),
+                                  color: Get.theme.colorScheme.onSecondary,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 height: Get.height * 0.33,
@@ -341,7 +383,7 @@ class JournalPageView extends StatelessWidget {
                                       textAlign: TextAlign.justify,
                                       style: TextStyle(
                                         fontSize: Get.width * 0.04,
-                                        color: Colors.black54,
+                                        // color: Colors.black54,
                                       ),
                                     ),
                                   ),

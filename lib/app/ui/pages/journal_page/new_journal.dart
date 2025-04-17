@@ -134,7 +134,8 @@ class _NewJournalPageState extends State<NewJournalPage> {
                       CircleAvatar(
                         radius: Get.width / 5,
                         backgroundColor: valueToColor(
-                            journalController.moodSlider.value.toInt()),
+                                journalController.moodSlider.value.toInt())
+                            .withOpacity(0.6),
                         child: AnimatedEmoji(
                           journalController.emotion.value,
                           size: Get.width / 5,
@@ -144,7 +145,7 @@ class _NewJournalPageState extends State<NewJournalPage> {
                         onChange: (value) {
                           journalController.moodSlider.value = value;
                         },
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -190,8 +191,9 @@ class _NewJournalPageState extends State<NewJournalPage> {
                                 boxShadow: [
                                   BoxShadow(
                                     color: valueToColor(journalController
-                                        .moodSlider.value
-                                        .toInt()),
+                                            .moodSlider.value
+                                            .toInt())
+                                        .withOpacity(0.4),
                                     spreadRadius: 1,
                                     blurRadius: 0.4,
                                     // offset: const Offset(0, 4),
@@ -216,7 +218,8 @@ class _NewJournalPageState extends State<NewJournalPage> {
                           isLoading: journalController.isLoading.value,
                           text: "Confirm",
                           color: valueToColor(
-                              journalController.moodSlider.value.toInt()),
+                                  journalController.moodSlider.value.toInt())
+                              .withOpacity(0.6),
                           onPressed: () async {
                             journalController.content.value =
                                 textEditingController.text;

@@ -66,14 +66,17 @@ class HomePage extends GetView<HomeController> {
                   padding: const EdgeInsets.only(top: 10.0),
                   child: Stack(
                     children: [
-                      const Icon(CupertinoIcons.person_2),
+                      const Icon(
+                        CupertinoIcons.person_2,
+                      ),
                       StreamBuilder<int>(
-                          stream: friendController.noOfFriendRequestStream(),
-                          builder: (context, snapshot) {
-                            return snapshot.data == 0
-                                ? const SizedBox()
-                                : _redMark(friendController.noFriReq.value);
-                          })
+                        stream: friendController.noOfFriendRequestStream(),
+                        builder: (context, snapshot) {
+                          return snapshot.data == 0
+                              ? const SizedBox()
+                              : _redMark(friendController.noFriReq.value);
+                        },
+                      ),
                     ],
                   ),
                 ),

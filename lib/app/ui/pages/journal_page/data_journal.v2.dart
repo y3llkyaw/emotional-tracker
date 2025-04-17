@@ -105,10 +105,7 @@ class DataJournalV2 extends StatelessWidget {
             height: Get.height * 0.3,
             child: SingleChildScrollView(
               child: Text(
-                journal.content +
-                    journal.content +
-                    journal.content +
-                    journal.content,
+                journal.content,
                 style: TextStyle(
                   fontSize: Get.width * 0.04,
                 ),
@@ -119,7 +116,7 @@ class DataJournalV2 extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("data"),
+              // Text("data"),
             ],
           ),
         ],

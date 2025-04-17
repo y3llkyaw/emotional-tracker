@@ -17,7 +17,6 @@ class FriendsPage extends StatefulWidget {
 
 class _FriendsPageState extends State<FriendsPage> {
   final FriendsController friendsController = Get.put(FriendsController());
-
   final OnlineController onlineController = Get.put(OnlineController());
   final TextEditingController searchBarController = TextEditingController();
 
@@ -30,8 +29,7 @@ class _FriendsPageState extends State<FriendsPage> {
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
-        backgroundColor: Theme.of(context)
-            .scaffoldBackgroundColor, // Ensure the background color remains the same
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Padding(
           padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
           child: Row(
@@ -50,7 +48,6 @@ class _FriendsPageState extends State<FriendsPage> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
@@ -60,7 +57,9 @@ class _FriendsPageState extends State<FriendsPage> {
                     width: Get.width * 0.75,
                     child: SearchWidget(
                       onSearch: (value) async {
-                        // addFriendsController.searchFriends(value);
+                        setState(() {
+                          searchBarController.text = value;
+                        });
                       },
                       controller: searchBarController,
                       hintText: "Search for friends",
@@ -72,80 +71,96 @@ class _FriendsPageState extends State<FriendsPage> {
                       await Get.to(() => FriendsRequestPage());
                       friendsController.getFriends();
                     },
-                    icon: Stack(
-                      alignment: Alignment.topRight,
-                      children: [
-                        const Icon(CupertinoIcons.person_fill),
-                        Transform(
-                          transform:
-                              Matrix4.translationValues(Get.width * 0.02, 0, 0),
-                          child: Icon(
-                            CupertinoIcons.bell_fill,
-                            size: Get.width * 0.03,
+                    icon: searchBarController.text == ""
+                        ? SizedBox(
+                            width: Get.width * 0.04,
+                            child: Stack(
+                              alignment: Alignment.topRight,
+                              children: [
+                                const Icon(CupertinoIcons.person_fill),
+                                Transform(
+                                  transform: Matrix4.translationValues(
+                                      Get.width * 0.02, 0, 0),
+                                  child: Icon(
+                                    CupertinoIcons.bell_fill,
+                                    size: Get.width * 0.03,
+                                  ),
+                                ),
+                                Transform(
+                                  transform: Matrix4.translationValues(
+                                      Get.width * 0.04, Get.height * 0.015, 0),
+                                  child: Obx(
+                                    () => friendsController.noFriReq != 0
+                                        ? CircleAvatar(
+                                            radius: Get.width * 0.02,
+                                            foregroundColor: Colors.white,
+                                            backgroundColor: Colors.redAccent,
+                                            child: Text(
+                                              friendsController.noFriReq
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  fontSize: Get.width * 0.02),
+                                            ),
+                                          )
+                                        : const SizedBox(),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : SizedBox(
+                            width: Get.width * 0.04,
+                            child: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  searchBarController.text = "";
+                                });
+                              },
+                              icon: const Icon(CupertinoIcons.xmark),
+                            ),
                           ),
-                        ),
-                        Transform(
-                          transform: Matrix4.translationValues(
-                              Get.width * 0.04, Get.height * 0.015, 0),
-                          child: Obx(
-                            () => friendsController.noFriReq != 0
-                                ? CircleAvatar(
-                                    radius: Get.width * 0.02,
-                                    foregroundColor: Colors.white,
-                                    backgroundColor: Colors.redAccent,
-                                    child: Text(
-                                      friendsController.noFriReq.toString(),
-                                      style:
-                                          TextStyle(fontSize: Get.width * 0.02),
-                                    ),
-                                  )
-                                : const SizedBox(),
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                 ],
               ),
-              SizedBox(
-                height: Get.height * 0.025,
-              ),
+              SizedBox(height: Get.height * 0.025),
               Center(
                 child: Obx(
                   () {
+                    final query = searchBarController.text.trim().toLowerCase();
+                    final filteredFriends =
+                        friendsController.friends.where((friend) {
+                      if (query.isEmpty) return true;
+                      return friend.name.toLowerCase().contains(query);
+                    }).toList();
+
                     return SizedBox(
                       width: Get.width * 0.8,
                       child: Wrap(
                         spacing: Get.width * 0.08,
                         runSpacing: Get.width * 0.08,
-                        children: <Widget>[addFrinedCard()] +
-                            friendsController.friends.map<Widget>((friend) {
-                              onlineController
-                                  .getFriendsOnlineStatus(friend.uid);
-                              return InkWell(
-                                  onTap: () async {
-                                    if (friend != null) {
-                                      FocusManager.instance.primaryFocus
-                                          ?.unfocus();
-                                      await Get.to(
-                                        () => OtherProfilePage(
-                                          profile: friend!,
-                                        ),
-                                        transition: Transition.downToUp,
-                                      );
-                                    }
-                                    friendsController.getFriends();
-                                  },
-                                  child: UserCard(profile: friend));
-                            }).toList(),
+                        children: <Widget>[
+                          addFrinedCard(),
+                          ...filteredFriends.map<Widget>((friend) {
+                            onlineController.getFriendsOnlineStatus(friend.uid);
+                            return InkWell(
+                              onTap: () async {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                await Get.to(
+                                  () => OtherProfilePage(profile: friend),
+                                  transition: Transition.downToUp,
+                                );
+                                friendsController.getFriends();
+                              },
+                              child: UserCard(profile: friend),
+                            );
+                          }),
+                        ],
                       ),
                     );
                   },
                 ),
               ),
-              SizedBox(
-                height: Get.width * 0.04,
-              )
+              SizedBox(height: Get.width * 0.04),
             ],
           ),
         ),
@@ -169,19 +184,16 @@ class _FriendsPageState extends State<FriendsPage> {
       child: Container(
         width: Get.width * 0.35,
         height: Get.width * 0.5,
-        padding: EdgeInsets.symmetric(
-          vertical: Get.width * 0.03,
-        ),
+        padding: EdgeInsets.symmetric(vertical: Get.width * 0.03),
         decoration: BoxDecoration(
           color: Get.theme.cardColor,
-          // color: Get.theme.canvasColor, // Background color
-          borderRadius: BorderRadius.circular(24.0), // Rounded corners
+          borderRadius: BorderRadius.circular(24.0),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.shade300.withOpacity(0.5), // Shadow color
-              spreadRadius: 5, // Spread radius
-              blurRadius: 7, // Blur radius
-              offset: const Offset(0, 0), // Offset
+              color: Colors.grey.shade300.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: const Offset(0, 0),
             ),
           ],
         ),
@@ -191,7 +203,6 @@ class _FriendsPageState extends State<FriendsPage> {
             SizedBox(
               height: Get.width * 0.2,
               child: const CircleAvatar(
-                // backgroundColor: Colors.grey,
                 child: Icon(
                   Icons.add,
                   color: Colors.black,
@@ -214,7 +225,7 @@ class _FriendsPageState extends State<FriendsPage> {
 
   @override
   void dispose() {
-    super.dispose();
     searchBarController.dispose();
+    super.dispose();
   }
 }

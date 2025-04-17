@@ -12,6 +12,8 @@ class AppRoutes {
   static const PROFILE_EDIT_PASSWORD = '/profile/update/password';
   static const PROFILE_EDIT_NAME = '/profile/update/name';
   static const PROFILE_EDIT_EMAIL = '/profile/update/email';
+  static const PROFILE_EDIT_BIRTHDAY = '/profile/update/birthday';
+
 
   // Auth Middleware
   static const LOGIN = '/login';

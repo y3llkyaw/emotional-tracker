@@ -56,14 +56,13 @@ class _MoodSliderWidgetState extends State<MoodSliderWidget> {
           ),
           Obx(
             () => Slider(
-              value: moodSliderController.sliderValue.value,
               min: 0,
               max: 4,
+              value: moodSliderController.sliderValue.value,
               activeColor:
                   valueToColor(moodSliderController.sliderValue.value.toInt()),
               secondaryActiveColor:
                   valueToColor(moodSliderController.sliderValue.value.toInt()),
-
               divisions: 4, // Number of steps for the slider
               label: _moods[moodSliderController.sliderValue.value
                   .toInt()], // Show the mood label

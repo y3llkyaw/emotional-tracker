@@ -1,5 +1,6 @@
 import 'package:emotion_tracker/app/controllers/local_auth_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_update_page/change_birthday_page/change_birthday_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
 
   @override
   Widget build(BuildContext context) {
-    // nameController.text = controller.userProfile.value!.name.toString();
+    controller.getCurrentUserProfile();
 
     return Scaffold(
       appBar: AppBar(
@@ -107,7 +108,46 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
               ),
             ),
 
-            // Password
+            // Birthday
+            InkWell(
+              onTap: () async {
+                await Get.to(
+                    ChangeBirthdayPage(
+                      birthday: controller.userProfile.value!.dob.toDate(),
+                    ),
+                    transition: Transition.rightToLeft);
+                setState(() {});
+              },
+              child: ListTile(
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: Get.width * 0.09),
+                isThreeLine: false,
+                leading: const Icon(
+                  Icons.cake,
+                ),
+                title: Text(
+                  "Birthday",
+                  style: Get.theme.textTheme.titleMedium,
+                ),
+                subtitle: Obx(
+                  () => Text(
+                    controller.userProfile.value!.dob
+                        .toDate()
+                        .toString()
+                        .split(' ')[0],
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+                trailing: const Icon(
+                  CupertinoIcons.right_chevron,
+                  color: Colors.black,
+                  weight: 20,
+                ),
+              ),
+            ),
             InkWell(
               onTap: () {
                 Get.toNamed("profile/update/password");

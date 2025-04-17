@@ -48,7 +48,9 @@ class _ChangeNamePageState extends State<ChangeNamePage> {
                 controller: nameController,
                 decoration: const InputDecoration(
                   labelText: "Name",
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(),
+                  ),
                 ),
                 maxLength: 70,
                 onChanged: (value) {

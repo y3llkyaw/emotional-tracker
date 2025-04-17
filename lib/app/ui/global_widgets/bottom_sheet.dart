@@ -248,7 +248,8 @@ void showMessageActionBottomSheet(Message message, String fid) {
     context: Get.context!,
     builder: (context) {
       return Container(
-        height: Get.height * 0.2,
+        color: Get.theme.scaffoldBackgroundColor.withOpacity(0.7),
+        height: Get.height * 0.17,
         padding: EdgeInsets.symmetric(
           horizontal: Get.width * 0.05,
           vertical: Get.height * 0.02,

@@ -74,7 +74,7 @@ class ProfilePageController extends GetxController {
           .then((value) {
         if (value.exists) {
           final profile = value.data() as Map<String, dynamic>;
-          print(profile);
+
           log(profile.toString(), name: "profile-page-controller-log");
           userProfile.value = Profile.fromDocument(profile);
         } else {
@@ -107,6 +107,55 @@ class ProfilePageController extends GetxController {
         isLoading.value = false;
         Get.back();
         Get.snackbar("Success", "Name updated successfully!");
+      },
+    ).onError((error, stackTrace) {
+      isLoading.value = false;
+      Get.back();
+      Get.snackbar("Error", error.toString());
+    });
+  }
+
+  Future<void> updateBsirthday(DateTime date) async {
+    log("updating birthday", name: "profile-page-controller");
+    isLoading.value = true;
+    final user = FirebaseAuth.instance.currentUser;
+    await FirebaseFirestore.instance
+        .collection("profile")
+        .doc(user!.uid)
+        .update(
+      {
+        "dob": date.toIso8601String(),
+      },
+    ).then(
+      (value) async {
+        await getCurrentUserProfile().then((v) {
+          isLoading.value = false;
+          Get.back();
+          Get.snackbar("Success", "Birthday updated successfully!");
+        });
+      },
+    ).onError((error, stackTrace) {
+      isLoading.value = false;
+      Get.back();
+      Get.snackbar("Error", error.toString());
+    });
+  }
+
+  Future<void> updateBirthday(DateTime date) async {
+    log("Birthday Updating", name: "profile-page-controller");
+    isLoading.value = true;
+    final user = FirebaseAuth.instance.currentUser;
+    await FirebaseFirestore.instance
+        .collection("profile")
+        .doc(user!.uid)
+        .update({
+      "dob": date.toIso8601String(),
+    }).then(
+      (value) async {
+        await getCurrentUserProfile();
+        isLoading.value = false;
+        Get.back();
+        Get.snackbar("Success", "Birthday updated successfully!");
       },
     ).onError((error, stackTrace) {
       isLoading.value = false;

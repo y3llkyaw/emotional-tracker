@@ -28,24 +28,24 @@ class LandingPage extends StatelessWidget {
             SizedBox(
               height: Get.height * 0.05,
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 60),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 60),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    'welcome to',
+                  const Text(
+                    'Welcome to',
                   ),
                   Text(
-                    'Detective Goat',
+                    'MoodMate.',
                     style: TextStyle(
                       color: Colors.blueAccent,
-                      fontSize: 20,
+                      fontSize: Get.width * 0.06,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(
-                    "Hello, I’m detective GOAT and today I’m a detective for you to find what are you feeling.",
+                  const Text(
+                    "Track your mood and feelings.\n Share your moods with friends.\n Analyize your moods.",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       height: 2,

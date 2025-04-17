@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:alarm/alarm.dart';
-import 'package:animated_emoji/animated_emoji.dart';
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:chat_bubbles/bubbles/bubble_special_three.dart';
 import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
@@ -155,16 +154,6 @@ class _ProfilePageState extends State<ProfilePage> {
             style: TextStyle(fontWeight: FontWeight.w700),
           ),
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: IconButton(
-              tooltip: "profile setting",
-              onPressed: () {},
-              icon: const Icon(Icons.settings),
-            ),
-          )
-        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -213,35 +202,35 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
-            Transform(
-              transform: Matrix4.translationValues(
-                Get.width * 0.15,
-                -Get.height * 0.08,
-                0,
-              ),
-              child: InkWell(
-                customBorder: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                onTap: () {},
-                child: Obx(
-                  () => profilePageController.userProfile.value?.emoji != null
-                      ? const CircleAvatar(
-                          backgroundColor: Colors.black38,
-                          child: AnimatedEmoji(
-                            AnimatedEmojis.dizzy,
-                            errorWidget: Text('💫'),
-                          ),
-                        )
-                      : const CircleAvatar(
-                          backgroundColor: Colors.black38,
-                          child: Icon(
-                            CupertinoIcons.add,
-                            color: Colors.white,
-                          ),
-                        ),
-                ),
-              ),
-            ),
+            // Transform(
+            //   transform: Matrix4.translationValues(
+            //     Get.width * 0.15,
+            //     -Get.height * 0.08,
+            //     0,
+            //   ),
+            //   child: InkWell(
+            //     customBorder: RoundedRectangleBorder(
+            //         borderRadius: BorderRadius.circular(20)),
+            //     onTap: () {},
+            //     child: Obx(
+            //       () => profilePageController.userProfile.value?.emoji != null
+            //           ? const CircleAvatar(
+            //               backgroundColor: Colors.black38,
+            //               child: AnimatedEmoji(
+            //                 AnimatedEmojis.dizzy,
+            //                 errorWidget: Text('💫'),
+            //               ),
+            //             )
+            //           : const CircleAvatar(
+            //               backgroundColor: Colors.black38,
+            //               child: Icon(
+            //                 CupertinoIcons.add,
+            //                 color: Colors.white,
+            //               ),
+            //             ),
+            //     ),
+            //   ),
+            // ),
             if (_showBubble)
               Transform(
                 transform: Matrix4.translationValues(
@@ -495,14 +484,15 @@ class _ProfilePageState extends State<ProfilePage> {
               child: SizedBox(
                 width: Get.width * 0.16,
                 height: Get.width * 0.16,
-                child: const CircleAvatar(
-                  backgroundColor: Color.fromARGB(255, 88, 95, 133),
-                  radius: 20,
-                  child: Icon(
-                    Icons.logout,
-                    color: Colors.white,
-                  ),
-                ),
+                child: CircleAvatar(
+                    // radius: Get.width*0.,
+                    radius: 30,
+                    child: CircleAvatar(
+                      child: AvatarPlus(
+                        "${FirebaseAuth.instance.currentUser!.uid}${FirebaseAuth.instance.currentUser!.displayName}",
+                        width: Get.width * 0.4,
+                      ),
+                    )),
               ),
             ),
             title: Text(
@@ -514,7 +504,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 onPressed: () {
                   Get.back();
                 },
-                child: const Text("Cancel"),
+                child: Text(
+                  "Cancel",
+                  style: TextStyle(
+                    color: Get.theme.colorScheme.onSecondary,
+                  ),
+                ),
               ),
               TextButton(
                 onPressed: () async {
@@ -522,7 +517,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   journalController.journals.clear();
                   Get.offAllNamed("/home");
                 },
-                child: const Text("Log out"),
+                child: Text(
+                  "Log out",
+                  style: TextStyle(
+                    color: Get.theme.colorScheme.onPrimary,
+                  ),
+                ),
               ),
             ],
           ),

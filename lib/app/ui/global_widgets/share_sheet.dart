@@ -36,7 +36,7 @@ class _ShareSheetState extends State<ShareSheet> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Get.theme.colorScheme.primary,
+        color: Get.theme.scaffoldBackgroundColor.withOpacity(0.7),
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
