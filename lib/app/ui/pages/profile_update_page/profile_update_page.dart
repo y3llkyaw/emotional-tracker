@@ -1,6 +1,8 @@
 import 'package:emotion_tracker/app/controllers/local_auth_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
+import 'package:emotion_tracker/app/controllers/uid_controller.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_update_page/change_birthday_page/change_birthday_page.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_update_page/username_update_page/username_update_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,16 +19,19 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
   final nameController = TextEditingController();
   final ProfilePageController controller = Get.find();
   final LocalAuthController localAuthController = Get.find();
+  final UidController uidController = Get.put(UidController());
 
   @override
   void initState() {
     super.initState();
     FirebaseAuth.instance.currentUser!.reload();
+    uidController.getCurrentUserUid(FirebaseAuth.instance.currentUser!.uid);
   }
 
   @override
   Widget build(BuildContext context) {
     controller.getCurrentUserProfile();
+    uidController.getCurrentUserUid(FirebaseAuth.instance.currentUser!.uid);
 
     return Scaffold(
       appBar: AppBar(
@@ -48,7 +53,7 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
                 isThreeLine: false,
                 leading: const Icon(Icons.person),
                 title: Text(
-                  "Name",
+                  "Display Name",
                   style: Get.theme.textTheme.titleMedium,
                 ),
                 subtitle: Obx(
@@ -62,7 +67,55 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
                 ),
                 trailing: const Icon(
                   CupertinoIcons.right_chevron,
-                  color: Colors.black,
+                  weight: 20,
+                ),
+              ),
+            ),
+            // User Id
+            InkWell(
+              onTap: () async {
+                // Get.toNamed("profile/update/name");
+                await Get.to(() => const UsernameUpdatePage());
+                setState(() {});
+              },
+              child: ListTile(
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: Get.width * 0.09),
+                isThreeLine: false,
+                leading: const Icon(CupertinoIcons.doc_person),
+                title: Row(
+                  children: [
+                    Text(
+                      "username",
+                      style: Get.theme.textTheme.titleMedium,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Obx(
+                      () => Icon(
+                        uidController.hasUserName.value
+                            ? Icons.check_circle
+                            : Icons.error,
+                        size: 14,
+                        color: uidController.hasUserName.value
+                            ? Colors.green
+                            : Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
+                subtitle: Obx(
+                  () => Text(
+                    uidController.username.value,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+                trailing: const Icon(
+                  CupertinoIcons.right_chevron,
                   weight: 20,
                 ),
               ),
@@ -102,7 +155,6 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
                 ),
                 trailing: const Icon(
                   CupertinoIcons.right_chevron,
-                  color: Colors.black,
                   weight: 20,
                 ),
               ),
@@ -143,7 +195,6 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
                 ),
                 trailing: const Icon(
                   CupertinoIcons.right_chevron,
-                  color: Colors.black,
                   weight: 20,
                 ),
               ),
@@ -172,7 +223,6 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
                 ),
                 trailing: const Icon(
                   CupertinoIcons.right_chevron,
-                  color: Colors.black,
                   weight: 20,
                 ),
               ),

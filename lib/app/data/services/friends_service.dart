@@ -134,11 +134,37 @@ class FriendService {
     });
   }
 
+  Future<List> searchFriendsWithUsername(String? query) async {
+    if (query == null) {
+      return [];
+    }
+
+    // search for friends
+    var searchResults = [];
+    final result = await _firestore
+        .collection('usernames')
+        .where("username", isEqualTo: query.split("@")[1])
+        .get();
+
+    for (var r in result.docs) {
+      if (r.data()['uid'] != _cuid) {
+        final profile =
+            await profilePageController.getProfileByUid(r.data()["uid"]);
+        searchResults.add(profile);
+      }
+    }
+    if (query.isEmpty) {
+      searchResults.clear();
+    }
+
+    return searchResults;
+  }
+
   Future<List> searchFriendsWithName(String? query) async {
     if (query == null) {
       return [];
     }
-    final end = '${query}\uf8ff'; // Unicode trick
+    final end = '$query\uf8ff'; // Unicode trick
     // search for friends
     var searchResults = [];
     final result = await _firestore

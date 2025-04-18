@@ -35,7 +35,12 @@ class FriendsController extends GetxController {
 
   Future<void> searchFriendsWithName(String? query) async {
     try {
-      searchResults.value = await _friendService.searchFriendsWithName(query);
+      if (query != null && query[0] == "@") {
+        searchResults.value =
+            await _friendService.searchFriendsWithUsername(query);
+      } else {
+        searchResults.value = await _friendService.searchFriendsWithName(query);
+      }
     } catch (e) {
       print(e.toString());
     }

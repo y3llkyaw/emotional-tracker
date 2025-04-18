@@ -51,7 +51,7 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
                     onSearch: (value) async {
                       addFriendsController.searchFriendsWithName(value);
                     },
-                    hintText: 'Search for New friends',
+                    hintText: 'type name or @username',
                   ),
                 ),
                 SizedBox(

@@ -78,7 +78,7 @@ class JournalController extends GetxController {
           .collection("journals")
           .doc(jid)
           .get();
-        print(journal.data());
+      print(journal.data());
       if (journal.exists) {
         return Journal.fromDocument(journal.data()!);
       }

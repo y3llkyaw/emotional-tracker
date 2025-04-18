@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:avatar_plus/avatar_plus.dart';
+import 'package:emotion_tracker/app/controllers/uid_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/sources/enums.dart';
 import 'package:emotion_tracker/app/ui/pages/chat_page/chat_page.dart';
@@ -20,11 +21,13 @@ class OtherProfilePage extends StatefulWidget {
 
 class _OtherProfilePageState extends State<OtherProfilePage> {
   final controller = Get.put(OtherProfilePageController());
+  final uidController = Get.put(UidController());
 
   @override
   void initState() {
     super.initState();
     controller.friendStatusStream(widget.profile.uid);
+    // uidController.getUsernameByUid(widget.profile.uid);
   }
 
   final TextStyle textStyle = const TextStyle(

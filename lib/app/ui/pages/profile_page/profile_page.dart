@@ -6,6 +6,7 @@ import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
 import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
+import 'package:emotion_tracker/app/controllers/uid_controller.dart';
 import 'package:emotion_tracker/app/sources/enums.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/profile_qr_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -31,12 +32,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
   final ProfilePageController profilePageController = Get.find();
   final JournalController journalController = Get.find();
+  final UidController uidController = Get.put(UidController());
   Time selectedTime = Time(hour: 21, minute: 0, second: 0);
 
   @override
   void initState() {
-    profilePageController.getCurrentUserProfile();
     super.initState();
+    profilePageController.getCurrentUserProfile();
+    uidController.getCurrentUserUid(FirebaseAuth.instance.currentUser!.uid);
     isOn = box.read('isOn') ?? false;
     selectedTime = readTime();
   }
@@ -300,7 +303,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           )
                         : Container(),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -309,11 +312,16 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                "uid: ${FirebaseAuth.instance.currentUser!.uid}",
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
+              Obx(
+                () => Text(
+                  uidController.hasUserName.value
+                      ? "@${uidController.username.value}"
+                      : FirebaseAuth.instance.currentUser!.uid.toString(),
+                  // "uid: ${FirebaseAuth.instance.currentUser!.uid}",
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
                 ),
               ),
               IconButton(
@@ -321,7 +329,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 onPressed: () async {
                   await Clipboard.setData(
                     ClipboardData(
-                      text: FirebaseAuth.instance.currentUser!.uid,
+                      text: uidController.hasUserName.value
+                          ? "@${uidController.username.value}"
+                          : FirebaseAuth.instance.currentUser!.uid.toString(),
                     ),
                   );
                 },

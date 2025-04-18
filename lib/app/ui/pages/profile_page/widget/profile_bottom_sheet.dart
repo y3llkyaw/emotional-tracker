@@ -10,6 +10,7 @@ void showCancelRequest(Profile profile) {
     context: Get.context!,
     builder: (context) {
       return Container(
+        color: Get.theme.scaffoldBackgroundColor.withOpacity(0.7),
         height: Get.height * 0.18,
         padding: EdgeInsets.symmetric(
           horizontal: Get.width * 0.05,
@@ -58,6 +59,7 @@ void showUnfriend(Profile profile) {
     context: Get.context!,
     builder: (context) {
       return Container(
+        color: Get.theme.scaffoldBackgroundColor.withOpacity(0.7),
         height: Get.height * 0.24,
         padding: EdgeInsets.symmetric(
           horizontal: Get.width * 0.05,
