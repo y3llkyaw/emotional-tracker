@@ -47,8 +47,22 @@ class CalendarPage extends GetView<HomeController> {
                 itemCount: journalController.journals.length,
                 itemBuilder: (context, index) {
                   final jounalModel = journalController.journals[index];
-                  return MoodCard(
-                    journal: jounalModel,
+
+                  return Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: InkWell(
+                      onTap: () {
+                        journalController.indexDataJournal.value = index;
+                        Get.to(
+                          () => JournalPageView(),
+                          transition: Transition.downToUp,
+                        );
+                        journalController.fetchJournals();
+                      },
+                      child: MoodCard(
+                        journal: jounalModel,
+                      ),
+                    ),
                   );
                 },
               ),

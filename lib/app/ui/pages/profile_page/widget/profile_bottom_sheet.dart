@@ -23,7 +23,9 @@ void showCancelRequest(Profile profile) {
               leading: const Icon(CupertinoIcons.person_badge_minus_fill),
               title: const Text(
                 "remove friend request ",
-                style: TextStyle(color: Colors.redAccent),
+                style: TextStyle(
+                  color: Colors.redAccent,
+                ),
               ),
               onTap: () async {
                 await friendsController.removeFriendRequest(profile).then((v) {

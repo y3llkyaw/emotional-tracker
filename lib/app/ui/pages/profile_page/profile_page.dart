@@ -17,6 +17,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -487,55 +489,19 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _buildLogoutTile() {
     return InkWell(
       onTap: () async {
-        Get.dialog(
-          AlertDialog(
-            icon: Transform(
-              transform: Matrix4.translationValues(0, -40, 0),
-              child: SizedBox(
-                width: Get.width * 0.16,
-                height: Get.width * 0.16,
-                child: CircleAvatar(
-                    // radius: Get.width*0.,
-                    radius: 30,
-                    child: CircleAvatar(
-                      child: AvatarPlus(
-                        "${FirebaseAuth.instance.currentUser!.uid}${FirebaseAuth.instance.currentUser!.displayName}",
-                        width: Get.width * 0.4,
-                      ),
-                    )),
-              ),
-            ),
-            title: Text(
-              "Are you sure you want to log out?",
-              style: TextStyle(fontSize: Get.height * 0.02),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Get.back();
-                },
-                child: Text(
-                  "Cancel",
-                  style: TextStyle(
-                    color: Get.theme.colorScheme.onSecondary,
-                  ),
-                ),
-              ),
-              TextButton(
-                onPressed: () async {
-                  await FirebaseAuth.instance.signOut();
-                  journalController.journals.clear();
-                  Get.offAllNamed("/home");
-                },
-                child: Text(
-                  "Log out",
-                  style: TextStyle(
-                    color: Get.theme.colorScheme.onPrimary,
-                  ),
-                ),
-              ),
-            ],
-          ),
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.confirm,
+          text: 'Do you want to logout',
+          confirmBtnText: 'Yes',
+          cancelBtnText: 'No',
+          confirmBtnColor: Colors.red,
+          onCancelBtnTap: () => Get.back(),
+          onConfirmBtnTap: () async {
+            await FirebaseAuth.instance.signOut();
+            journalController.journals.clear();
+            Get.offAllNamed("/home");
+          },
         );
       },
       child: const ListTile(
