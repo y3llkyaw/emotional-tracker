@@ -89,6 +89,7 @@ class ProfilePageController extends GetxController {
   Future<void> updateDisplayName(String name) async {
     log("updateDisplayName called", name: "profile-page-controller");
     isLoading.value = true;
+
     await FirebaseAuth.instance.currentUser!
         .updateDisplayName(name.trim())
         .onError((e, s) {

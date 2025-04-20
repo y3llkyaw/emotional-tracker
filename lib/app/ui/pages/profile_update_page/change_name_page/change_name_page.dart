@@ -63,7 +63,8 @@ class _ChangeNamePageState extends State<ChangeNamePage> {
             ),
             Obx(
               () => CustomButton(
-                isDisabled: profilePageController.isLoading.value,
+                isDisabled: profilePageController.isLoading.value ||
+                    nameController.text == "",
                 isLoading: profilePageController.isLoading.value,
                 text: "Update Name",
                 onPressed: () {

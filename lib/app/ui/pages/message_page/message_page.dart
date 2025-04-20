@@ -21,20 +21,21 @@ class MessagePage extends StatefulWidget {
 }
 
 class _MessagePageState extends State<MessagePage> {
-  final MessagePageController messagePageController = MessagePageController();
+  final MessagePageController messagePageController =
+      Get.put(MessagePageController());
   final FriendsController friendsController = Get.put(FriendsController());
   final OnlineController onlineController = Get.put(OnlineController());
   final ChatController chatController = Get.put(ChatController());
   @override
   void initState() {
-    friendsController.getFriends();
-    chatController.getUnreadMessageCount();
-    messagePageController.getFriendsMessages();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    friendsController.getFriends();
+    chatController.getUnreadMessageCount();
+    messagePageController.getFriendsMessages();
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -60,7 +61,7 @@ class _MessagePageState extends State<MessagePage> {
       ),
       body: Obx(
         () {
-          log("obx");
+          log("obx for message page");
           if (messagePageController.messages.isNotEmpty) {
             List<MapEntry> messages =
                 messagePageController.messages.entries.toList();
@@ -78,7 +79,6 @@ class _MessagePageState extends State<MessagePage> {
                 isMessageEmpty = false;
               }
             }
-            log(isMessageEmpty.toString());
 
             if (isMessageEmpty) {
               return _noMessage();

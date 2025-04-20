@@ -1,4 +1,5 @@
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
+import 'package:emotion_tracker/app/ui/pages/mood_staticstics/mood_staticstics_page.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -152,19 +153,22 @@ class PiechartPage extends StatelessWidget {
                   SizedBox(
                     height: Get.height * 0.02,
                   ),
-                  // ElevatedButton(
-                  //     style: ElevatedButton.styleFrom(
-                  //       backgroundColor: Colors.blueAccent,
-                  //     ),
-                  //     onPressed: () {},
-                  //     child: const Text(
-                  //       "view all data",
-                  //       style: TextStyle(
-                  //         color: Colors.white,
-                  //       ),
-                  //     ),)
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                    ),
+                    onPressed: () {
+                      Get.to(() => const MoodStaticsticsPage());
+                    },
+                    child: const Text(
+                      "view all data",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                 ],
-              )
+              ),
             ],
           ),
         ],

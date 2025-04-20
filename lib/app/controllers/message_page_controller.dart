@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/data/services/chat_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,6 +10,13 @@ class MessagePageController extends GetxController {
   final _cuid = FirebaseAuth.instance.currentUser!.uid;
   final ChatService chatService = ChatService();
   var messages = {}.obs;
+
+  @override
+  void onInit() async {
+    super.onInit();
+    log("message-page-controller");
+    getFriendsMessages();
+  }
 
   Future<void> getFriendsMessages() async {
     messages.bindStream(chatService.getFriendsMessages());
