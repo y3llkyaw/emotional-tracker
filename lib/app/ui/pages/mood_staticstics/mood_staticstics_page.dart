@@ -20,6 +20,7 @@ class _MoodStaticsticsPageState extends State<MoodStaticsticsPage> {
   final journalController = Get.put(JournalController());
   final txtStyle = TextStyle(color: Get.theme.colorScheme.onSurface);
   var journals = [];
+  var filteredJournal = [];
   int dropDown = 0;
   TextStyle title = const TextStyle(
     fontWeight: FontWeight.w400,
@@ -28,7 +29,7 @@ class _MoodStaticsticsPageState extends State<MoodStaticsticsPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    journals = journalController.journals.value;
+    journals = moodStaticsticsPageController.filteredJournal;
   }
 
   @override
@@ -70,7 +71,8 @@ class _MoodStaticsticsPageState extends State<MoodStaticsticsPage> {
                                   radius: 13,
                                   backgroundColor: Colors.blue.withOpacity(0.2),
                                   child: Text(
-                                    journalController.journals.length
+                                    moodStaticsticsPageController
+                                        .filteredJournal.length
                                         .toString(),
                                     style: TextStyle(
                                       color: Get.theme.hintColor,
@@ -87,8 +89,11 @@ class _MoodStaticsticsPageState extends State<MoodStaticsticsPage> {
                             double kindaBad = 0;
                             double superBad = 0;
 
-                            for (var element in journalController.journals) {
+                            for (var element in moodStaticsticsPageController
+                                .filteredJournal) {
                               switch (element.value) {
+                                case null:
+                                  break;
                                 case 0:
                                   superBad++;
                                   break;
@@ -157,93 +162,41 @@ class _MoodStaticsticsPageState extends State<MoodStaticsticsPage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          width: Get.width * 0.4,
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          decoration: BoxDecoration(
-                            color: Colors.blueAccent,
+                        // int? selectedValue;
+
+                        SizedBox(
+                          width: Get.width * 0.3,
+                          child: DropdownButtonFormField<int>(
                             borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<int>(
-                              isDense: true,
-                              value: dropDown,
-                              dropdownColor:
-                                  Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(12),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                            value: 1,
+                            decoration: InputDecoration(
+                              labelText: 'Filter',
+                              labelStyle: TextStyle(
+                                color: Get.theme.colorScheme.onSurface,
                               ),
-                              items: [
-                                DropdownMenuItem(
-                                  value: 7,
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.calendar_today,
-                                          size: 16,
-                                          color:
-                                              Get.theme.colorScheme.onSurface),
-                                      const SizedBox(width: 8),
-                                      Text('Last 7 Days', style: txtStyle),
-                                    ],
-                                  ),
-                                ),
-                                DropdownMenuItem(
-                                  value: 30,
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.calendar_month,
-                                          size: 16,
-                                          color:
-                                              Get.theme.colorScheme.onSurface),
-                                      const SizedBox(width: 8),
-                                      Text('Last 30 Days', style: txtStyle),
-                                    ],
-                                  ),
-                                ),
-                                DropdownMenuItem(
-                                  value: 90,
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.calendar_month,
-                                          size: 16,
-                                          color:
-                                              Get.theme.colorScheme.onSurface),
-                                      const SizedBox(width: 8),
-                                      Text('Last 90 Days', style: txtStyle),
-                                    ],
-                                  ),
-                                ),
-                                DropdownMenuItem(
-                                  value: 0,
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.all_inclusive,
-                                          size: 16,
-                                          color:
-                                              Get.theme.colorScheme.onSurface),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        'All Time',
-                                        style: dropDown != 0
-                                            ? txtStyle
-                                            : const TextStyle(
-                                                color: Colors.black38),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                              onChanged: (int? newValue) {
-                                setState(() {
-                                  dropDown = newValue!;
-                                });
-                              },
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                    color: Colors.grey.shade400, width: 1),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
                             ),
+                            items: const [
+                              DropdownMenuItem(
+                                  value: 1, child: Text('All Time')),
+                              DropdownMenuItem(value: 2, child: Text('7d ago')),
+                              DropdownMenuItem(
+                                  value: 3, child: Text('30d ago')),
+                            ],
+                            onChanged: (value) {
+                              if (value != null) {
+                                moodStaticsticsPageController.filterMood(value);
+                              }
+                            },
                           ),
                         ),
+
                         SizedBox(height: Get.height * 0.02),
                         _labelWidget(Colors.red, "Super Bad"),
                         _labelWidget(Colors.orange, "Kinda Bad"),
@@ -273,6 +226,7 @@ class _MoodStaticsticsPageState extends State<MoodStaticsticsPage> {
                     if (journals.length < 3) {
                       return Center(
                         child: Container(
+                          // margin: EdgeInsets.all(20),
                           decoration: BoxDecoration(
                               color: Colors.grey.withOpacity(0.5),
                               borderRadius: BorderRadius.circular(20)),
@@ -296,9 +250,10 @@ class _MoodStaticsticsPageState extends State<MoodStaticsticsPage> {
                         scrollDirection: Axis.horizontal,
                         child: Container(
                           // height: Get.height * 0.4,
-                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
                           width: journalController.journals.length *
-                                  (Get.width * 0.14) +
+                                  (Get.width * 0.1) +
                               200, // Adjust based on how much scroll you want
                           child: LineChart(
                             LineChartData(
@@ -353,7 +308,7 @@ class _MoodStaticsticsPageState extends State<MoodStaticsticsPage> {
                               lineBarsData: [
                                 LineChartBarData(
                                   spots: spots,
-                                  isCurved: true,
+                                  isCurved: false,
                                   // color: Colors.blue,
                                   barWidth: 3,
                                   dotData: FlDotData(

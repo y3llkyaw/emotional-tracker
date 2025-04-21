@@ -36,7 +36,7 @@ class _ShareSheetState extends State<ShareSheet> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Get.theme.scaffoldBackgroundColor.withOpacity(0.7),
+        color: Get.theme.scaffoldBackgroundColor,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
@@ -200,7 +200,7 @@ class _ShareSheetState extends State<ShareSheet> {
       children: [
         Icon(
           CupertinoIcons.person_2_fill,
-          color: Colors.black26,
+          color: Get.theme.colorScheme.onSecondary,
           size: Get.width * 0.5,
         ),
         Center(
@@ -209,7 +209,7 @@ class _ShareSheetState extends State<ShareSheet> {
             style: TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: Get.width * 0.036,
-              color: Colors.black26,
+              color: Get.theme.colorScheme.onSecondary,
             ),
           ),
         ),

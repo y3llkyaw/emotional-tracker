@@ -218,6 +218,7 @@ class _MessagePageState extends State<MessagePage> {
         Icon(
           CupertinoIcons.chat_bubble_2_fill,
           size: Get.width * 0.5,
+          color: Get.theme.colorScheme.onSecondary,
         ),
         Center(
           child: Text(
@@ -225,6 +226,7 @@ class _MessagePageState extends State<MessagePage> {
             style: TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: Get.width * 0.036,
+              color: Get.theme.colorScheme.onSecondary,
             ),
           ),
         ),

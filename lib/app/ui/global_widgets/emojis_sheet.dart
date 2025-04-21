@@ -16,7 +16,7 @@ void showEmojiSheet(void Function(AnimatedEmojiData) onEmojiSelected,
               Row(
                 children: [
                   CircleAvatar(
-                    backgroundColor: Colors.white,
+                    backgroundColor: Get.theme.scaffoldBackgroundColor,
                     radius: Get.height * 0.06,
                     child: AnimatedEmoji(
                       selectedEmoji,
@@ -112,7 +112,7 @@ void showEmojiSheet(void Function(AnimatedEmojiData) onEmojiSelected,
       },
     ),
     elevation: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: Get.theme.scaffoldBackgroundColor,
     enableDrag: true,
   );
 }
