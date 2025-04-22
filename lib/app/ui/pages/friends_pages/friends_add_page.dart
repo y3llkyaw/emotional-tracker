@@ -149,7 +149,6 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
             title: Text(
               profile.name,
               style: const TextStyle(
-                color: Colors.black,
                 fontWeight: FontWeight.w500,
               ),
             ),

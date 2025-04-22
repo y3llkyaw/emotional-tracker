@@ -234,7 +234,7 @@ class _MoodStaticsticsPageState extends State<MoodStaticsticsPage> {
                           width: Get.width * 0.9,
                           child: Center(
                             child: Text(
-                              "Line chart need to have at least 3 moods.\n ${journalController.journals.length} of 3",
+                              "Line chart need to have at least 3 moods.\n ${moodStaticsticsPageController.filteredJournal.length} of 3",
                               style: TextStyle(
                                 color: Colors.grey.shade500,
                                 fontWeight: FontWeight.bold,

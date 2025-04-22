@@ -5,6 +5,7 @@ import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/controllers/message_page_controller.dart';
 import 'package:emotion_tracker/app/controllers/online_controller.dart';
+import 'package:emotion_tracker/app/controllers/share_sheet_controller.dart';
 import 'package:emotion_tracker/app/data/models/journal.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,6 +24,8 @@ class _ShareSheetState extends State<ShareSheet> {
   final FriendsController friendsController = Get.put(FriendsController());
   final OnlineController onlineController = Get.put(OnlineController());
   final ChatController chatController = Get.put(ChatController());
+  final ShareSheetController shareSheetController =
+      Get.put(ShareSheetController());
   var alreadyShard = false;
 
   @override
@@ -160,27 +163,32 @@ class _ShareSheetState extends State<ShareSheet> {
                 ],
               ),
               subtitle: Text(messages[index].value.first.message),
-              // trailing: Text("data"),
-              trailing: ElevatedButton.icon(
-                iconAlignment: IconAlignment.end,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  iconColor: Colors.white,
-                  backgroundColor: Colors.blue,
-                ),
-                onPressed: () {
-                  chatController
-                      .sendJournal(
-                        friend.uid,
-                        widget.journal,
-                      )
-                      .then((v) => {});
-                },
-                icon: const Icon(CupertinoIcons.paperplane_fill),
-                label: const Text(
-                  "send",
-                  style: TextStyle(
-                    color: Colors.white,
+              trailing: Obx(
+                () => ElevatedButton.icon(
+                  iconAlignment: IconAlignment.end,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    iconColor: Colors.white,
+                    backgroundColor:
+                        shareSheetController.shareList.contains(friend.uid)
+                            ? Colors.blueGrey
+                            : Colors.blue,
+                  ),
+                  onPressed: () {
+                    if (shareSheetController.shareList.contains(friend.uid)) {
+                      shareSheetController.shareList.remove(friend.uid);
+                    } else {
+                      shareSheetController.shareList.add(friend.uid);
+                    }
+                  },
+                  icon: const Icon(CupertinoIcons.paperplane_fill),
+                  label: Text(
+                    shareSheetController.shareList.contains(friend.uid)
+                        ? "unsend"
+                        : "send",
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -218,8 +226,10 @@ class _ShareSheetState extends State<ShareSheet> {
   }
 }
 
-void showShareSheet(Journal jid) {
-  Get.bottomSheet(
+void showShareSheet(Journal jid) async {
+  final controller = Get.put(ShareSheetController());
+
+  await Get.bottomSheet(
     ShareSheet(
       journal: jid,
     ),
@@ -227,4 +237,6 @@ void showShareSheet(Journal jid) {
     backgroundColor: Colors.white,
     enableDrag: true,
   );
+  controller.shareSheet(jid);
+  controller.shareList.clear();
 }

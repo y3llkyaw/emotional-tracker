@@ -262,8 +262,7 @@ class _ChatPageState extends State<ChatPage> {
                                   controller.clear();
                                   chatController.clearMessage();
                                 });
-                                // print("object");
-                                // Optionally close emoji picker
+
                                 chatController.showEmoji.value = false;
                               },
                               child: Center(
