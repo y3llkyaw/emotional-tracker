@@ -12,10 +12,12 @@ class MessagePageController extends GetxController {
   var messages = {}.obs;
 
   @override
-  void onInit() async {
-    super.onInit();
-    log("message-page-controller");
-    getFriendsMessages();
+  void onReady() {
+    
+    super.onReady();
+    log("message-page-controller ready");
+    getFriendsMessages(); // no need to await if stream is already bound
+    messages.bindStream(chatService.getFriendsMessages());
   }
 
   Future<void> getFriendsMessages() async {

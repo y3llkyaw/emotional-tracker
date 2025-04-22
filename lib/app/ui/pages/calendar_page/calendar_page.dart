@@ -1,6 +1,7 @@
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
+import 'package:emotion_tracker/app/controllers/message_page_controller.dart';
 import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/mood_card.dart';
@@ -17,6 +18,8 @@ import 'package:emotion_tracker/app/controllers/home_controller.dart';
 class CalendarPage extends GetView<HomeController> {
   CalendarPage({Key? key}) : super(key: key);
 
+  final MessagePageController messagePageController =
+      Get.put(MessagePageController());
   final JournalController journalController = Get.put(JournalController());
   final OnlineController onlineController = Get.put(OnlineController());
   final FriendsController friendsController = Get.put(FriendsController());
@@ -26,6 +29,7 @@ class CalendarPage extends GetView<HomeController> {
   Widget build(BuildContext context) {
     journalController.fetchJournals();
     onlineController.updateOnlineStatus();
+    messagePageController.getFriendsMessages();
     return Scaffold(
       body: Obx(
         () => Column(
