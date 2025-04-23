@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:emotion_tracker/app/controllers/uid_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_rx/src/rx_workers/utils/debouncer.dart';
 
 class UsernameUpdatePage extends StatefulWidget {
   const UsernameUpdatePage({Key? key}) : super(key: key);
@@ -14,6 +17,7 @@ class UsernameUpdatePage extends StatefulWidget {
 class _UsernameUpdatePageState extends State<UsernameUpdatePage> {
   final usernameController = TextEditingController();
   final UidController uidController = Get.put(UidController());
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -46,8 +50,15 @@ class _UsernameUpdatePageState extends State<UsernameUpdatePage> {
               const SizedBox(height: 20),
               TextField(
                 controller: usernameController,
-                onChanged: (value) {
-                  uidController.validateUsername(value.toLowerCase());
+                onChanged: (value) async {
+                  if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+                  _debounce =
+                      Timer(const Duration(milliseconds: 200), () async {
+                    await uidController.validateUsername(value.toLowerCase());
+
+                    // await addFriendsController.searchFriendsWithName(query);
+                  });
                 },
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(

@@ -158,7 +158,10 @@ class PiechartPage extends StatelessWidget {
                       backgroundColor: Colors.blueAccent,
                     ),
                     onPressed: () {
-                      Get.to(() => const MoodStaticsticsPage());
+                      Get.to(
+                        () => const MoodStaticsticsPage(),
+                        transition: Transition.rightToLeft,
+                      );
                     },
                     child: const Text(
                       "view all data",

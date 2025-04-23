@@ -1,16 +1,16 @@
+import 'dart:developer';
+
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:emotion_tracker/app/sources/enums.dart';
 
 class Profile {
   final String uid;
   final String name;
   final String nameLowerCase;
-  final Gender gender;
+  final String gender;
   final Timestamp dob;
-  final AnimatedEmojiData? emoji;
+  // final AnimatedEmojiData? emoji;
   final List<AnimatedEmojiData> recentEmojis;
-
   final String? avatar;
 
   Profile({
@@ -20,7 +20,7 @@ class Profile {
     required this.gender,
     required this.dob,
     required this.recentEmojis,
-    this.emoji,
+    // this.emoji,
     this.avatar,
   });
 
@@ -30,10 +30,10 @@ class Profile {
       "name": name,
       "name_lowercase": nameLowerCase,
       "gender": gender.toString(),
-      "dob": dob.toString(),
-      "emoji": emoji?.toUnicodeEmoji() ?? "",
-      "avatar": dob.toString(),
+      "dob": dob, // Store Timestamp directly
+      // "emoji": emoji?.id ?? "", // store emoji ID, not unicode
       "recentEmojis": recentEmojis.map((e) => e.id).toList(),
+      "avatar": avatar,
     };
   }
 
@@ -42,35 +42,48 @@ class Profile {
       uid: json['uid'],
       name: json['name'],
       nameLowerCase: json['name_lowercase'],
-      gender: Gender.values
-          .firstWhere((element) => element.toString() == json['gender']),
-      dob: Timestamp.fromDate(DateTime.parse(json['dob'])),
-      emoji: _getEmojiFromJson(json),
-      avatar: json['avatar'],
+      gender: json['gender'],
+      dob: _parseTimestamp(json['dob']),
+      // emoji: _getEmojiFromJson(json),
       recentEmojis: _getEmojiList(json),
+      avatar: json['avatar'],
     );
+  }
+
+  static Timestamp _parseTimestamp(dynamic dobField) {
+    try {
+      return dobField is Timestamp
+          ? dobField
+          : Timestamp.fromDate(DateTime.parse(dobField.toString()));
+    } catch (e) {
+      log('DOB parse error: $e');
+      return Timestamp.now(); // fallback
+    }
   }
 
   static AnimatedEmojiData? _getEmojiFromJson(Map<String, dynamic> json) {
     try {
-      return json['emotion'] != null
-          ? AnimatedEmojis.fromId(json['emotion'].toString())
-          : null; // Return null if 'emotion' is null
+      return json['emoji'] != null
+          ? AnimatedEmojis.fromId(json['emoji'].toString())
+          : null;
     } catch (e) {
-      return null; // If any error occurs, return null
+      log('Emoji parse error: $e');
+      return null;
     }
   }
 
   static List<AnimatedEmojiData> _getEmojiList(Map<String, dynamic> json) {
     try {
-      final List<dynamic> emojis =
-          json["recentEmojis"] ?? []; // Handle null safety
-      return emojis.map((e) {
-        // Convert each emoji ID to AnimatedEmojiData
-        return AnimatedEmojis.fromId(e.toString());
-      }).toList();
+      final rawList = json["recentEmojis"];
+      if (rawList is! List || rawList.isEmpty) return [];
+
+      return rawList
+          .where((e) => e != null && e.toString().isNotEmpty)
+          .map((e) => AnimatedEmojis.fromId(e.toString()))
+          .toList();
     } catch (e) {
-      return []; // If there's an error, return an empty list
+      log('Recent emojis parse error: $e');
+      return [];
     }
   }
 }

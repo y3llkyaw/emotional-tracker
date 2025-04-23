@@ -294,13 +294,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     profilePageController.userProfile.value != null
                         ? Icon(
                             profilePageController.userProfile.value!.gender ==
-                                    Gender.Male
+                                    "Gender.Male"
                                 ? Icons.male
                                 : profilePageController
                                             .userProfile.value!.gender ==
-                                        Gender.Female
+                                        "Gender.Female"
                                     ? Icons.female
-                                    : CupertinoIcons.news,
+                                    : CupertinoIcons.question_circle,
                             color: Colors.blue,
                           )
                         : Container(),

@@ -139,10 +139,14 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
                       "Email ",
                       style: Get.theme.textTheme.titleMedium,
                     ),
-                    const Icon(
-                      Icons.check_circle,
+                    Icon(
+                      FirebaseAuth.instance.currentUser!.emailVerified
+                          ? Icons.check_circle
+                          : Icons.error,
                       size: 14,
-                      color: Colors.green,
+                      color: FirebaseAuth.instance.currentUser!.emailVerified
+                          ? Colors.green
+                          : Colors.red,
                     ),
                   ],
                 ),

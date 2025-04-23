@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/search_widget.dart';
@@ -17,12 +19,22 @@ class FriendsAddPage extends StatefulWidget {
 class _FriendsAddPageState extends State<FriendsAddPage> {
   final FriendsController addFriendsController = Get.find();
   final textController = TextEditingController();
+  Timer? _debounce;
 
   @override
   void dispose() {
     textController.dispose();
     addFriendsController.searchFriendsWithName("");
+    _debounce?.cancel();
     super.dispose();
+  }
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+    _debounce = Timer(const Duration(milliseconds: 200), () async {
+      await addFriendsController.searchFriendsWithName(query);
+    });
   }
 
   @override
@@ -40,7 +52,9 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: Get.width * 0.005),
+            padding: EdgeInsets.symmetric(
+              horizontal: Get.width * 0.005,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -49,7 +63,8 @@ class _FriendsAddPageState extends State<FriendsAddPage> {
                   child: SearchWidget(
                     controller: textController,
                     onSearch: (value) async {
-                      addFriendsController.searchFriendsWithName(value);
+                      // addFriendsController.searchFriendsWithName(value);
+                      _onSearchChanged(value);
                     },
                     hintText: 'type name or @username',
                   ),

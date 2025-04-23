@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
-import 'package:emotion_tracker/app/sources/enums.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
@@ -52,7 +51,7 @@ class ProfilePageController extends GetxController {
           uid: "",
           name: "",
           nameLowerCase: "",
-          gender: Gender.Others,
+          gender: "Gender.Others",
           dob: Timestamp.now(),
           recentEmojis: [],
         );
@@ -102,7 +101,10 @@ class ProfilePageController extends GetxController {
     await FirebaseFirestore.instance
         .collection("profile")
         .doc(user!.uid)
-        .update({"name": user.displayName}).then(
+        .update({
+      "name": user.displayName,
+      "name_lowercase": user.displayName!.toLowerCase()
+    }).then(
       (value) async {
         await getCurrentUserProfile();
         isLoading.value = false;

@@ -35,14 +35,18 @@ class FriendsController extends GetxController {
 
   Future<void> searchFriendsWithName(String? query) async {
     try {
-      if (query != null && query[0] == "@") {
-        searchResults.value =
-            await _friendService.searchFriendsWithUsername(query);
+      if (query != null && query.trim().isNotEmpty) {
+        if (query[0] == "@") {
+          searchResults.value =
+              await _friendService.searchFriendsWithUsername(query);
+        } else {
+          searchResults.value = await _friendService.searchUsersByName(query);
+        }
       } else {
-        searchResults.value = await _friendService.searchFriendsWithName(query);
+        searchResults.value = []; // Optionally clear results on empty input
       }
     } catch (e) {
-      print(e.toString());
+      log('Search error: $e');
     }
   }
 

@@ -160,30 +160,32 @@ class FriendService {
     return searchResults;
   }
 
-  Future<List> searchFriendsWithName(String? query) async {
-    if (query == null) {
+  Future<List<Profile>> searchUsersByName(String? name) async {
+    try {
+      var searchResults = [];
+      if (name == null || name.trim().isEmpty) return [];
+
+      final queryText = name.toLowerCase();
+      // final endText = '$queryText\uf8ff'; // matches prefix
+
+      final snapshot = await _firestore
+          .collection('profile')
+          .orderBy('name_lowercase')
+          .startAt([queryText]).get();
+
+      for (var doc in snapshot.docs) {
+        if (!searchResults.contains(doc.data())) {
+          searchResults.add(doc.data());
+        }
+      }
+      return snapshot.docs
+          .where((doc) => doc.data()['uid'] != _cuid) // avoid self
+          .map((doc) => Profile.fromDocument(doc.data()))
+          .toList();
+    } catch (e) {
+      log(e.toString());
       return [];
     }
-    final end = '$query\uf8ff'; // Unicode trick
-    // search for friends
-    var searchResults = [];
-    final result = await _firestore
-        .collection('profile')
-        .where("name_lowercase", isGreaterThanOrEqualTo: query.toLowerCase())
-        .where("name_lowercase", isLessThan: end)
-        .get();
-
-    for (var r in result.docs) {
-      if (r.data()['uid'] != _cuid) {
-        searchResults.add(Profile.fromDocument(r.data()));
-      }
-    }
-
-    if (query.isEmpty) {
-      searchResults.clear();
-    }
-
-    return searchResults;
   }
 
   Future<List<Profile?>> getFriends() async {

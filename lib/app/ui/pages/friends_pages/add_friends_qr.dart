@@ -6,6 +6,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class QRScannerPage extends StatefulWidget {
+  const QRScannerPage({Key? key}) : super(key: key);
+
   @override
   _QRScannerPageState createState() => _QRScannerPageState();
 }

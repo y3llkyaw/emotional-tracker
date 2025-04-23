@@ -2,7 +2,6 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/controllers/uid_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
-import 'package:emotion_tracker/app/sources/enums.dart';
 import 'package:emotion_tracker/app/ui/pages/chat_page/chat_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/widget/friend_piechart.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/widget/profile_bottom_sheet.dart';
@@ -97,9 +96,9 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
                           color: Colors.grey,
                         ),
                         Icon(
-                          widget.profile.gender == Gender.Male
+                          widget.profile.gender == "Gender.Male"
                               ? Icons.male
-                              : widget.profile.gender == Gender.Female
+                              : widget.profile.gender == "Gender.Female"
                                   ? Icons.female
                                   : CupertinoIcons.news,
                           color: Colors.blue,
