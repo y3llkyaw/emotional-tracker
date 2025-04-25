@@ -27,7 +27,7 @@ class HomePage extends GetView<HomeController> {
             index: homeController.pageIndex.value,
             children: [
               CalendarPage(),
-              FriendsPage(),
+              const FriendsPage(),
               // const NotificationPage(),
               const MessagePage(),
               const ProfilePage(),
@@ -35,88 +35,89 @@ class HomePage extends GetView<HomeController> {
           ),
         ),
       ),
-      bottomNavigationBar: Obx(
-        () => ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-          child: BottomNavigationBar(
-            currentIndex: homeController.pageIndex.value,
-            onTap: (index) {
-              SystemSound.play(SystemSoundType.click);
-              homeController.changeIndex(index);
-            },
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: Get.theme.primaryColorDark,
-            unselectedItemColor: Colors.grey,
-            backgroundColor: Get.theme.canvasColor,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            items: [
-              const BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(top: 10.0),
-                  child: Icon(CupertinoIcons.home),
-                ),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Stack(
-                    children: [
-                      const Icon(
-                        CupertinoIcons.person_2,
-                      ),
-                      StreamBuilder<int>(
-                        stream: friendController.noOfFriendRequestStream(),
-                        builder: (context, snapshot) {
-                          return snapshot.data == 0
-                              ? const SizedBox()
-                              : _redMark(friendController.noFriReq.value);
-                        },
-                      ),
-                    ],
+      bottomNavigationBar: Builder(
+        builder: (context) {
+          final theme = Theme.of(context);
+          return ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+            child: Obx(
+              () => BottomNavigationBar(
+                currentIndex: homeController.pageIndex.value,
+                onTap: (index) {
+                  SystemSound.play(SystemSoundType.click);
+                  homeController.changeIndex(index);
+                },
+                type: BottomNavigationBarType.fixed,
+                selectedItemColor: theme.colorScheme.onPrimary,
+                unselectedItemColor: Colors.grey,
+                // backgroundColor: theme.bottomAppBarTheme.,
+                showSelectedLabels: false,
+                showUnselectedLabels: false,
+                items: [
+                  const BottomNavigationBarItem(
+                    icon: Padding(
+                      padding: EdgeInsets.only(top: 10.0),
+                      child: Icon(CupertinoIcons.home),
+                    ),
+                    label: 'Home',
                   ),
-                ),
-                label: 'Friends',
-              ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Stack(
-                    children: [
-                      const Icon(CupertinoIcons.chat_bubble_2),
-                      StreamBuilder(
-                        stream: chatController.getUnreadMessageCount(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData && snapshot.data is int) {
-                            int count = snapshot.data as int;
-                            if (count == 0) {
-                              return const SizedBox();
-                            }
-                            return _redMark(snapshot.data as int);
-                          } else {
-                            return const SizedBox();
-                          }
-                        },
-                      )
-                    ],
+                  BottomNavigationBarItem(
+                    icon: Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Stack(
+                        children: [
+                          const Icon(CupertinoIcons.person_2),
+                          StreamBuilder<int>(
+                            stream: friendController.noOfFriendRequestStream(),
+                            builder: (context, snapshot) {
+                              return snapshot.data == 0
+                                  ? const SizedBox()
+                                  : _redMark(friendController.noFriReq.value);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    label: 'Friends',
                   ),
-                ),
-                label: 'Messages',
+                  BottomNavigationBarItem(
+                    icon: Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Stack(
+                        children: [
+                          const Icon(CupertinoIcons.chat_bubble_2),
+                          StreamBuilder(
+                            stream: chatController.getUnreadMessageCount(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData && snapshot.data is int) {
+                                int count = snapshot.data as int;
+                                if (count == 0) return const SizedBox();
+                                return _redMark(count);
+                              } else {
+                                return const SizedBox();
+                              }
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                    label: 'Messages',
+                  ),
+                  const BottomNavigationBarItem(
+                    icon: Padding(
+                      padding: EdgeInsets.only(top: 10.0),
+                      child: Icon(CupertinoIcons.settings),
+                    ),
+                    label: 'Setting',
+                  ),
+                ],
               ),
-              const BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(top: 10.0),
-                  child: Icon(CupertinoIcons.settings),
-                ),
-                label: 'Setting',
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }

@@ -3,7 +3,6 @@ import 'package:emotion_tracker/app/controllers/darkmode_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'app/data/services/dependency_injection.dart';
-import 'app/data/services/theme_service.dart';
 import 'app/data/services/translations_service.dart';
 import 'app/routes/app_pages.dart';
 import 'app/routes/app_routes.dart';

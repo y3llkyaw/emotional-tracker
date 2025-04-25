@@ -31,7 +31,7 @@ class DarkModePage extends StatelessWidget {
               height: Get.height * 0.07,
             ),
             RadioListTile<int>(
-              selectedTileColor: Get.theme.colorScheme.onSurface,
+              selectedTileColor: Colors.black87,
               contentPadding: const EdgeInsets.symmetric(horizontal: 40),
               value: 0,
               groupValue: darkmodeController.theme.value,
@@ -47,7 +47,7 @@ class DarkModePage extends StatelessWidget {
               selected: darkmodeController.theme.value == 0,
             ),
             RadioListTile<int>(
-              selectedTileColor: Get.theme.colorScheme.onSurface,
+              selectedTileColor: Colors.black87,
               contentPadding: const EdgeInsets.symmetric(horizontal: 40),
               value: 1,
               groupValue: darkmodeController.theme.value,
@@ -63,7 +63,7 @@ class DarkModePage extends StatelessWidget {
               selected: darkmodeController.theme.value == 1,
             ),
             RadioListTile<int>(
-              selectedTileColor: Get.theme.colorScheme.onSurface,
+              selectedTileColor: Colors.black87,
               contentPadding: const EdgeInsets.symmetric(horizontal: 40),
               value: 2,
               groupValue: darkmodeController.theme.value,

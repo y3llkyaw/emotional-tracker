@@ -502,6 +502,8 @@ class _ProfilePageState extends State<ProfilePage> {
         QuickAlert.show(
           context: context,
           type: QuickAlertType.confirm,
+          backgroundColor: Get.theme.canvasColor,
+          textColor: Get.theme.colorScheme.onSurface,
           text: 'Do you want to logout',
           confirmBtnText: 'Yes',
           cancelBtnText: 'No',

@@ -245,6 +245,9 @@ class JournalPageView extends StatelessWidget {
                                   QuickAlert.show(
                                       context: context,
                                       type: QuickAlertType.confirm,
+                                      backgroundColor: Get.theme.canvasColor,
+                                      textColor:
+                                          Get.theme.colorScheme.onSurface,
                                       text: 'Do you want to Delete',
                                       confirmBtnText: 'Yes',
                                       cancelBtnText: 'No',
