@@ -164,7 +164,7 @@ class PiechartPage extends StatelessWidget {
                       );
                     },
                     child: const Text(
-                      "view all data",
+                      "Mood Insight",
                       style: TextStyle(
                         color: Colors.white,
                       ),
