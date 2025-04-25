@@ -21,12 +21,12 @@ class OtherProfilePage extends StatefulWidget {
 class _OtherProfilePageState extends State<OtherProfilePage> {
   final controller = Get.put(OtherProfilePageController());
   final uidController = Get.put(UidController());
+  // late username;
 
   @override
   void initState() {
     super.initState();
     controller.friendStatusStream(widget.profile.uid);
-    // uidController.getUsernameByUid(widget.profile.uid);
   }
 
   final TextStyle textStyle = const TextStyle(
@@ -107,6 +107,23 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
                     ),
                     SizedBox(
                       height: Get.height * 0.02,
+                    ),
+                    FutureBuilder(
+                      future:
+                          uidController.getUsernameByUid(widget.profile.uid),
+                      builder: (context, snapshot) {
+                        // print(snapshot.data.toString());
+                        return Text(
+                          snapshot.connectionState == ConnectionState.waiting
+                              ? 'Loading...'
+                              : snapshot.hasData
+                                  ? "@${snapshot.data.toString()}"
+                                  : widget.profile.uid,
+                          style: TextStyle(
+                            color: Get.theme.colorScheme.onSecondary,
+                          ),
+                        );
+                      },
                     ),
                     buildFriendButton(widget.profile),
                     SizedBox(

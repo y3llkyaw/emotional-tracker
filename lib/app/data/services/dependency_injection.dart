@@ -1,5 +1,5 @@
-
 import 'package:alarm/alarm.dart';
+import 'package:emotion_tracker/app/controllers/darkmode_controller.dart';
 
 import '../../controllers/navigation_controller.dart';
 import '../../controllers/main_controller.dart';
@@ -41,8 +41,9 @@ class DependecyInjection {
         ),
       );
     });
-    
+
     Get.put<NavigationController>(NavigationController());
     Get.put<MainController>(MainController());
+    Get.put(DarkmodeController());
   }
 }

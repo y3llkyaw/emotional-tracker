@@ -5,7 +5,6 @@ import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_rx/src/rx_workers/utils/debouncer.dart';
 
 class UsernameUpdatePage extends StatefulWidget {
   const UsernameUpdatePage({Key? key}) : super(key: key);
@@ -31,6 +30,7 @@ class _UsernameUpdatePageState extends State<UsernameUpdatePage> {
     // TODO: implement dispose
     super.dispose();
     usernameController.dispose();
+    _debounce?.cancel();
   }
 
   @override
@@ -56,8 +56,6 @@ class _UsernameUpdatePageState extends State<UsernameUpdatePage> {
                   _debounce =
                       Timer(const Duration(milliseconds: 200), () async {
                     await uidController.validateUsername(value.toLowerCase());
-
-                    // await addFriendsController.searchFriendsWithName(query);
                   });
                 },
                 decoration: InputDecoration(

@@ -67,9 +67,15 @@ class _FriendsPageState extends State<FriendsPage> {
                   ),
                   IconButton(
                     onPressed: () async {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      await Get.to(() => FriendsRequestPage());
-                      friendsController.getFriends();
+                      if (searchBarController.text == "") {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        await Get.to(() => FriendsRequestPage());
+                        friendsController.getFriends();
+                      } else {
+                        setState(() {
+                          searchBarController.text = "";
+                        });
+                      }
                     },
                     icon: searchBarController.text == ""
                         ? SizedBox(
@@ -110,14 +116,7 @@ class _FriendsPageState extends State<FriendsPage> {
                           )
                         : SizedBox(
                             width: Get.width * 0.04,
-                            child: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  searchBarController.text = "";
-                                });
-                              },
-                              icon: const Icon(CupertinoIcons.xmark),
-                            ),
+                            child: const Icon(CupertinoIcons.xmark),
                           ),
                   ),
                 ],

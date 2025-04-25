@@ -24,20 +24,18 @@ class UidController extends GetxController {
 
   Future<String?> getUsernameByUid(String uid) async {
     try {
-      await fireStore.collection('usernames').doc(uid).get().then((v) {
-        if (v.exists) {
-          otherUsername.value = v.data()!["username"];
-          return v.data()!["username"];
+      final doc = await fireStore.collection('usernames').doc(uid).get();
+      if (doc.exists) {
+        final fetchedUsername = doc.data()?["username"];
+        if (fetchedUsername != null) {
+          otherUsername.value = fetchedUsername;
+          return fetchedUsername;
         }
-        return null;
-      }).onError((error, stackTrace) {
-        otherUsername.value = "";
-        return null;
-      });
+      }
     } catch (e) {
-      otherUsername.value = "";
-      return null;
+      log(e.toString(), name: "getUsernameByUid_error");
     }
+
     otherUsername.value = "";
     return null;
   }

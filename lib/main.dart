@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:emotion_tracker/app/controllers/darkmode_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'app/data/services/dependency_injection.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  final DarkmodeController darkmodeController = Get.find();
   @override
   void initState() {
     super.initState();
@@ -63,21 +65,23 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       builder: (_, __) {
-        return GetMaterialApp(
-          title: 'MoodMate',
-          debugShowCheckedModeBanner: false,
-          theme: Themes().lightTheme,
-          darkTheme: Themes().darkTheme,
-          themeMode: ThemeService.instance.themeMode,
-          translations: Translation(),
-          locale: const Locale('en'),
-          fallbackLocale: const Locale('en'),
-          initialRoute: AppRoutes.HOME,
-          unknownRoute: AppPages.unknownRoutePage,
-          getPages: AppPages.pages,
-          builder: (_, child) {
-            return MainLayout(child: child!);
-          },
+        return Obx(
+          () => GetMaterialApp(
+            title: 'MoodMate',
+            debugShowCheckedModeBanner: false,
+            theme: Themes().lightTheme,
+            darkTheme: Themes().darkTheme,
+            themeMode: darkmodeController.currentThemeMode,
+            translations: Translation(),
+            locale: const Locale('en'),
+            fallbackLocale: const Locale('en'),
+            initialRoute: AppRoutes.HOME,
+            unknownRoute: AppPages.unknownRoutePage,
+            getPages: AppPages.pages,
+            builder: (_, child) {
+              return MainLayout(child: child!);
+            },
+          ),
         );
       },
       //! Must change it to true if you want to use the ScreenUtil
