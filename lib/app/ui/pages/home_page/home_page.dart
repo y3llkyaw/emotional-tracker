@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/controllers/noti_controller.dart';
@@ -46,8 +47,12 @@ class HomePage extends GetView<HomeController> {
             child: Obx(
               () => BottomNavigationBar(
                 currentIndex: homeController.pageIndex.value,
-                onTap: (index) {
-                  SystemSound.play(SystemSoundType.click);
+                onTap: (index) async {
+                  final player = AudioPlayer();
+                  await player.play(AssetSource('audio/pop.mp3'));
+                  player.onPlayerComplete.listen((event) {
+                    player.dispose();
+                  });
                   homeController.changeIndex(index);
                 },
                 type: BottomNavigationBarType.fixed,

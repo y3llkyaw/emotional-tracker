@@ -112,7 +112,6 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
                       future:
                           uidController.getUsernameByUid(widget.profile.uid),
                       builder: (context, snapshot) {
-                        // print(snapshot.data.toString());
                         return Text(
                           snapshot.connectionState == ConnectionState.waiting
                               ? 'Loading...'
@@ -124,6 +123,9 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
                           ),
                         );
                       },
+                    ),
+                    const SizedBox(
+                      height: 10,
                     ),
                     buildFriendButton(widget.profile),
                     SizedBox(

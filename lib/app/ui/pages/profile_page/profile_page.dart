@@ -408,7 +408,6 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         trailing: const Icon(
           CupertinoIcons.right_chevron,
-          color: Colors.black,
           weight: 20,
         ),
       ),

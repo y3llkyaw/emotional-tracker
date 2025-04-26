@@ -1,6 +1,7 @@
 // ignore_for_file: invalid_use_of_protected_member
 
 import 'package:animated_emoji/animated_emoji.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/share_sheet.dart';
@@ -253,7 +254,13 @@ class JournalPageView extends StatelessWidget {
                                       cancelBtnText: 'No',
                                       confirmBtnColor: Colors.red,
                                       onCancelBtnTap: () => Get.back(),
-                                      onConfirmBtnTap: () {
+                                      onConfirmBtnTap: () async {
+                                        final player = AudioPlayer();
+                                        await player.play(
+                                            AssetSource('audio/swoosh.mp3'));
+                                        player.onPlayerComplete.listen((event) {
+                                          player.dispose();
+                                        });
                                         journalController.deleteJournal(
                                             journalList[index].date.toString());
                                       });
