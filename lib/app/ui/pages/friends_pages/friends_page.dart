@@ -7,6 +7,7 @@ import 'package:emotion_tracker/app/ui/pages/profile_page/other_profile_page.dar
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class FriendsPage extends StatefulWidget {
   const FriendsPage({Key? key}) : super(key: key);
@@ -34,9 +35,11 @@ class _FriendsPageState extends State<FriendsPage> {
           padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
           child: Row(
             children: [
-              const Text(
+              Text(
                 "Friends",
-                style: TextStyle(fontWeight: FontWeight.w600),
+                style: GoogleFonts.playfairDisplay(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               SizedBox(width: Get.width * 0.03),
               const Icon(CupertinoIcons.person_3_fill)
@@ -69,7 +72,10 @@ class _FriendsPageState extends State<FriendsPage> {
                     onPressed: () async {
                       if (searchBarController.text == "") {
                         FocusManager.instance.primaryFocus?.unfocus();
-                        await Get.to(() => FriendsRequestPage());
+                        await Get.to(
+                          () => FriendsRequestPage(),
+                          transition: Transition.rightToLeft,
+                        );
                         friendsController.getFriends();
                       } else {
                         setState(() {

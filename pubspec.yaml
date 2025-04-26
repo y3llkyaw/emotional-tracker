@@ -49,6 +49,7 @@ dependencies:
   quickalert: ^1.1.0
   flutter_debouncer: ^2.0.0
   url_launcher: ^6.3.1
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   build_runner:
@@ -76,6 +77,12 @@ flutter_icons:
 
   flutter_test:
     sdk: flutter
+
+fonts:
+  - family: PlayfairDisplay
+    fonts:
+      - asset: assets/fonts/playfiar/PlayfairDisplay-Regular.ttf
+
 
 flutter:
   assets:

@@ -17,6 +17,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
@@ -155,9 +156,11 @@ class _ProfilePageState extends State<ProfilePage> {
         leading: null,
         title: Padding(
           padding: EdgeInsets.symmetric(horizontal: Get.width * 0.04),
-          child: const Text(
+          child: Text(
             "Profile",
-            style: TextStyle(fontWeight: FontWeight.w700),
+            style: GoogleFonts.playfairDisplay(
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),

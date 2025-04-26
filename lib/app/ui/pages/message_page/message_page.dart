@@ -11,6 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class MessagePage extends StatefulWidget {
@@ -21,7 +22,8 @@ class MessagePage extends StatefulWidget {
 }
 
 class _MessagePageState extends State<MessagePage> {
-  final MessagePageController messagePageController = Get.put(MessagePageController());
+  final MessagePageController messagePageController =
+      Get.put(MessagePageController());
   final FriendsController friendsController = Get.put(FriendsController());
   final OnlineController onlineController = Get.put(OnlineController());
   final ChatController chatController = Get.put(ChatController());
@@ -36,15 +38,15 @@ class _MessagePageState extends State<MessagePage> {
         centerTitle: false,
         title: Padding(
           padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
-          child: const Row(
+          child: Row(
             children: [
               Text(
                 "Messages",
-                style: TextStyle(
+                style: GoogleFonts.playfairDisplay(
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              Padding(
+              const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Icon(
                   CupertinoIcons.chat_bubble_fill,

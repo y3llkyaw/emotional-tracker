@@ -60,7 +60,7 @@ class AboutPage extends StatelessWidget {
                 'It includes features like daily mood tracking, calendar views, friend connections and messaging — '
                 'all crafted to create a beautiful and simple mental health journey.',
                 style: Theme.of(context).textTheme.bodyLarge,
-                textAlign: TextAlign.center,
+                // textAlign: TextAlign.justify,
               ),
             ),
             const SizedBox(height: 16),
