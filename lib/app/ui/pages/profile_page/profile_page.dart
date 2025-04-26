@@ -7,6 +7,7 @@ import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/controllers/uid_controller.dart';
+import 'package:emotion_tracker/app/ui/pages/about_page/about_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/dark_mode_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/profile_qr_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -357,11 +358,6 @@ class _ProfilePageState extends State<ProfilePage> {
         _buildAlarmTile(),
         if (isOn) _buildSetAlarmTile(),
         _buildListTile(
-          onTap: () {},
-          leading: const Icon(CupertinoIcons.doc),
-          title: "Terms & Conditions",
-        ),
-        _buildListTile(
           onTap: () {
             Get.to(() => const QrCodePage());
           },
@@ -377,6 +373,13 @@ class _ProfilePageState extends State<ProfilePage> {
           },
           leading: const Icon(Icons.dark_mode_outlined),
           title: "Dark Mode",
+        ),
+        _buildListTile(
+          onTap: () {
+            Get.to(() => const AboutPage());
+          },
+          leading: const Icon(CupertinoIcons.exclamationmark_bubble),
+          title: "About Our App",
         ),
         _buildLogoutTile(),
       ],
