@@ -50,6 +50,7 @@ dependencies:
   flutter_debouncer: ^2.0.0
   url_launcher: ^6.3.1
   google_fonts: ^6.2.1
+  firebase_database: ^11.3.5
 
 dev_dependencies:
   build_runner:

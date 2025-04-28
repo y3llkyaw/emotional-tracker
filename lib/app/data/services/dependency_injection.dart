@@ -1,5 +1,7 @@
 import 'package:alarm/alarm.dart';
 import 'package:emotion_tracker/app/controllers/darkmode_controller.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:emotion_tracker/app/controllers/matching_controller.dart';
 
 import '../../controllers/navigation_controller.dart';
 import '../../controllers/main_controller.dart';
@@ -18,6 +20,24 @@ class DependecyInjection {
     );
     await Alarm.init();
     await GetStorage.init();
+
+    AudioPlayer.global.setAudioContext(
+      const AudioContext(
+        android: AudioContextAndroid(
+          isSpeakerphoneOn: false,
+          stayAwake: false,
+          contentType: AndroidContentType.sonification, // <-- Very important
+          usageType:
+              AndroidUsageType.assistanceSonification, // <-- Very important
+          audioFocus: AndroidAudioFocus.none, // <-- Super important!!!
+        ),
+        iOS: AudioContextIOS(
+          category:
+              AVAudioSessionCategory.ambient, // iOS won't interrupt other music
+          options: [AVAudioSessionOptions.mixWithOthers],
+        ),
+      ),
+    );
     // Add observer
 
     Alarm.ringStream.stream
@@ -41,7 +61,7 @@ class DependecyInjection {
         ),
       );
     });
-
+    Get.put(MatchingController());
     Get.put<NavigationController>(NavigationController());
     Get.put<MainController>(MainController());
     Get.put(DarkmodeController());

@@ -85,9 +85,9 @@ class MoodCard extends StatelessWidget {
               ),
             ],
           ),
-    
+
           const Spacer(),
-    
+
           // Mood Entry
           Container(
             padding: EdgeInsets.symmetric(horizontal: Get.width * 0.03),
@@ -103,7 +103,7 @@ class MoodCard extends StatelessWidget {
               ),
             ),
           ),
-    
+
           // const Spacer(),
           SizedBox(
             height: Get.height * 0.003,

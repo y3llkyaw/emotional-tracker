@@ -51,9 +51,10 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCh6SvCc6LmXAVOMvD-ouzuoTyTBX65aZk',
-    appId: '1:52163657696:android:3f65ac651a4142e01b3585',
+    appId: '1:52163657696:android:3d7f772c443095451b3585',
     messagingSenderId: '52163657696',
     projectId: 'emotion-tracker-7728e',
+    databaseURL: 'https://emotion-tracker-7728e-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'emotion-tracker-7728e.firebasestorage.app',
   );
 
@@ -62,6 +63,7 @@ class DefaultFirebaseOptions {
     appId: '1:52163657696:ios:1b60191f69d829b91b3585',
     messagingSenderId: '52163657696',
     projectId: 'emotion-tracker-7728e',
+    databaseURL: 'https://emotion-tracker-7728e-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'emotion-tracker-7728e.firebasestorage.app',
     androidClientId: '52163657696-qv3vdqapahpmtjb3arlfkv5mce9l2i97.apps.googleusercontent.com',
     iosClientId: '52163657696-smsv37ff54i8lhurhp2fhg1l92c4gb0d.apps.googleusercontent.com',

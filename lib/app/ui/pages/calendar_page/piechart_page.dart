@@ -155,7 +155,7 @@ class PiechartPage extends StatelessWidget {
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
+                      backgroundColor: Get.theme.colorScheme.error,
                     ),
                     onPressed: () {
                       Get.to(

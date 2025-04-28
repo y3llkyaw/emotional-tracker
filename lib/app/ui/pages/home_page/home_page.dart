@@ -1,24 +1,28 @@
+import 'package:animated_emoji/animated_emoji.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
+import 'package:emotion_tracker/app/controllers/matching_controller.dart';
 import 'package:emotion_tracker/app/controllers/noti_controller.dart';
+import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/ui/pages/calendar_page/calendar_page.dart';
 import 'package:emotion_tracker/app/ui/pages/friends_pages/friends_page.dart';
 import 'package:emotion_tracker/app/ui/pages/message_page/message_page.dart';
+import 'package:emotion_tracker/app/ui/pages/moodmate/mood_mate_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/profile_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../../controllers/home_controller.dart';
 
 class HomePage extends GetView<HomeController> {
   HomePage({Key? key}) : super(key: key);
   final HomeController homeController = Get.find();
+  final ProfilePageController profilePageController = Get.find();
   final noti = NotiController();
   final friendController = FriendsController();
   final ChatController chatController = Get.put(ChatController());
-
+  final MatchingController matchingController = Get.find();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,11 +34,30 @@ class HomePage extends GetView<HomeController> {
               CalendarPage(),
               const FriendsPage(),
               // const NotificationPage(),
+              const MoodMatePage(),
               const MessagePage(),
               const ProfilePage(),
             ],
           ),
         ),
+      ),
+      floatingActionButton: Obx(
+        () => matchingController.isMatching.value
+            ? FloatingActionButton.extended(
+                backgroundColor: Get.theme.colorScheme.primary,
+                onPressed: () {
+                  matchingController
+                      .stopMatching(profilePageController.userProfile.value!);
+                },
+                icon: const AnimatedEmoji(AnimatedEmojis.eyes),
+                label: Text(
+                  "finding\nmatch",
+                  style: TextStyle(
+                    color: Get.theme.colorScheme.onSurface,
+                  ),
+                ),
+              )
+            : Container(),
       ),
       bottomNavigationBar: Builder(
         builder: (context) {
@@ -87,6 +110,13 @@ class HomePage extends GetView<HomeController> {
                       ),
                     ),
                     label: 'Friends',
+                  ),
+                  const BottomNavigationBarItem(
+                    icon: Padding(
+                      padding: EdgeInsets.only(top: 10.0),
+                      child: Icon(CupertinoIcons.heart),
+                    ),
+                    label: 'Home',
                   ),
                   BottomNavigationBarItem(
                     icon: Padding(
