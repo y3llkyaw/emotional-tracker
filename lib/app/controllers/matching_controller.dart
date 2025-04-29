@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
+import 'package:emotion_tracker/app/ui/pages/temp_chat_page/temp_chat_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -16,7 +17,7 @@ class MatchingController extends GetxController {
   final filterGender = Icons.female.obs;
 
   StreamSubscription<DatabaseEvent>? _matchSubscription;
-  StreamSubscription<DatabaseEvent>? _tempChatSubscription;
+  StreamSubscription<DatabaseEvent>? _roomSubscription;
 
   @override
   void onInit() {
@@ -81,11 +82,8 @@ class MatchingController extends GetxController {
     int filterMinAge,
   ) {
     final ref = FirebaseDatabase.instance.ref("searching_users");
-    // final refTmpChat = FirebaseDatabase.instance.ref("tempChat");
 
-  //  _tempChatSubscription = refTmpChat.onChildAdded.listen((event) {});
-
-    _matchSubscription = ref.onChildAdded.listen((event) {
+    _matchSubscription = ref.onChildAdded.listen((event) async {
       final otherUid = event.snapshot.key;
 
       // Avoid comparing with your own profile
@@ -97,28 +95,50 @@ class MatchingController extends GetxController {
       final gender = data["gender"]?.toString().toLowerCase();
       final age = int.tryParse(data["age"].toString());
 
-      final isGenderMatch = gender == genderFilter.toLowerCase() &&
-          data["filterGender"]?.toString().toLowerCase() ==
-              profile.gender.toLowerCase();
+      final otherFilterMinAge = int.tryParse(data["filterMinAge"].toString());
+      final otherFilterMaxAge = int.tryParse(data["filterMaxAge"].toString());
+
+      var isGenderMatch = false;
+
+      isGenderMatch = (gender == genderFilter.toLowerCase() ||
+              genderFilter.toLowerCase() == "gender.both") &&
+          (data["filterGender"]?.toString().toLowerCase() ==
+                  profile.gender.toLowerCase() ||
+              data["filterGender"]?.toString().toLowerCase() == "gender.both");
+
       final isAgeMatch = age != null &&
           age >= filterMinAge &&
           age <= filterMaxAge &&
-          _calculateAge(profile.dob.toDate()) >= filterMinAge &&
-          _calculateAge(profile.dob.toDate()) <= filterMaxAge;
+          _calculateAge(profile.dob.toDate()) >= otherFilterMinAge! &&
+          _calculateAge(profile.dob.toDate()) <= otherFilterMaxAge!;
 
       if (isGenderMatch && isAgeMatch) {
         log("🎯 Match found: UID = $otherUid, Gender = $gender, Age = $age");
+        var sorted = [otherUid, profile.uid]..sort();
+        final ref = FirebaseDatabase.instance
+            .ref('searching_users/matched_users/${sorted[0]}_${sorted[1]}');
+        await ref.set({
+          "users": [otherUid, profile.uid]
+        });
       } else {
         log("❌ Not a match: UID = $otherUid, Gender = $gender, Age = $age");
       }
     });
+
+    final roomRef =
+        FirebaseDatabase.instance.ref("searching_users/matched_users");
+
+    _roomSubscription = roomRef.onChildAdded.listen((event) {
+      event.snapshot.key!.contains(profile.uid)
+          ? Get.to(() => const TempChatPage())
+          : null;
+    });
   }
 
-  Future<void> stopMatching(Profile profile) async {
+  Future<void> stopMatching(String uid) async {
     try {
-      log("🛑 Stopping matching for UID: ${profile.uid}");
-      final ref =
-          FirebaseDatabase.instance.ref("searching_users/${profile.uid}");
+      log("🛑 Stopping matching for UID: $uid");
+      final ref = FirebaseDatabase.instance.ref("searching_users/$uid");
       await ref.remove();
 
       _matchSubscription?.cancel();
@@ -133,6 +153,7 @@ class MatchingController extends GetxController {
   @override
   void onClose() {
     _matchSubscription?.cancel();
+    _roomSubscription?.cancel();
     super.onClose();
   }
 }
