@@ -43,19 +43,19 @@ class HomePage extends GetView<HomeController> {
       ),
       floatingActionButton: Obx(
         () => matchingController.isMatching.value
-            ? FloatingActionButton.extended(
-                backgroundColor: Get.theme.colorScheme.primary,
+            ? FloatingActionButton.small(
+                backgroundColor: Get.theme.colorScheme.error,
                 onPressed: () {
                   matchingController
                       .stopMatching(profilePageController.userProfile.value!);
                 },
-                icon: const AnimatedEmoji(AnimatedEmojis.eyes),
-                label: Text(
-                  "finding\nmatch",
-                  style: TextStyle(
-                    color: Get.theme.colorScheme.onSurface,
-                  ),
-                ),
+                child: const AnimatedEmoji(AnimatedEmojis.eyes),
+                // label: const Text(
+                //   "finding\nmatch",
+                //   style: TextStyle(
+                //     color: Colors.white70,
+                //   ),
+                // ),
               )
             : Container(),
       ),

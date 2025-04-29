@@ -1,4 +1,6 @@
+import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -128,6 +130,130 @@ class MoodMatePage extends StatelessWidget {
                   ),
                 ),
               ),
+            ),
+          ),
+          Expanded(
+            child: PageView.builder(
+              itemCount: 2, // Number of pages
+              controller: PageController(
+                  viewportFraction: 0.9), // Optional: for nice partial views
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Get.theme.colorScheme.error.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: Get.height * 0.02,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            index == 0
+                                ? Icons.public
+                                : CupertinoIcons.person_3_fill,
+                            // color: Colors.grey.shade300,
+                            color: Get.theme.colorScheme.onSurface,
+                          ),
+                          SizedBox(width: Get.width * 0.02),
+                          Text(
+                            index == 0 ? "Public Callouts" : "Friends Callouts",
+                            style: GoogleFonts.aBeeZee(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20,
+                              color: Get.theme.colorScheme.onSurface,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.02,
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.55,
+                        width: Get.width *
+                            0.8, // Adjust height based on your layout
+                        child: ListView.builder(
+                          itemCount: 7, // example count
+                          itemBuilder: (context, index) {
+                            return Container(
+                              margin: const EdgeInsets.symmetric(vertical: 10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    child: AvatarPlus("string"),
+                                  ),
+                                  SizedBox(
+                                    width: Get.width * 0.03,
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    width: Get.width * 0.55,
+                                    decoration: BoxDecoration(
+                                      color: Get.theme.colorScheme.error,
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(20),
+                                        topRight: Radius.circular(20),
+                                        bottomRight: Radius.circular(20),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      "I'm so bored.... yar yar sa ssas kwr",
+                                      style: GoogleFonts.aBeeZee(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      CupertinoIcons.heart,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                            // return ListTile(
+                            //   title: Row(
+                            //     children: [
+                            //       CircleAvatar(
+                            //         child: AvatarPlus("hello"),
+                            //       ),
+                            //       SizedBox(
+                            //         width: Get.width * 0.03,
+                            //       ),
+                            //       Text("Yell Htet Kyaws $index"),
+                            //       SizedBox(
+                            //         width: Get.width * 0.03,
+                            //       ),
+                            //     ],
+                            //   ),
+                            //   subtitle: const Text(
+                            //       "\nHello HelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHello HelloHelloHelloHello HelloHelloHelloHelloHello"),
+                            //   trailing: Column(
+                            //     children: [
+                            //       IconButton(
+                            //         onPressed: () {},
+                            //         icon: const Icon(
+                            //           CupertinoIcons.heart,
+                            //         ),
+                            //       ),
+                            //     ],
+                            //   ),
+                            // );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
           )
         ],
