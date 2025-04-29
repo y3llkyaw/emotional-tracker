@@ -47,7 +47,7 @@ class HomePage extends GetView<HomeController> {
                 backgroundColor: Get.theme.colorScheme.error,
                 onPressed: () {
                   matchingController.stopMatching(
-                      profilePageController.userProfile.value!.uid);
+                      profilePageController.userProfile.value!);
                 },
                 child: const AnimatedEmoji(AnimatedEmojis.eyes),
                 // label: const Text(
