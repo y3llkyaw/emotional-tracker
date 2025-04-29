@@ -46,8 +46,8 @@ class HomePage extends GetView<HomeController> {
             ? FloatingActionButton.small(
                 backgroundColor: Get.theme.colorScheme.error,
                 onPressed: () {
-                  matchingController
-                      .stopMatching(profilePageController.userProfile.value!);
+                  matchingController.stopMatching(
+                      profilePageController.userProfile.value!.uid);
                 },
                 child: const AnimatedEmoji(AnimatedEmojis.eyes),
                 // label: const Text(

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:flutter/material.dart';
@@ -9,113 +10,130 @@ import 'package:firebase_database/firebase_database.dart';
 
 class MatchingController extends GetxController {
   final profilePageController = Get.put(ProfilePageController());
-  final isMatching = false.obs;
+  final chatController = Get.put(ChatController());
 
+  final isMatching = false.obs;
   final filterMinAge = 17.obs;
   final filterMaxAge = 45.obs;
   final filterGender = Icons.female.obs;
 
   StreamSubscription<DatabaseEvent>? _matchSubscription;
+  StreamSubscription<DatabaseEvent>? _tempChatSubscription;
 
   @override
   void onInit() {
+    log("✅ MatchingController initialized");
     super.onInit();
-    log("matching-controller-created");
   }
 
   int _calculateAge(DateTime dob) {
-    final today = DateTime.now();
-    int age = today.year - dob.year;
-    if (today.month < dob.month ||
-        (today.month == dob.month && today.day < dob.day)) {
+    final now = DateTime.now();
+    int age = now.year - dob.year;
+    if (now.month < dob.month ||
+        (now.month == dob.month && now.day < dob.day)) {
       age--;
     }
     return age;
   }
 
+  String _getGenderString(IconData icon) {
+    return icon == Icons.male
+        ? "Gender.Male"
+        : icon == Icons.female
+            ? "Gender.Female"
+            : "Gender.Both";
+  }
+
   Future<void> startMatching(Profile profile) async {
     try {
-      final dob = profilePageController.userProfile.value?.dob.toDate();
-      if (dob == null) throw Exception("DOB is null");
-
+      final dob = profile.dob.toDate();
       final age = _calculateAge(dob);
+      final genderFilter = _getGenderString(filterGender.value);
 
-      log("🚀 Starting matching for UID: ${profile.uid}");
       final ref =
           FirebaseDatabase.instance.ref("searching_users/${profile.uid}");
-
       await ref.set({
         "gender": profile.gender,
         "age": age,
+        "filterGender": genderFilter,
+        "filterMaxAge": filterMaxAge.value,
+        "filterMinAge": filterMinAge.value,
         "timestamp": ServerValue.timestamp,
       });
-
       await ref.onDisconnect().remove();
 
       isMatching.value = true;
-      listenForMatch(profile); // 🔁 Start listening for matches
+
+      _listenForTempChats();
+      _listenForMatches(profile, genderFilter, age);
     } catch (e) {
-      log("❌ Error in startMatching: $e");
+      log("❌ startMatching error: $e");
     }
   }
 
-  void listenForMatch(Profile profile) {
+  void _listenForTempChats() {
+    final ref = FirebaseDatabase.instance.ref("tempChat");
+    _tempChatSubscription?.cancel(); // Ensure no duplication
+    _tempChatSubscription = ref.onChildAdded.listen((event) {
+      final data = Map<String, dynamic>.from(event.snapshot.value as Map);
+      log("💬 tempChat users: ${data['users']}");
+    });
+  }
+
+  void _listenForMatches(Profile profile, String genderFilter, int userAge) {
     final ref = FirebaseDatabase.instance.ref("searching_users");
-
+    _matchSubscription?.cancel();
     _matchSubscription = ref.onChildAdded.listen((event) async {
-      final data = event.snapshot.value as Map?;
-      if (data == null) return;
+      final otherUid = event.snapshot.key;
+      if (otherUid == profile.uid) return;
 
-      final otherUid = event.snapshot.key!;
-      if (otherUid == profile.uid) return; // ignore self
+      final data = Map<String, dynamic>.from(event.snapshot.value as Map);
 
-      final gender = data['gender']?.toString().toLowerCase() ?? '';
-      final age = data['age'] is int
-          ? data['age']
-          : int.tryParse(data['age'].toString() ?? '0') ?? 0;
+      final otherGender = data["gender"]?.toString().toLowerCase();
+      final otherFilterGender = data["filterGender"]?.toString().toLowerCase();
+      final otherAge = int.tryParse(data["age"].toString());
 
-      final isGenderMatch = filterGender.value == Icons.female
-          ? gender == 'Gender.Female'
-          : gender == 'Gender.Male';
+      final isGenderMatch = otherGender == genderFilter.toLowerCase() &&
+          otherFilterGender == profile.gender.toLowerCase();
 
-      final isAgeMatch = age >= filterMinAge.value && age <= filterMaxAge.value;
+      final isAgeMatch = otherAge != null &&
+          otherAge >= filterMinAge.value &&
+          otherAge <= filterMaxAge.value &&
+          userAge >= int.parse(data["filterMinAge"].toString()) &&
+          userAge <= int.parse(data["filterMaxAge"].toString());
 
       if (isGenderMatch && isAgeMatch) {
-        log("🎯 Match found with $otherUid!");
+        log("🎯 Match found with $otherUid");
+        final sortedUids = [otherUid, profile.uid]..sort();
+        final chatRef =
+            FirebaseDatabase.instance.ref("tempChat/${sortedUids.join('_')}");
 
-        // Optional: remove both from matchmaking pool
-        await stopMatching(profile);
-        await FirebaseDatabase.instance
-            .ref("searching_users/$otherUid")
-            .remove();
-
-        // Notify the user (replace with your UI flow)
-        Get.snackbar("Match Found", "You matched with user: $otherUid");
-
-        // Optionally: Save to 'matches' node or open chat
+        await chatRef.set({"users": sortedUids});
+        await stopMatching(profile.uid);
+        await stopMatching(otherUid!);
+        isMatching.value = false;
+      } else {
+        log("⛔ No match with $otherUid");
       }
     });
   }
 
-  Future<void> stopMatching(Profile profile) async {
+  Future<void> stopMatching(String uid) async {
     try {
-      log("🛑 Stopping matching for UID: ${profile.uid}");
-      final ref =
-          FirebaseDatabase.instance.ref("searching_users/${profile.uid}");
-      await ref.remove();
-
+      await FirebaseDatabase.instance.ref("searching_users/$uid").remove();
       _matchSubscription?.cancel();
       _matchSubscription = null;
-
       isMatching.value = false;
+      log("🛑 Stopped matching for $uid");
     } catch (e) {
-      log("❌ Error in stopMatching: $e");
+      log("❌ stopMatching error: $e");
     }
   }
 
   @override
   void onClose() {
     _matchSubscription?.cancel();
+    _tempChatSubscription?.cancel();
     super.onClose();
   }
 }
