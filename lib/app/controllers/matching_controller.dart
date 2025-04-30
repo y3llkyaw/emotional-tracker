@@ -22,7 +22,7 @@ class MatchingController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    log("matching-controller-created");
+    log("🔧 MatchingController initialized");
   }
 
   int _calculateAge(DateTime dob) {
@@ -41,12 +41,10 @@ class MatchingController extends GetxController {
       if (dob == null) throw Exception("DOB is null");
 
       final age = _calculateAge(dob);
+      final uid = profile.uid;
+      final ref = FirebaseDatabase.instance.ref("searching_users/$uid");
 
-      log("🚀 Starting matching for UID: ${profile.uid}");
-      final ref =
-          FirebaseDatabase.instance.ref("searching_users/${profile.uid}");
-
-      final genderFilter = filterGender.value == Icons.male
+      final genderFilterValue = filterGender.value == Icons.male
           ? "Gender.Male"
           : filterGender.value == Icons.female
               ? "Gender.Female"
@@ -55,7 +53,7 @@ class MatchingController extends GetxController {
       await ref.set({
         "gender": profile.gender,
         "age": age,
-        "filterGender": genderFilter,
+        "filterGender": genderFilterValue,
         "filterMaxAge": filterMaxAge.value,
         "filterMinAge": filterMinAge.value,
         "timestamp": ServerValue.timestamp,
@@ -64,89 +62,98 @@ class MatchingController extends GetxController {
       await ref.onDisconnect().remove();
 
       isMatching.value = true;
-      listenForMatch(
-        profile,
-        genderFilter,
-        filterMaxAge.value,
-        filterMinAge.value,
-      ); // 🔁 Start listening for matches
+
+      _listenForMatch(profile, genderFilterValue);
+      _listenForRoom(profile.uid);
     } catch (e) {
-      log("❌ Error in startMatching: $e");
+      log("❌ startMatching error: $e");
     }
   }
 
-  void listenForMatch(
-    Profile profile,
-    String genderFilter,
-    int filterMaxAge,
-    int filterMinAge,
-  ) {
+  void _listenForMatch(Profile profile, String genderFilter) {
     final ref = FirebaseDatabase.instance.ref("searching_users");
 
     _matchSubscription = ref.onChildAdded.listen((event) async {
       final otherUid = event.snapshot.key;
-
-      // Avoid comparing with your own profile
       if (otherUid == profile.uid) return;
 
-      final rawData = event.snapshot.value as Map<Object?, Object?>;
-      final data = rawData.map((key, value) => MapEntry(key.toString(), value));
+      final data = Map<String, dynamic>.from(event.snapshot.value as Map);
 
       final gender = data["gender"]?.toString().toLowerCase();
       final age = int.tryParse(data["age"].toString());
+      final otherMinAge = int.tryParse(data["filterMinAge"].toString());
+      final otherMaxAge = int.tryParse(data["filterMaxAge"].toString());
 
-      final otherFilterMinAge = int.tryParse(data["filterMinAge"].toString());
-      final otherFilterMaxAge = int.tryParse(data["filterMaxAge"].toString());
+      final userAge = _calculateAge(profile.dob.toDate());
 
-      var isGenderMatch = false;
-
-      isGenderMatch = (gender == genderFilter.toLowerCase() ||
-              genderFilter.toLowerCase() == "gender.both") &&
+      final isGenderMatch = (gender == genderFilter.toLowerCase() ||
+              genderFilter == "gender.both") &&
           (data["filterGender"]?.toString().toLowerCase() ==
                   profile.gender.toLowerCase() ||
               data["filterGender"]?.toString().toLowerCase() == "gender.both");
 
       final isAgeMatch = age != null &&
-          age >= filterMinAge &&
-          age <= filterMaxAge &&
-          _calculateAge(profile.dob.toDate()) >= otherFilterMinAge! &&
-          _calculateAge(profile.dob.toDate()) <= otherFilterMaxAge!;
+          age >= filterMinAge.value &&
+          age <= filterMaxAge.value &&
+          userAge >= (otherMinAge ?? 0) &&
+          userAge <= (otherMaxAge ?? 100);
 
       if (isGenderMatch && isAgeMatch) {
-        log("🎯 Match found: UID = $otherUid, Gender = $gender, Age = $age");
-        var sorted = [otherUid, profile.uid]..sort();
-        final ref = FirebaseDatabase.instance
-            .ref('searching_users/matched_users/${sorted[0]}_${sorted[1]}');
-        await ref.set({
-          "users": [otherUid, profile.uid]
+        log("🎯 Match found: $otherUid");
+        await stopMatching(profile.uid);
+        await stopMatching(otherUid!);
+        final sorted = [profile.uid, otherUid]..sort();
+        final roomId = "${sorted[0]}_${sorted[1]}";
+
+        final roomRef = FirebaseDatabase.instance
+            .ref("searching_users/matched_users/$roomId");
+        await roomRef.set({
+          "users": sorted,
         });
       } else {
-        log("❌ Not a match: UID = $otherUid, Gender = $gender, Age = $age");
+        log("❌ Not a match: $otherUid");
       }
     });
+  }
 
+  void _listenForRoom(String uid) {
     final roomRef =
         FirebaseDatabase.instance.ref("searching_users/matched_users");
 
     _roomSubscription = roomRef.onChildAdded.listen((event) {
-      event.snapshot.key!.contains(profile.uid)
-          ? Get.to(() => const TempChatPage())
-          : null;
+      final roomId = event.snapshot.key ?? "";
+      final users = List.from(event.snapshot.child("users").value as List);
+
+      if (users.contains(uid)) {
+        log("💬 Navigating to TempChatPage: $roomId");
+        Get.to(() => TempChatPage(chatRoomId: roomId));
+      }
     });
   }
 
   Future<void> stopMatching(String uid) async {
     try {
-      log("🛑 Stopping matching for UID: $uid");
-      final ref = FirebaseDatabase.instance.ref("searching_users/$uid");
-      await ref.remove();
-
+      log("🛑 Stopping match for $uid");
+      await FirebaseDatabase.instance.ref("searching_users/$uid").remove();
       _matchSubscription?.cancel();
       _matchSubscription = null;
 
       isMatching.value = false;
     } catch (e) {
-      log("❌ Error in stopMatching: $e");
+      log("❌ stopMatching error: $e");
+    }
+  }
+
+  Future<void> removeRoom(String roomId) async {
+    try {
+      log("🛑 Stopping room for $roomId");
+      await FirebaseDatabase.instance
+          .ref("searching_users/matched_users/$roomId")
+          .remove();
+      _roomSubscription?.cancel();
+      _roomSubscription = null;
+    } catch (e) {
+      log("❌ stopMatching error: $e");
     }
   }
 

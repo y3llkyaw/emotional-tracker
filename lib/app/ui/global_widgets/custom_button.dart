@@ -8,7 +8,8 @@ class CustomButton extends StatelessWidget {
       required this.onPressed,
       this.isDisabled = false,
       this.isLoading = false,
-      this.color = Colors.blueAccent})
+      this.color = Colors.blueAccent,
+      this.fontSize = 14.0})
       : super(key: key);
 
   final bool isLoading;
@@ -16,6 +17,7 @@ class CustomButton extends StatelessWidget {
   final bool isDisabled;
   final Function onPressed;
   final Color color;
+  final double fontSize;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -47,9 +49,9 @@ class CustomButton extends StatelessWidget {
                 )
               : Text(
                   text,
-                  style: const TextStyle(
-                      wordSpacing: 4,
-                      fontSize: 14,
+                  style: TextStyle(
+                      // wordSpacing: 4,
+                      fontSize: fontSize,
                       color: Colors.white,
                       fontWeight: FontWeight.bold),
                 ),

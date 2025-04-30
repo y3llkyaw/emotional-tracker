@@ -1,7 +1,12 @@
+import 'package:avatar_plus/avatar_plus.dart';
+import 'package:emotion_tracker/app/controllers/matching_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class TempChatPage extends StatefulWidget {
-  const TempChatPage({Key? key}) : super(key: key);
+  const TempChatPage({Key? key, required this.chatRoomId}) : super(key: key);
+  final String chatRoomId;
 
   @override
   State<TempChatPage> createState() => _TempChatPageState();
@@ -10,6 +15,7 @@ class TempChatPage extends StatefulWidget {
 class _TempChatPageState extends State<TempChatPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  final matchingControllerRoom = Get.put(MatchingController());
 
   @override
   void initState() {
@@ -19,6 +25,7 @@ class _TempChatPageState extends State<TempChatPage>
 
   @override
   void dispose() {
+    matchingControllerRoom.removeRoom(widget.chatRoomId);
     _controller.dispose();
     super.dispose();
   }
@@ -28,6 +35,25 @@ class _TempChatPageState extends State<TempChatPage>
     return Scaffold(
       appBar: AppBar(
         title: const Text("Chat Page"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          children: [
+            FirebaseAuth.instance.currentUser!.uid ==
+                    widget.chatRoomId.split("_")[0].toString()
+                ? CircleAvatar(
+                    radius: 20,
+                    child:
+                        AvatarPlus(widget.chatRoomId.split("_")[0].toString()),
+                  )
+                : CircleAvatar(
+                    radius: 20,
+                    child:
+                        AvatarPlus(widget.chatRoomId.split("_")[1].toString()),
+                  ),
+          ],
+        ),
       ),
     );
   }

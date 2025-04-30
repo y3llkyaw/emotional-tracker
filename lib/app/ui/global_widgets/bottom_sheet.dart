@@ -480,6 +480,7 @@ void showDatingFilterSheet() {
                 width: Get.width * 0.4,
                 height: Get.height * 0.07,
                 child: CustomButton(
+                  // fontSize: 10,
                   color: Get.theme.colorScheme.error,
                   text: "Find Your\nMoodMate",
                   onPressed: () async {

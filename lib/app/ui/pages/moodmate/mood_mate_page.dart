@@ -1,6 +1,5 @@
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
-import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -179,7 +178,7 @@ class MoodMatePage extends StatelessWidget {
                         width: Get.width *
                             0.8, // Adjust height based on your layout
                         child: ListView.builder(
-                          itemCount: 7, // example count
+                          itemCount: 5, // example count
                           itemBuilder: (context, index) {
                             return Container(
                               margin: const EdgeInsets.symmetric(vertical: 10),
@@ -204,7 +203,7 @@ class MoodMatePage extends StatelessWidget {
                                       ),
                                     ),
                                     child: Text(
-                                      "I'm so bored.... yar yar sa ssas kwr",
+                                      "I'm so bored.... yar yar sa sa kwr",
                                       style: GoogleFonts.aBeeZee(
                                         color: Colors.white,
                                       ),
