@@ -110,6 +110,7 @@ class MatchingController extends GetxController {
         await roomRef.set({
           "users": sorted,
         });
+        isMatching.value = false;
       } else {
         log("❌ Not a match: $otherUid");
       }

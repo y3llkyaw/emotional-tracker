@@ -7,6 +7,7 @@ import 'package:emotion_tracker/app/controllers/noti_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/ui/pages/calendar_page/calendar_page.dart';
 import 'package:emotion_tracker/app/ui/pages/friends_pages/friends_page.dart';
+import 'package:emotion_tracker/app/ui/pages/matching_page/matching_page.dart';
 import 'package:emotion_tracker/app/ui/pages/message_page/message_page.dart';
 import 'package:emotion_tracker/app/ui/pages/moodmate/mood_mate_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/profile_page.dart';
@@ -46,8 +47,10 @@ class HomePage extends GetView<HomeController> {
             ? FloatingActionButton.small(
                 backgroundColor: Get.theme.colorScheme.error,
                 onPressed: () {
-                  matchingController.stopMatching(
-                      profilePageController.userProfile.value!.uid);
+                  Get.to(
+                    () => MatchingPage(),
+                    transition: Transition.downToUp,
+                  );
                 },
                 child: const AnimatedEmoji(AnimatedEmojis.eyes),
               )
