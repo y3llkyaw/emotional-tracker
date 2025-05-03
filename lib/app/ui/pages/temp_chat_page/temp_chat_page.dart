@@ -1,63 +1,377 @@
+import 'package:animated_emoji/emoji.dart';
+import 'package:animated_emoji/emojis.g.dart';
 import 'package:avatar_plus/avatar_plus.dart';
+import 'package:chat_bubbles/bubbles/bubble_normal.dart';
+import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/controllers/matching_controller.dart';
+import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
+import 'package:emotion_tracker/app/data/models/message.dart';
+import 'package:emotion_tracker/app/data/models/profile.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
+import 'package:emotion_tracker/app/ui/pages/review_profile_page/review_profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class TempChatPage extends StatefulWidget {
-  const TempChatPage({Key? key, required this.chatRoomId}) : super(key: key);
+  const TempChatPage({
+    Key? key,
+    required this.chatRoomId,
+    required this.users,
+  }) : super(key: key);
   final String chatRoomId;
+  final List<String> users;
 
   @override
   State<TempChatPage> createState() => _TempChatPageState();
+}
+
+int _calculateAge(DateTime dob) {
+  final today = DateTime.now();
+  int age = today.year - dob.year;
+  if (today.month < dob.month ||
+      (today.month == dob.month && today.day < dob.day)) {
+    age--;
+  }
+  return age;
 }
 
 class _TempChatPageState extends State<TempChatPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   final matchingControllerRoom = Get.put(MatchingController());
+  final profilePageController = Get.put(ProfilePageController());
+  final chatController = Get.put(ChatController());
+
+  final messageController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    for (var uid in widget.users) {
+      if (uid != FirebaseAuth.instance.currentUser!.uid) {
+        chatController.getUserMessages(uid);
+      }
+    }
     _controller = AnimationController(vsync: this);
   }
 
   @override
   void dispose() {
     matchingControllerRoom.removeRoom(widget.chatRoomId);
+    matchingControllerRoom.stopMatching(FirebaseAuth.instance.currentUser!.uid);
+    messageController.dispose();
     _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    String otherUid = "hello";
+    for (var uid in widget.users) {
+      if (uid != FirebaseAuth.instance.currentUser!.uid) {
+        otherUid = uid;
+      }
+    }
     return WillPopScope(
       onWillPop: _confirmExit,
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Chat Page"),
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.more_horiz),
+            ),
+          ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              FirebaseAuth.instance.currentUser!.uid ==
-                      widget.chatRoomId.split("_")[0].toString()
-                  ? CircleAvatar(
-                      radius: 20,
-                      child: AvatarPlus(
-                        widget.chatRoomId.split("_")[0].toString(),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Builder(
+              builder: (context) {
+                return Container(
+                  height: Get.height * 0.1,
+                  padding: EdgeInsets.symmetric(
+                    vertical: Get.height * 0.01,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Get.theme.colorScheme.primary,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      SizedBox(
+                        width: Get.width * 0.2,
+                        child: FutureBuilder(
+                          future:
+                              profilePageController.getProfileByUid(otherUid),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return SpinKitCircle(
+                                itemBuilder: (context, index) => DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: index.isEven
+                                        ? Colors.red
+                                        : Colors.green,
+                                  ),
+                                ),
+                                size: 15.0,
+                              );
+                            } else if (snapshot.hasData) {
+                              final profile = snapshot.data as Profile;
+                              return Column(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 20,
+                                    child: AvatarPlus(
+                                        "${profile.uid}${profile.name}"),
+                                  ),
+                                  SizedBox(
+                                    height: Get.height * 0.01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Tooltip(
+                                        triggerMode: TooltipTriggerMode.tap,
+                                        message: "age",
+                                        child: Text(
+                                          _calculateAge(profile.dob.toDate())
+                                              .toString(),
+                                          style: GoogleFonts.aBeeZee(
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                Get.theme.colorScheme.onSurface,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: Get.width * 0.015),
+                                      Container(
+                                        width: 1,
+                                        height: 20,
+                                        color: Get.theme.colorScheme.onSurface,
+                                      ),
+                                      SizedBox(width: Get.width * 0.015),
+                                      Tooltip(
+                                        triggerMode: TooltipTriggerMode.tap,
+                                        message: profile.gender == "Gender.Male"
+                                            ? "Male"
+                                            : profile.gender == "Gender.Female"
+                                                ? "Female"
+                                                : "Other",
+                                        child: Icon(
+                                          profile.gender == "Gender.Male"
+                                              ? Icons.male
+                                              : profile.gender ==
+                                                      "Gender.Female"
+                                                  ? Icons.female
+                                                  : Icons.transgender,
+                                          color:
+                                              Get.theme.colorScheme.onSurface,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            } else {
+                              return Container();
+                            }
+                          },
+                        ),
                       ),
-                    )
-                  : CircleAvatar(
-                      radius: 20,
-                      child: AvatarPlus(
-                        widget.chatRoomId.split("_")[1].toString(),
+                      SizedBox(
+                        width: Get.width * 0.4,
+                        child: Text(
+                          "5 minutes, 30 seconds\nleft to chat with this person.",
+                          style: GoogleFonts.aBeeZee(
+                            fontSize: 15,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      SizedBox(
+                        width: Get.width * 0.3,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            SizedBox(
+                              height: Get.height * 0.035,
+                              child: ElevatedButton.icon(
+                                style: ButtonStyle(
+                                  backgroundColor: WidgetStateProperty.all(
+                                    Colors.red,
+                                  ),
+                                ),
+                                onPressed: () {},
+                                label: const Text(
+                                  "report",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                icon: const Icon(
+                                  CupertinoIcons.exclamationmark_bubble,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: Get.height * 0.01,
+                            ),
+                            SizedBox(
+                              height: Get.height * 0.035,
+                              child: ElevatedButton.icon(
+                                style: ButtonStyle(
+                                  backgroundColor: WidgetStateProperty.all(
+                                    Get.theme.colorScheme.error,
+                                  ),
+                                  // textStyle: TextStyle()
+                                ),
+                                onPressed: () {},
+                                label: const Text(
+                                  "follow",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                icon: const Icon(
+                                  Icons.person_add,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            Expanded(
+              child: Obx(
+                () => ListView.builder(
+                  reverse: true,
+                  itemCount: chatController.messages.length,
+                  itemBuilder: (context, index) {
+                    final message = chatController.messages[index];
+                    if (message.type == "text") {
+                      return _buildMessageWidget(message, index, otherUid);
+                    } else if (message.type == "sticker") {
+                      return _buildStickerWidget(message, index, otherUid);
+                    }
+                    return Container();
+                  },
+                ),
+              ),
+            ),
+            // const Spacer(),
+            SizedBox(
+              width: Get.width,
+              height: Get.height * 0.06,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: const Icon(CupertinoIcons.smiley),
+                    color: Get.theme.colorScheme.onSurface,
+                    onPressed: () {
+                      if (!chatController.showEmoji.value) {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                      }
+                      chatController.showEmoji.value =
+                          !chatController.showEmoji.value;
+                    },
+                  ),
+                  SizedBox(
+                    width: Get.width * 0.75,
+                    child: TextField(
+                      onTap: () {
+                        chatController.showEmoji.value = false;
+                      },
+                      controller: messageController,
+                      textInputAction: TextInputAction.send,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                        hintText: "Message",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          borderSide: BorderSide.none,
+                        ),
                       ),
                     ),
-            ],
-          ),
+                  ),
+                  // const SizedBox(width: 8),
+                  IconButton(
+                    icon: const Icon(CupertinoIcons.paperplane_fill),
+                    color: Get.theme.colorScheme.onSurface,
+                    onPressed: () async {
+                      chatController.message.value = messageController.text;
+                      await chatController.sendMessage(otherUid);
+                      messageController.clear();
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Obx(() {
+              if (!chatController.showEmoji.value) {
+                return Container();
+              }
+              return Container(
+                color: Get.theme.scaffoldBackgroundColor,
+                height: Get.height * 0.3,
+                child: GridView.builder(
+                  padding: const EdgeInsets.all(8),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 8,
+                    childAspectRatio: 1,
+                  ),
+                  itemCount: AnimatedEmojis.values.length,
+                  itemBuilder: (context, index) {
+                    final emoji = AnimatedEmojis.values[index];
+                    return GestureDetector(
+                      onTap: () {
+                        // Update GetX controller
+                        chatController.setMessage(messageController.text);
+                        chatController
+                            .sendSticker(otherUid, emoji.toUnicodeEmoji())
+                            .then((v) {
+                          messageController.clear();
+                          chatController.clearMessage();
+                        });
+
+                        chatController.showEmoji.value = false;
+                      },
+                      child: Center(
+                        child: Text(
+                          emoji.toUnicodeEmoji(),
+                          style: TextStyle(
+                            fontSize: Get.width * 0.06,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            }),
+            SizedBox(
+              height: Get.height * 0.02,
+            ),
+          ],
         ),
       ),
     );
@@ -67,9 +381,8 @@ class _TempChatPageState extends State<TempChatPage>
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Stop Matching?"),
-        content:
-            const Text("Are you sure you want to exit from the chat-room ?"),
+        title: const Text("Exit Chat Room?"),
+        content: const Text("Are you sure you wanna exit from the chat-room ?"),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -82,8 +395,8 @@ class _TempChatPageState extends State<TempChatPage>
           ),
           TextButton(
             onPressed: () {
-              // Place any cleanup logic here, like stopping matching
-              Navigator.of(context).pop(true);
+              Get.back();
+              Get.off(const ReviewProfilePage());
             },
             child: const Text(
               "Yes",
@@ -96,5 +409,188 @@ class _TempChatPageState extends State<TempChatPage>
       ),
     );
     return result ?? false;
+  }
+
+  //Sticker widget
+  Widget _buildStickerWidget(Message message, int index, String uid) {
+    if (message.message.toString() == "") {
+      return const Column();
+    }
+    return InkWell(
+      onLongPress: () {
+        showMessageActionBottomSheet(message, uid);
+      },
+      child: Column(
+        crossAxisAlignment:
+            message.uid != FirebaseAuth.instance.currentUser!.uid
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment:
+                message.uid != FirebaseAuth.instance.currentUser!.uid
+                    ? MainAxisAlignment.end
+                    : MainAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                margin: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  // color: Colors.black12,
+                  color: Colors.grey.withOpacity(0.5),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft:
+                        message.uid != FirebaseAuth.instance.currentUser!.uid
+                            ? const Radius.circular(20)
+                            : const Radius.circular(0),
+                    bottomRight:
+                        message.uid != FirebaseAuth.instance.currentUser!.uid
+                            ? const Radius.circular(0)
+                            : const Radius.circular(20),
+                    topRight: const Radius.circular(20),
+                    topLeft: const Radius.circular(20),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: Get.height * 0.15,
+                      width: Get.width * 0.3,
+                      child: AnimatedEmoji(
+                        AnimatedEmojis.fromEmojiString(
+                          message.message,
+                        )!, // Add null check operator to handle nullable AnimatedEmojiData
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Container(
+            margin: const EdgeInsets.only(right: 20, left: 20),
+            child: Row(
+              mainAxisAlignment: chatController.messages[index].uid ==
+                      FirebaseAuth.instance.currentUser!.uid
+                  ? MainAxisAlignment.start
+                  : MainAxisAlignment.end,
+              children: [
+                chatController.messages[index].uid ==
+                        FirebaseAuth.instance.currentUser!.uid
+                    ? Icon(
+                        Icons.done_all,
+                        size: Get.width * 0.03,
+                        color: message.read ? Colors.green : Colors.black12,
+                      )
+                    : Container(),
+                SizedBox(
+                  width: Get.width * 0.014,
+                ),
+                Text(
+                  timeago.format(
+                    chatController.messages[index].timestamp.toDate(),
+                    // locale:
+                    //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
+                  ),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                SizedBox(
+                  width: Get.width * 0.014,
+                ),
+                chatController.messages[index].uid ==
+                        FirebaseAuth.instance.currentUser!.uid
+                    ? Container()
+                    : Icon(
+                        Icons.done_all,
+                        size: Get.width * 0.03,
+                        color: message.read ? Colors.green : Colors.black12,
+                      ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Message widget
+  Widget _buildMessageWidget(Message message, int index, String uid) {
+    return InkWell(
+      onLongPress: () {
+        showMessageActionBottomSheet(message, uid);
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: Get.height * .005),
+        child: Column(
+          crossAxisAlignment:
+              message.uid != FirebaseAuth.instance.currentUser!.uid
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
+          children: [
+            BubbleNormal(
+              onLongPress: () {},
+              color: Colors.grey.withOpacity(0.5),
+              // color: Get.theme.cardColor,
+              textStyle: const TextStyle(
+                fontWeight: FontWeight.w500,
+              ),
+              isSender: chatController.messages[index].uid ==
+                      FirebaseAuth.instance.currentUser!.uid
+                  ? false
+                  : true,
+              text: chatController.messages[index].message,
+            ),
+            Container(
+              margin: const EdgeInsets.only(right: 20, left: 20),
+              child: Row(
+                mainAxisAlignment: chatController.messages[index].uid ==
+                        FirebaseAuth.instance.currentUser!.uid
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.end,
+                children: [
+                  chatController.messages[index].uid ==
+                          FirebaseAuth.instance.currentUser!.uid
+                      ? Icon(
+                          Icons.done_all,
+                          size: Get.width * 0.03,
+                          color: message.read ? Colors.green : Colors.black12,
+                        )
+                      : Container(),
+                  Text(
+                    timeago.format(
+                      chatController.messages[index].timestamp.toDate(),
+
+                      // locale:
+                      //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
+                    ),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  SizedBox(
+                    width: Get.width * 0.014,
+                  ),
+                  chatController.messages[index].uid ==
+                          FirebaseAuth.instance.currentUser!.uid
+                      ? Container()
+                      : Icon(
+                          Icons.done_all,
+                          size: Get.width * 0.03,
+                          color: message.read ? Colors.green : Colors.black12,
+                        ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: Get.height * 0.015,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

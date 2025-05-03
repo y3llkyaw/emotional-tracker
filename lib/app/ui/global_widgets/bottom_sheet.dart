@@ -287,213 +287,217 @@ void showMessageActionBottomSheet(Message message, String fid) {
 }
 
 void showDatingFilterSheet() {
-  Get.bottomSheet(Container(
-    padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      color: Get.theme.scaffoldBackgroundColor,
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child: Obx(
-      () => Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Filter",
-            style: GoogleFonts.aBeeZee(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
+  Get.bottomSheet(
+    Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Get.theme.scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Obx(
+        () => Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Filter",
+              style: GoogleFonts.aBeeZee(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: Get.width * 0.01),
-            child: Row(
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: Get.width * 0.01),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      matchingController.filterGender.value = Icons.male;
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                          width: Get.width * 0.25,
+                          height: Get.width * 0.25,
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20)),
+                            color: matchingController.filterGender == Icons.male
+                                ? Get.theme.colorScheme.error
+                                : Colors.blueGrey,
+                          ),
+                          child: Icon(
+                            Icons.male,
+                            color: Colors.white,
+                            size: Get.width * 0.2,
+                          ),
+                        ),
+                        SizedBox(
+                          height: Get.height * 0.015,
+                        ),
+                        Text(
+                          "Male",
+                          style: GoogleFonts.aBeeZee(
+                            fontWeight: FontWeight.bold,
+                            color: matchingController.filterGender == Icons.male
+                                ? Get.theme.colorScheme.error
+                                : Colors.grey,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      matchingController.filterGender.value = Icons.female;
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                          width: Get.width * 0.25,
+                          height: Get.width * 0.25,
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20)),
+                            color:
+                                matchingController.filterGender == Icons.female
+                                    ? Get.theme.colorScheme.error
+                                    : Colors.blueGrey,
+                          ),
+                          child: Icon(
+                            Icons.female,
+                            color: Colors.white,
+                            size: Get.width * 0.2,
+                          ),
+                        ),
+                        SizedBox(
+                          height: Get.height * 0.015,
+                        ),
+                        Text(
+                          "Female",
+                          style: GoogleFonts.aBeeZee(
+                            fontWeight: FontWeight.bold,
+                            color:
+                                matchingController.filterGender == Icons.female
+                                    ? Get.theme.colorScheme.error
+                                    : Colors.grey,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      matchingController.filterGender.value = Icons.transgender;
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                          width: Get.width * 0.25,
+                          height: Get.width * 0.25,
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20)),
+                            color: matchingController.filterGender ==
+                                    Icons.transgender
+                                ? Get.theme.colorScheme.error
+                                : Colors.blueGrey,
+                          ),
+                          child: Icon(
+                            Icons.transgender,
+                            color: Colors.white,
+                            size: Get.width * 0.2,
+                          ),
+                        ),
+                        SizedBox(
+                          height: Get.height * 0.015,
+                        ),
+                        Text(
+                          "Both",
+                          style: GoogleFonts.aBeeZee(
+                            fontWeight: FontWeight.bold,
+                            color: matchingController.filterGender ==
+                                    Icons.transgender
+                                ? Get.theme.colorScheme.error
+                                : Colors.grey,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                InkWell(
-                  onTap: () {
-                    matchingController.filterGender.value = Icons.male;
-                  },
-                  child: Column(
-                    children: [
-                      Container(
-                        width: Get.width * 0.25,
-                        height: Get.width * 0.25,
-                        decoration: BoxDecoration(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(20)),
-                          color: matchingController.filterGender == Icons.male
-                              ? Get.theme.colorScheme.error
-                              : Colors.blueGrey,
-                        ),
-                        child: Icon(
-                          Icons.male,
-                          color: Colors.white,
-                          size: Get.width * 0.2,
-                        ),
-                      ),
-                      SizedBox(
-                        height: Get.height * 0.015,
-                      ),
-                      Text(
-                        "Male",
-                        style: GoogleFonts.aBeeZee(
-                          fontWeight: FontWeight.bold,
-                          color: matchingController.filterGender == Icons.male
-                              ? Get.theme.colorScheme.error
-                              : Colors.grey,
-                          fontSize: 20,
-                        ),
-                      ),
-                    ],
+                Text(
+                  "Age",
+                  style: GoogleFonts.aBeeZee(
+                    fontSize: 20,
                   ),
                 ),
-                InkWell(
-                  onTap: () {
-                    matchingController.filterGender.value = Icons.female;
-                  },
-                  child: Column(
-                    children: [
-                      Container(
-                        width: Get.width * 0.25,
-                        height: Get.width * 0.25,
-                        decoration: BoxDecoration(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(20)),
-                          color: matchingController.filterGender == Icons.female
-                              ? Get.theme.colorScheme.error
-                              : Colors.blueGrey,
-                        ),
-                        child: Icon(
-                          Icons.female,
-                          color: Colors.white,
-                          size: Get.width * 0.2,
-                        ),
-                      ),
-                      SizedBox(
-                        height: Get.height * 0.015,
-                      ),
-                      Text(
-                        "Female",
-                        style: GoogleFonts.aBeeZee(
-                          fontWeight: FontWeight.bold,
-                          color: matchingController.filterGender == Icons.female
-                              ? Get.theme.colorScheme.error
-                              : Colors.grey,
-                          fontSize: 20,
-                        ),
-                      ),
-                    ],
+                RangeSlider(
+                  activeColor: Get.theme.colorScheme.error,
+                  min: 17,
+                  max: 45,
+                  divisions: 37,
+                  values: RangeValues(
+                    matchingController.filterMinAge.value.toDouble(),
+                    matchingController.filterMaxAge.value.toDouble(),
                   ),
-                ),
-                InkWell(
-                  onTap: () {
-                    matchingController.filterGender.value = Icons.transgender;
+                  onChanged: (RangeValues rv) {
+                    matchingController.filterMinAge.value = rv.start.toInt();
+                    matchingController.filterMaxAge.value = rv.end.toInt();
                   },
-                  child: Column(
-                    children: [
-                      Container(
-                        width: Get.width * 0.25,
-                        height: Get.width * 0.25,
-                        decoration: BoxDecoration(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(20)),
-                          color: matchingController.filterGender ==
-                                  Icons.transgender
-                              ? Get.theme.colorScheme.error
-                              : Colors.blueGrey,
-                        ),
-                        child: Icon(
-                          Icons.transgender,
-                          color: Colors.white,
-                          size: Get.width * 0.2,
-                        ),
-                      ),
-                      SizedBox(
-                        height: Get.height * 0.015,
-                      ),
-                      Text(
-                        "Both",
-                        style: GoogleFonts.aBeeZee(
-                          fontWeight: FontWeight.bold,
-                          color: matchingController.filterGender ==
-                                  Icons.transgender
-                              ? Get.theme.colorScheme.error
-                              : Colors.grey,
-                          fontSize: 20,
-                        ),
-                      ),
-                    ],
+                ),
+                Text(
+                  "${matchingController.filterMinAge.value}-${matchingController.filterMaxAge.value}",
+                  style: GoogleFonts.aBeeZee(
+                    fontSize: 20,
                   ),
                 ),
               ],
             ),
-          ),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text(
-                "Age",
-                style: GoogleFonts.aBeeZee(
-                  fontSize: 20,
+            // const Spacer(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                SizedBox(
+                  width: Get.width * 0.4,
+                  height: Get.height * 0.07,
+                  child: CustomButton(
+                    color: Colors.blueGrey,
+                    text: "Back",
+                    onPressed: () {
+                      Get.back();
+                    },
+                  ),
                 ),
-              ),
-              RangeSlider(
-                activeColor: Get.theme.colorScheme.error,
-                min: 17,
-                max: 45,
-                divisions: 37,
-                values: RangeValues(
-                  matchingController.filterMinAge.value.toDouble(),
-                  matchingController.filterMaxAge.value.toDouble(),
+                SizedBox(
+                  width: Get.width * 0.4,
+                  height: Get.height * 0.07,
+                  child: CustomButton(
+                    // fontSize: 10,
+                    color: Get.theme.colorScheme.error,
+                    text: "Find Your\nMoodMate",
+                    onPressed: () async {
+                      await matchingController.startMatching(
+                          profilePageController.userProfile.value!);
+                      Get.back();
+                    },
+                  ),
                 ),
-                onChanged: (RangeValues rv) {
-                  matchingController.filterMinAge.value = rv.start.toInt();
-                  matchingController.filterMaxAge.value = rv.end.toInt();
-                },
-              ),
-              Text(
-                "${matchingController.filterMinAge.value}-${matchingController.filterMaxAge.value}",
-                style: GoogleFonts.aBeeZee(
-                  fontSize: 20,
-                ),
-              ),
-            ],
-          ),
-          // const Spacer(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              SizedBox(
-                width: Get.width * 0.4,
-                height: Get.height * 0.07,
-                child: CustomButton(
-                  color: Colors.blueGrey,
-                  text: "Back",
-                  onPressed: () {
-                    Get.back();
-                  },
-                ),
-              ),
-              SizedBox(
-                width: Get.width * 0.4,
-                height: Get.height * 0.07,
-                child: CustomButton(
-                  // fontSize: 10,
-                  color: Get.theme.colorScheme.error,
-                  text: "Find Your\nMoodMate",
-                  onPressed: () async {
-                    await matchingController.startMatching(
-                        profilePageController.userProfile.value!);
-                    Get.back();
-                  },
-                ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     ),
-  ));
+  );
 }

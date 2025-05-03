@@ -239,7 +239,7 @@ class _ChatPageState extends State<ChatPage> {
                     ),
                     if (chatController.showEmoji.value)
                       Container(
-                        color: Colors.white,
+                        color: Get.theme.scaffoldBackgroundColor,
                         height: Get.height * 0.3,
                         child: GridView.builder(
                           padding: const EdgeInsets.all(8),
@@ -879,4 +879,5 @@ class _ChatPageState extends State<ChatPage> {
       ),
     );
   }
+
 }

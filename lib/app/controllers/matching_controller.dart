@@ -123,11 +123,13 @@ class MatchingController extends GetxController {
 
     _roomSubscription = roomRef.onChildAdded.listen((event) {
       final roomId = event.snapshot.key ?? "";
-      final users = List.from(event.snapshot.child("users").value as List);
+      final rawUsers = event.snapshot.child("users").value;
+      final users =
+          (rawUsers as List<dynamic>).map((e) => e.toString()).toList();
 
       if (users.contains(uid)) {
         log("💬 Navigating to TempChatPage: $roomId");
-        Get.to(() => TempChatPage(chatRoomId: roomId));
+        Get.to(() => TempChatPage(chatRoomId: roomId, users: users));
       }
     });
   }

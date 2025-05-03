@@ -2,15 +2,15 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
-  const CustomButton(
-      {Key? key,
-      required this.text,
-      required this.onPressed,
-      this.isDisabled = false,
-      this.isLoading = false,
-      this.color = Colors.blueAccent,
-      this.fontSize = 14.0})
-      : super(key: key);
+  const CustomButton({
+    Key? key,
+    required this.text,
+    required this.onPressed,
+    this.isDisabled = false,
+    this.isLoading = false,
+    this.color = Colors.blueAccent,
+    this.fontSize = 14.0,
+  }) : super(key: key);
 
   final bool isLoading;
   final String text;

@@ -21,7 +21,6 @@ class OtherProfilePage extends StatefulWidget {
 class _OtherProfilePageState extends State<OtherProfilePage> {
   final controller = Get.put(OtherProfilePageController());
   final uidController = Get.put(UidController());
-  // late username;
 
   @override
   void initState() {
@@ -37,7 +36,6 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Container(),
         actions: [
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -81,11 +79,15 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          "${DateTime.now().difference(widget.profile.dob.toDate()).inDays ~/ 365}",
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
+                        Tooltip(
+                          triggerMode: TooltipTriggerMode.tap,
+                          message: "age",
+                          child: Text(
+                            "${DateTime.now().difference(widget.profile.dob.toDate()).inDays ~/ 365}",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
                         Container(
@@ -95,13 +97,21 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
                           height: Get.height * 0.03,
                           color: Colors.grey,
                         ),
-                        Icon(
-                          widget.profile.gender == "Gender.Male"
-                              ? Icons.male
+                        Tooltip(
+                          triggerMode: TooltipTriggerMode.tap,
+                          message: widget.profile.gender == "Gender.Male"
+                              ? "Male"
                               : widget.profile.gender == "Gender.Female"
-                                  ? Icons.female
-                                  : CupertinoIcons.news,
-                          color: Colors.blue,
+                                  ? "Female"
+                                  : "Other",
+                          child: Icon(
+                            widget.profile.gender == "Gender.Male"
+                                ? Icons.male
+                                : widget.profile.gender == "Gender.Female"
+                                    ? Icons.female
+                                    : CupertinoIcons.news,
+                            color: Colors.blue,
+                          ),
                         ),
                       ],
                     ),
