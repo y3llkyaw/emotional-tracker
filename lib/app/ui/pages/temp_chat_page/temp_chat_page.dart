@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:animated_emoji/emoji.dart';
 import 'package:animated_emoji/emojis.g.dart';
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:chat_bubbles/bubbles/bubble_normal.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/controllers/matching_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
@@ -22,8 +25,10 @@ class TempChatPage extends StatefulWidget {
     Key? key,
     required this.chatRoomId,
     required this.users,
+    required this.timestamp,
   }) : super(key: key);
   final String chatRoomId;
+  final Timestamp timestamp;
   final List<String> users;
 
   @override
@@ -77,6 +82,20 @@ class _TempChatPageState extends State<TempChatPage>
         otherUid = uid;
       }
     }
+    var targetTime = widget.timestamp.toDate();
+    log(targetTime.toString(),name: "temp-chat-page");
+    final now = DateTime.now().add(const Duration(minutes: 5));
+    final difference = now.difference(targetTime);
+
+    if (difference.isNegative) {
+      print("⏱️ Time has already passed");
+      print(difference.inMinutes);
+    } else {
+      print(difference.inMinutes);
+      print(
+          "🕒 Time remaining: ${difference.inMinutes} minutes and ${difference.inSeconds % 60} seconds");
+    }
+
     return WillPopScope(
       onWillPop: _confirmExit,
       child: Scaffold(
@@ -89,289 +108,293 @@ class _TempChatPageState extends State<TempChatPage>
             ),
           ],
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Builder(
-              builder: (context) {
-                return Container(
-                  height: Get.height * 0.1,
-                  padding: EdgeInsets.symmetric(
-                    vertical: Get.height * 0.01,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Get.theme.colorScheme.primary,
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(10),
-                      bottomRight: Radius.circular(10),
+        body: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Builder(
+                builder: (context) {
+                  return Container(
+                    height: Get.height * 0.1,
+                    padding: EdgeInsets.symmetric(
+                      vertical: Get.height * 0.01,
                     ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      SizedBox(
-                        width: Get.width * 0.2,
-                        child: FutureBuilder(
-                          future:
-                              profilePageController.getProfileByUid(otherUid),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return SpinKitCircle(
-                                itemBuilder: (context, index) => DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    color: index.isEven
-                                        ? Colors.red
-                                        : Colors.green,
+                    decoration: BoxDecoration(
+                      color: Get.theme.colorScheme.primary,
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(10),
+                        bottomRight: Radius.circular(10),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        SizedBox(
+                          width: Get.width * 0.2,
+                          child: FutureBuilder(
+                            future:
+                                profilePageController.getProfileByUid(otherUid),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return SpinKitCircle(
+                                  itemBuilder: (context, index) => DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      color: index.isEven
+                                          ? Colors.red
+                                          : Colors.green,
+                                    ),
                                   ),
-                                ),
-                                size: 15.0,
-                              );
-                            } else if (snapshot.hasData) {
-                              final profile = snapshot.data as Profile;
-                              return Column(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 20,
-                                    child: AvatarPlus(
-                                        "${profile.uid}${profile.name}"),
-                                  ),
-                                  SizedBox(
-                                    height: Get.height * 0.01,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Tooltip(
-                                        triggerMode: TooltipTriggerMode.tap,
-                                        message: "age",
-                                        child: Text(
-                                          _calculateAge(profile.dob.toDate())
-                                              .toString(),
-                                          style: GoogleFonts.aBeeZee(
-                                            fontWeight: FontWeight.bold,
+                                  size: 15.0,
+                                );
+                              } else if (snapshot.hasData) {
+                                final profile = snapshot.data as Profile;
+                                return Column(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 20,
+                                      child: AvatarPlus(
+                                          "${profile.uid}${profile.name}"),
+                                    ),
+                                    SizedBox(
+                                      height: Get.height * 0.01,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Tooltip(
+                                          triggerMode: TooltipTriggerMode.tap,
+                                          message: "age",
+                                          child: Text(
+                                            _calculateAge(profile.dob.toDate())
+                                                .toString(),
+                                            style: GoogleFonts.aBeeZee(
+                                              fontWeight: FontWeight.bold,
+                                              color: Get
+                                                  .theme.colorScheme.onSurface,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(width: Get.width * 0.015),
+                                        Container(
+                                          width: 1,
+                                          height: 20,
+                                          color:
+                                              Get.theme.colorScheme.onSurface,
+                                        ),
+                                        SizedBox(width: Get.width * 0.015),
+                                        Tooltip(
+                                          triggerMode: TooltipTriggerMode.tap,
+                                          message:
+                                              profile.gender == "Gender.Male"
+                                                  ? "Male"
+                                                  : profile.gender ==
+                                                          "Gender.Female"
+                                                      ? "Female"
+                                                      : "Other",
+                                          child: Icon(
+                                            profile.gender == "Gender.Male"
+                                                ? Icons.male
+                                                : profile.gender ==
+                                                        "Gender.Female"
+                                                    ? Icons.female
+                                                    : Icons.transgender,
                                             color:
                                                 Get.theme.colorScheme.onSurface,
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(width: Get.width * 0.015),
-                                      Container(
-                                        width: 1,
-                                        height: 20,
-                                        color: Get.theme.colorScheme.onSurface,
-                                      ),
-                                      SizedBox(width: Get.width * 0.015),
-                                      Tooltip(
-                                        triggerMode: TooltipTriggerMode.tap,
-                                        message: profile.gender == "Gender.Male"
-                                            ? "Male"
-                                            : profile.gender == "Gender.Female"
-                                                ? "Female"
-                                                : "Other",
-                                        child: Icon(
-                                          profile.gender == "Gender.Male"
-                                              ? Icons.male
-                                              : profile.gender ==
-                                                      "Gender.Female"
-                                                  ? Icons.female
-                                                  : Icons.transgender,
-                                          color:
-                                              Get.theme.colorScheme.onSurface,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              );
-                            } else {
-                              return Container();
-                            }
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        width: Get.width * 0.4,
-                        child: Text(
-                          "5 minutes, 30 seconds\nleft to chat with this person.",
-                          style: GoogleFonts.aBeeZee(
-                            fontSize: 15,
+                                      ],
+                                    ),
+                                  ],
+                                );
+                              } else {
+                                return Container();
+                              }
+                            },
                           ),
-                          textAlign: TextAlign.center,
                         ),
-                      ),
-                      SizedBox(
-                        width: Get.width * 0.3,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            SizedBox(
-                              height: Get.height * 0.035,
-                              child: ElevatedButton.icon(
-                                style: ButtonStyle(
-                                  backgroundColor: WidgetStateProperty.all(
-                                    Colors.red,
+                        SizedBox(
+                          width: Get.width * 0.4,
+                          child: Text(
+                            "5 minutes, 30 seconds\nleft to chat with this person.",
+                            style: GoogleFonts.aBeeZee(
+                              fontSize: 15,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        SizedBox(
+                          width: Get.width * 0.3,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              SizedBox(
+                                height: Get.height * 0.035,
+                                child: ElevatedButton.icon(
+                                  style: ButtonStyle(
+                                    backgroundColor: WidgetStateProperty.all(
+                                      Colors.red,
+                                    ),
                                   ),
-                                ),
-                                onPressed: () {},
-                                label: const Text(
-                                  "report",
-                                  style: TextStyle(
+                                  onPressed: () {},
+                                  label: const Text(
+                                    "report",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  icon: const Icon(
+                                    CupertinoIcons.exclamationmark_bubble,
                                     color: Colors.white,
                                   ),
                                 ),
-                                icon: const Icon(
-                                  CupertinoIcons.exclamationmark_bubble,
-                                  color: Colors.white,
-                                ),
                               ),
-                            ),
-                            SizedBox(
-                              height: Get.height * 0.01,
-                            ),
-                            SizedBox(
-                              height: Get.height * 0.035,
-                              child: ElevatedButton.icon(
-                                style: ButtonStyle(
-                                  backgroundColor: WidgetStateProperty.all(
-                                    Get.theme.colorScheme.error,
+                              SizedBox(
+                                height: Get.height * 0.01,
+                              ),
+                              SizedBox(
+                                height: Get.height * 0.035,
+                                child: ElevatedButton.icon(
+                                  style: ButtonStyle(
+                                    backgroundColor: WidgetStateProperty.all(
+                                      Get.theme.colorScheme.error,
+                                    ),
+                                    // textStyle: TextStyle()
                                   ),
-                                  // textStyle: TextStyle()
-                                ),
-                                onPressed: () {},
-                                label: const Text(
-                                  "follow",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                icon: const Icon(
-                                  Icons.person_add,
-                                  color: Colors.white,
+                                  onPressed: () {},
+                                  label: const Text(
+                                    "follow",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  icon: const Icon(
+                                    Icons.person_add,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  );
+                },
+              ),
+              Expanded(
+                child: Obx(
+                  () => ListView.builder(
+                    reverse: true,
+                    itemCount: chatController.messages.length,
+                    itemBuilder: (context, index) {
+                      final message = chatController.messages[index];
+                      if (message.type == "text") {
+                        return _buildMessageWidget(message, index, otherUid);
+                      } else if (message.type == "sticker") {
+                        return _buildStickerWidget(message, index, otherUid);
+                      }
+                      return Container();
+                    },
                   ),
-                );
-              },
-            ),
-            Expanded(
-              child: Obx(
-                () => ListView.builder(
-                  reverse: true,
-                  itemCount: chatController.messages.length,
-                  itemBuilder: (context, index) {
-                    final message = chatController.messages[index];
-                    if (message.type == "text") {
-                      return _buildMessageWidget(message, index, otherUid);
-                    } else if (message.type == "sticker") {
-                      return _buildStickerWidget(message, index, otherUid);
-                    }
-                    return Container();
-                  },
                 ),
               ),
-            ),
-            // const Spacer(),
-            SizedBox(
-              width: Get.width,
-              height: Get.height * 0.06,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: const Icon(CupertinoIcons.smiley),
-                    color: Get.theme.colorScheme.onSurface,
-                    onPressed: () {
-                      if (!chatController.showEmoji.value) {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                      }
-                      chatController.showEmoji.value =
-                          !chatController.showEmoji.value;
-                    },
-                  ),
-                  SizedBox(
-                    width: Get.width * 0.75,
-                    child: TextField(
-                      onTap: () {
-                        chatController.showEmoji.value = false;
+              // const Spacer(),
+              SizedBox(
+                width: Get.width,
+                height: Get.height * 0.06,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: const Icon(CupertinoIcons.smiley),
+                      color: Get.theme.colorScheme.onSurface,
+                      onPressed: () {
+                        if (!chatController.showEmoji.value) {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                        }
+                        chatController.showEmoji.value =
+                            !chatController.showEmoji.value;
                       },
-                      controller: messageController,
-                      textInputAction: TextInputAction.send,
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 10,
-                        ),
-                        hintText: "Message",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
                     ),
-                  ),
-                  // const SizedBox(width: 8),
-                  IconButton(
-                    icon: const Icon(CupertinoIcons.paperplane_fill),
-                    color: Get.theme.colorScheme.onSurface,
-                    onPressed: () async {
-                      chatController.message.value = messageController.text;
-                      await chatController.sendMessage(otherUid);
-                      messageController.clear();
-                    },
-                  ),
-                ],
-              ),
-            ),
-            Obx(() {
-              if (!chatController.showEmoji.value) {
-                return Container();
-              }
-              return Container(
-                color: Get.theme.scaffoldBackgroundColor,
-                height: Get.height * 0.3,
-                child: GridView.builder(
-                  padding: const EdgeInsets.all(8),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 8,
-                    childAspectRatio: 1,
-                  ),
-                  itemCount: AnimatedEmojis.values.length,
-                  itemBuilder: (context, index) {
-                    final emoji = AnimatedEmojis.values[index];
-                    return GestureDetector(
-                      onTap: () {
-                        // Update GetX controller
-                        chatController.setMessage(messageController.text);
-                        chatController
-                            .sendSticker(otherUid, emoji.toUnicodeEmoji())
-                            .then((v) {
-                          messageController.clear();
-                          chatController.clearMessage();
-                        });
-
-                        chatController.showEmoji.value = false;
-                      },
-                      child: Center(
-                        child: Text(
-                          emoji.toUnicodeEmoji(),
-                          style: TextStyle(
-                            fontSize: Get.width * 0.06,
+                    SizedBox(
+                      width: Get.width * 0.75,
+                      child: TextField(
+                        onTap: () {
+                          chatController.showEmoji.value = false;
+                        },
+                        controller: messageController,
+                        textInputAction: TextInputAction.send,
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
+                          hintText: "Message",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide.none,
                           ),
                         ),
                       ),
-                    );
-                  },
+                    ),
+                    // const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(CupertinoIcons.paperplane_fill),
+                      color: Get.theme.colorScheme.onSurface,
+                      onPressed: () async {
+                        chatController.message.value = messageController.text;
+                        await chatController.sendMessage(otherUid);
+                        messageController.clear();
+                      },
+                    ),
+                  ],
                 ),
-              );
-            }),
-            SizedBox(
-              height: Get.height * 0.02,
-            ),
-          ],
+              ),
+              Obx(() {
+                if (!chatController.showEmoji.value) {
+                  return Container();
+                }
+                return Container(
+                  color: Get.theme.scaffoldBackgroundColor,
+                  height: Get.height * 0.3,
+                  child: GridView.builder(
+                    padding: const EdgeInsets.all(8),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 8,
+                      childAspectRatio: 1,
+                    ),
+                    itemCount: AnimatedEmojis.values.length,
+                    itemBuilder: (context, index) {
+                      final emoji = AnimatedEmojis.values[index];
+                      return GestureDetector(
+                        onTap: () {
+                          // Update GetX controller
+                          chatController.setMessage(messageController.text);
+                          chatController
+                              .sendSticker(otherUid, emoji.toUnicodeEmoji())
+                              .then((v) {
+                            messageController.clear();
+                            chatController.clearMessage();
+                          });
+
+                          chatController.showEmoji.value = false;
+                        },
+                        child: Center(
+                          child: Text(
+                            emoji.toUnicodeEmoji(),
+                            style: TextStyle(
+                              fontSize: Get.width * 0.06,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }),
+            ],
+          ),
         ),
       ),
     );
@@ -475,39 +498,35 @@ class _TempChatPageState extends State<TempChatPage>
                   ? MainAxisAlignment.start
                   : MainAxisAlignment.end,
               children: [
-                chatController.messages[index].uid ==
-                        FirebaseAuth.instance.currentUser!.uid
-                    ? Icon(
-                        Icons.done_all,
-                        size: Get.width * 0.03,
-                        color: message.read ? Colors.green : Colors.black12,
-                      )
-                    : Container(),
-                SizedBox(
-                  width: Get.width * 0.014,
-                ),
                 Text(
                   timeago.format(
                     chatController.messages[index].timestamp.toDate(),
-                    // locale:
-                    //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
                   ),
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[600],
                   ),
                 ),
-                SizedBox(
-                  width: Get.width * 0.014,
+                Row(
+                  children: [
+                    SizedBox(
+                      width: Get.width * 0.014,
+                    ),
+                    chatController.messages[index].uid ==
+                            FirebaseAuth.instance.currentUser!.uid
+                        ? Container()
+                        : Icon(
+                            Icons.done_all,
+                            size: Get.width * 0.03,
+                            color: message.read
+                                ? Colors.green
+                                : Get.theme.colorScheme.onSurface,
+                          ),
+                    SizedBox(
+                      width: Get.width * 0.014,
+                    ),
+                  ],
                 ),
-                chatController.messages[index].uid ==
-                        FirebaseAuth.instance.currentUser!.uid
-                    ? Container()
-                    : Icon(
-                        Icons.done_all,
-                        size: Get.width * 0.03,
-                        color: message.read ? Colors.green : Colors.black12,
-                      ),
               ],
             ),
           ),
@@ -551,18 +570,9 @@ class _TempChatPageState extends State<TempChatPage>
                     ? MainAxisAlignment.start
                     : MainAxisAlignment.end,
                 children: [
-                  chatController.messages[index].uid ==
-                          FirebaseAuth.instance.currentUser!.uid
-                      ? Icon(
-                          Icons.done_all,
-                          size: Get.width * 0.03,
-                          color: message.read ? Colors.green : Colors.black12,
-                        )
-                      : Container(),
                   Text(
                     timeago.format(
                       chatController.messages[index].timestamp.toDate(),
-
                       // locale:
                       //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
                     ),
@@ -580,13 +590,15 @@ class _TempChatPageState extends State<TempChatPage>
                       : Icon(
                           Icons.done_all,
                           size: Get.width * 0.03,
-                          color: message.read ? Colors.green : Colors.black12,
+                          color: message.read
+                              ? Colors.green
+                              : Get.theme.colorScheme.onSurface,
                         ),
+                  SizedBox(
+                    width: Get.width * 0.014,
+                  ),
                 ],
               ),
-            ),
-            SizedBox(
-              height: Get.height * 0.015,
             ),
           ],
         ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/ui/pages/temp_chat_page/temp_chat_page.dart';
@@ -105,10 +106,10 @@ class MatchingController extends GetxController {
         final sorted = [profile.uid, otherUid]..sort();
         final roomId = "${sorted[0]}_${sorted[1]}";
 
-        final roomRef = FirebaseDatabase.instance
-            .ref("searching_users/matched_users/$roomId");
+        final roomRef = FirebaseDatabase.instance.ref("matched_users/$roomId");
         await roomRef.set({
           "users": sorted,
+          "timestamp": DateTime.now().microsecondsSinceEpoch,
         });
         isMatching.value = false;
       } else {
@@ -118,18 +119,27 @@ class MatchingController extends GetxController {
   }
 
   void _listenForRoom(String uid) {
-    final roomRef =
-        FirebaseDatabase.instance.ref("searching_users/matched_users");
+    final roomRef = FirebaseDatabase.instance.ref("matched_users");
 
     _roomSubscription = roomRef.onChildAdded.listen((event) {
       final roomId = event.snapshot.key ?? "";
       final rawUsers = event.snapshot.child("users").value;
+      final timestamp = Timestamp.fromMicrosecondsSinceEpoch(
+          event.snapshot.child("timestamp").value as int);
+
       final users =
           (rawUsers as List<dynamic>).map((e) => e.toString()).toList();
 
       if (users.contains(uid)) {
         log("💬 Navigating to TempChatPage: $roomId");
-        Get.to(() => TempChatPage(chatRoomId: roomId, users: users));
+        Get.to(
+          () => TempChatPage(
+            chatRoomId: roomId,
+            users: users,
+            timestamp: timestamp,
+          ),
+          transition: Transition.rightToLeft,
+        );
       }
     });
   }
@@ -150,9 +160,7 @@ class MatchingController extends GetxController {
   Future<void> removeRoom(String roomId) async {
     try {
       log("🛑 Stopping room for $roomId");
-      await FirebaseDatabase.instance
-          .ref("searching_users/matched_users/$roomId")
-          .remove();
+      await FirebaseDatabase.instance.ref("matched_users/$roomId").remove();
       _roomSubscription?.cancel();
       _roomSubscription = null;
     } catch (e) {

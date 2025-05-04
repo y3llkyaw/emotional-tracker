@@ -133,7 +133,7 @@ class ChatService {
         .snapshots()
         .asyncMap((snapshot) async {
       Map<String, Stream<List<Message>>> friendMessageStreams = {};
-      
+
       for (var doc in snapshot.docs) {
         String uid = doc.data()['uid'];
         friendMessageStreams[uid] = getUserMessages(uid);
