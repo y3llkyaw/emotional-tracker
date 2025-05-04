@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:animated_emoji/emoji.dart';
@@ -53,10 +54,35 @@ class _TempChatPageState extends State<TempChatPage>
   final chatController = Get.put(ChatController());
 
   final messageController = TextEditingController();
+  // late Timer _countdownTimer;
+  String _timeRemaining = "";
+
+  void _startCountdown() {
+    final _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      final now = DateTime.now();
+      final targetTime =
+          widget.timestamp.toDate().add(const Duration(minutes: 5));
+      final difference = targetTime.difference(now);
+
+      if (difference.isNegative) {
+        timer.cancel();
+        setState(() {
+          _timeRemaining = "Time is up!";
+        });
+      } else {
+        setState(() {
+          _timeRemaining =
+              "${difference.inMinutes} minutes and ${difference.inSeconds % 60} seconds left";
+        });
+      }
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    _startCountdown();
+
     for (var uid in widget.users) {
       if (uid != FirebaseAuth.instance.currentUser!.uid) {
         chatController.getUserMessages(uid);
@@ -81,19 +107,6 @@ class _TempChatPageState extends State<TempChatPage>
       if (uid != FirebaseAuth.instance.currentUser!.uid) {
         otherUid = uid;
       }
-    }
-    var targetTime = widget.timestamp.toDate();
-    log(targetTime.toString(),name: "temp-chat-page");
-    final now = DateTime.now().add(const Duration(minutes: 5));
-    final difference = now.difference(targetTime);
-
-    if (difference.isNegative) {
-      print("⏱️ Time has already passed");
-      print(difference.inMinutes);
-    } else {
-      print(difference.inMinutes);
-      print(
-          "🕒 Time remaining: ${difference.inMinutes} minutes and ${difference.inSeconds % 60} seconds");
     }
 
     return WillPopScope(
@@ -217,7 +230,7 @@ class _TempChatPageState extends State<TempChatPage>
                         SizedBox(
                           width: Get.width * 0.4,
                           child: Text(
-                            "5 minutes, 30 seconds\nleft to chat with this person.",
+                            _timeRemaining,
                             style: GoogleFonts.aBeeZee(
                               fontSize: 15,
                             ),

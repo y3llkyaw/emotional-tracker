@@ -111,6 +111,7 @@ class MatchingController extends GetxController {
           "users": sorted,
           "timestamp": DateTime.now().microsecondsSinceEpoch,
         });
+        await ref.onDisconnect().remove();
         isMatching.value = false;
       } else {
         log("❌ Not a match: $otherUid");
