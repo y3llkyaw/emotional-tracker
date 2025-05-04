@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:animated_emoji/emoji.dart';
 import 'package:animated_emoji/emojis.g.dart';
 import 'package:avatar_plus/avatar_plus.dart';
@@ -9,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/controllers/matching_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
+import 'package:emotion_tracker/app/controllers/temp_chat_controller.dart';
 import 'package:emotion_tracker/app/data/models/message.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
@@ -49,31 +48,32 @@ int _calculateAge(DateTime dob) {
 class _TempChatPageState extends State<TempChatPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  final matchingControllerRoom = Get.put(MatchingController());
+  final matchingController = Get.put(MatchingController());
   final profilePageController = Get.put(ProfilePageController());
   final chatController = Get.put(ChatController());
+  final tempChatController = Get.put(TempChatController());
 
   final messageController = TextEditingController();
-  // late Timer _countdownTimer;
-  String _timeRemaining = "";
+  late Timer _countdownTimer;
 
   void _startCountdown() {
-    final _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       final now = DateTime.now();
       final targetTime =
-          widget.timestamp.toDate().add(const Duration(minutes: 5));
+          widget.timestamp.toDate().add(const Duration(minutes: 1));
       final difference = targetTime.difference(now);
 
       if (difference.isNegative) {
         timer.cancel();
-        setState(() {
-          _timeRemaining = "Time is up!";
-        });
+        tempChatController.timeRemaining.value = "Time is up!";
+        Get.back();
+        // Get.to(
+        //   () => const ReviewProfilePage(),
+        //   transition: Transition.rightToLeft,
+        // );
       } else {
-        setState(() {
-          _timeRemaining =
-              "${difference.inMinutes} minutes and ${difference.inSeconds % 60} seconds left";
-        });
+        tempChatController.timeRemaining.value =
+            "${difference.inMinutes} minutes and ${difference.inSeconds % 60} seconds left";
       }
     });
   }
@@ -82,21 +82,23 @@ class _TempChatPageState extends State<TempChatPage>
   void initState() {
     super.initState();
     _startCountdown();
-
+    tempChatController.roomId.value = widget.chatRoomId;
     for (var uid in widget.users) {
       if (uid != FirebaseAuth.instance.currentUser!.uid) {
         chatController.getUserMessages(uid);
       }
     }
+    tempChatController.listenRoom();
     _controller = AnimationController(vsync: this);
   }
 
   @override
   void dispose() {
-    matchingControllerRoom.removeRoom(widget.chatRoomId);
-    matchingControllerRoom.stopMatching(FirebaseAuth.instance.currentUser!.uid);
+    matchingController.removeRoom(widget.chatRoomId);
+    matchingController.stopMatching(FirebaseAuth.instance.currentUser!.uid);
     messageController.dispose();
     _controller.dispose();
+    _countdownTimer.cancel();
     super.dispose();
   }
 
@@ -229,12 +231,14 @@ class _TempChatPageState extends State<TempChatPage>
                         ),
                         SizedBox(
                           width: Get.width * 0.4,
-                          child: Text(
-                            _timeRemaining,
-                            style: GoogleFonts.aBeeZee(
-                              fontSize: 15,
+                          child: Obx(
+                            () => Text(
+                              tempChatController.timeRemaining.value,
+                              style: GoogleFonts.aBeeZee(
+                                fontSize: 15,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
                           ),
                         ),
                         SizedBox(
@@ -430,9 +434,15 @@ class _TempChatPageState extends State<TempChatPage>
             ),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
+              await matchingController.removeRoom(widget.chatRoomId);
+
               Get.back();
-              Get.off(const ReviewProfilePage());
+              Get.off(
+                const ReviewProfilePage(
+                  uid: "",
+                ),
+              );
             },
             child: const Text(
               "Yes",

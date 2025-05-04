@@ -64,8 +64,8 @@ class MatchingController extends GetxController {
 
       isMatching.value = true;
 
-      _listenForMatch(profile, genderFilterValue);
       _listenForRoom(profile.uid);
+      _listenForMatch(profile, genderFilterValue);
     } catch (e) {
       log("❌ startMatching error: $e");
     }
@@ -79,7 +79,6 @@ class MatchingController extends GetxController {
       if (otherUid == profile.uid) return;
 
       final data = Map<String, dynamic>.from(event.snapshot.value as Map);
-
       final gender = data["gender"]?.toString().toLowerCase();
       final age = int.tryParse(data["age"].toString());
       final otherMinAge = int.tryParse(data["filterMinAge"].toString());
@@ -88,7 +87,7 @@ class MatchingController extends GetxController {
       final userAge = _calculateAge(profile.dob.toDate());
 
       final isGenderMatch = (gender == genderFilter.toLowerCase() ||
-              genderFilter == "gender.both") &&
+              genderFilter.toLowerCase() == "gender.both") &&
           (data["filterGender"]?.toString().toLowerCase() ==
                   profile.gender.toLowerCase() ||
               data["filterGender"]?.toString().toLowerCase() == "gender.both");
@@ -103,6 +102,7 @@ class MatchingController extends GetxController {
         log("🎯 Match found: $otherUid");
         await stopMatching(profile.uid);
         await stopMatching(otherUid!);
+
         final sorted = [profile.uid, otherUid]..sort();
         final roomId = "${sorted[0]}_${sorted[1]}";
 
@@ -111,7 +111,10 @@ class MatchingController extends GetxController {
           "users": sorted,
           "timestamp": DateTime.now().microsecondsSinceEpoch,
         });
+
         await ref.onDisconnect().remove();
+
+        _cancelMatchSubscription();
         isMatching.value = false;
       } else {
         log("❌ Not a match: $otherUid");
@@ -122,26 +125,29 @@ class MatchingController extends GetxController {
   void _listenForRoom(String uid) {
     final roomRef = FirebaseDatabase.instance.ref("matched_users");
 
-    _roomSubscription = roomRef.onChildAdded.listen((event) {
-      final roomId = event.snapshot.key ?? "";
-      final rawUsers = event.snapshot.child("users").value;
-      final timestamp = Timestamp.fromMicrosecondsSinceEpoch(
-          event.snapshot.child("timestamp").value as int);
+    _roomSubscription = roomRef.onValue.listen((event) {
+      final data = event.snapshot.value as Map?;
+      if (data == null) return;
 
-      final users =
-          (rawUsers as List<dynamic>).map((e) => e.toString()).toList();
+      data.forEach((roomId, value) {
+        final users = List<String>.from(value["users"]);
+        if (users.contains(uid)) {
+          final timestamp =
+              Timestamp.fromMicrosecondsSinceEpoch(value["timestamp"]);
+          log("💬 Navigating to TempChatPage: $roomId");
 
-      if (users.contains(uid)) {
-        log("💬 Navigating to TempChatPage: $roomId");
-        Get.to(
-          () => TempChatPage(
-            chatRoomId: roomId,
-            users: users,
-            timestamp: timestamp,
-          ),
-          transition: Transition.rightToLeft,
-        );
-      }
+          Get.to(
+            () => TempChatPage(
+              chatRoomId: roomId,
+              users: users,
+              timestamp: timestamp,
+            ),
+            transition: Transition.rightToLeft,
+          );
+
+          _cancelRoomSubscription();
+        }
+      });
     });
   }
 
@@ -149,8 +155,9 @@ class MatchingController extends GetxController {
     try {
       log("🛑 Stopping match for $uid");
       await FirebaseDatabase.instance.ref("searching_users/$uid").remove();
-      _matchSubscription?.cancel();
-      _matchSubscription = null;
+
+      _cancelMatchSubscription();
+      _cancelRoomSubscription();
 
       isMatching.value = false;
     } catch (e) {
@@ -160,19 +167,28 @@ class MatchingController extends GetxController {
 
   Future<void> removeRoom(String roomId) async {
     try {
-      log("🛑 Stopping room for $roomId");
+      log("🗑️ Removing room: $roomId");
       await FirebaseDatabase.instance.ref("matched_users/$roomId").remove();
-      _roomSubscription?.cancel();
-      _roomSubscription = null;
+      _cancelRoomSubscription();
     } catch (e) {
-      log("❌ stopMatching error: $e");
+      log("❌ removeRoom error: $e");
     }
+  }
+
+  void _cancelMatchSubscription() {
+    _matchSubscription?.cancel();
+    _matchSubscription = null;
+  }
+
+  void _cancelRoomSubscription() {
+    _roomSubscription?.cancel();
+    _roomSubscription = null;
   }
 
   @override
   void onClose() {
-    _matchSubscription?.cancel();
-    _roomSubscription?.cancel();
+    _cancelMatchSubscription();
+    _cancelRoomSubscription();
     super.onClose();
   }
 }
