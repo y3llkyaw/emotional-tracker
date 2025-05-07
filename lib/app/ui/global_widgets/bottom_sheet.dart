@@ -313,7 +313,7 @@ void showDatingFilterSheet() {
                 children: [
                   InkWell(
                     onTap: () {
-                      matchingController.filterGender.value = Icons.male;
+                      matchingController.filterGender.value = "gender.male";
                     },
                     child: Column(
                       children: [
@@ -323,9 +323,10 @@ void showDatingFilterSheet() {
                           decoration: BoxDecoration(
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(20)),
-                            color: matchingController.filterGender == Icons.male
-                                ? Get.theme.colorScheme.error
-                                : Colors.blueGrey,
+                            color:
+                                matchingController.filterGender == "gender.male"
+                                    ? Get.theme.colorScheme.error
+                                    : Colors.blueGrey,
                           ),
                           child: Icon(
                             Icons.male,
@@ -351,7 +352,7 @@ void showDatingFilterSheet() {
                   ),
                   InkWell(
                     onTap: () {
-                      matchingController.filterGender.value = Icons.female;
+                      matchingController.filterGender.value = "gender.female";
                     },
                     child: Column(
                       children: [
@@ -361,10 +362,10 @@ void showDatingFilterSheet() {
                           decoration: BoxDecoration(
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(20)),
-                            color:
-                                matchingController.filterGender == Icons.female
-                                    ? Get.theme.colorScheme.error
-                                    : Colors.blueGrey,
+                            color: matchingController.filterGender ==
+                                    "gender.female"
+                                ? Get.theme.colorScheme.error
+                                : Colors.blueGrey,
                           ),
                           child: Icon(
                             Icons.female,
@@ -391,7 +392,7 @@ void showDatingFilterSheet() {
                   ),
                   InkWell(
                     onTap: () {
-                      matchingController.filterGender.value = Icons.transgender;
+                      matchingController.filterGender.value = "gender.other";
                     },
                     child: Column(
                       children: [
@@ -402,7 +403,7 @@ void showDatingFilterSheet() {
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(20)),
                             color: matchingController.filterGender ==
-                                    Icons.transgender
+                                    "gender.other"
                                 ? Get.theme.colorScheme.error
                                 : Colors.blueGrey,
                           ),
@@ -485,10 +486,11 @@ void showDatingFilterSheet() {
                   child: CustomButton(
                     // fontSize: 10,
                     color: Get.theme.colorScheme.error,
-                    text: "Find Your\nMoodMate",
+                    text: "Find Your MoodMate",
                     onPressed: () async {
-                      await matchingController.startMatching(
-                          profilePageController.userProfile.value!);
+                      // await matchingController.startMatching(
+                      //     profilePageController.userProfile.value!);
+                      matchingController.findingMatchPerson();
                       Get.back();
                     },
                   ),

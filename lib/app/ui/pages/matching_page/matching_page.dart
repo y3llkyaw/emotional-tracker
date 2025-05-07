@@ -3,7 +3,6 @@ import 'package:avatar_plus/avatar_plus.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:emotion_tracker/app/controllers/matching_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -96,8 +95,10 @@ class MatchingPage extends StatelessWidget {
                 color: Colors.red.shade600,
                 text: "Quit Finding Your Matches",
                 onPressed: () async {
-                  await matchingController
-                      .stopMatching(FirebaseAuth.instance.currentUser!.uid);
+                  // await matchingController
+                  //     .stopMatching(FirebaseAuth.instance.currentUser!.uid);
+                  
+                  matchingController.stopFindingMatch();
                   Get.back();
                 },
               ),

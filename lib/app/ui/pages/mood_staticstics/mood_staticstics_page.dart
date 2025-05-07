@@ -4,6 +4,7 @@ import 'package:emotion_tracker/app/ui/utils/helper_functions.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class MoodStaticsticsPage extends StatefulWidget {
@@ -208,8 +209,58 @@ class _MoodStaticsticsPageState extends State<MoodStaticsticsPage> {
                     ),
                   ],
                 ),
+                Obx(
+                  () => Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Get.theme.colorScheme.surface.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                          color:
+                              Get.theme.colorScheme.primary.withOpacity(0.4)),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.assessment,
+                            color: Get.theme.colorScheme.error, size: 24),
+                        const SizedBox(width: 12),
+                        Expanded(
+                            child: RichText(
+                          text: TextSpan(
+                            style: DefaultTextStyle.of(context)
+                                .style, // Base style
+                            children: [
+                              const TextSpan(
+                                text: 'Mood Swign Level:  ',
+                              ),
+                              TextSpan(
+                                text: moodStaticsticsPageController
+                                    .getStdDevLevel(
+                                        moodStaticsticsPageController
+                                            .standardDeviation.value),
+                                style: GoogleFonts.aBeeZee(
+                                  fontSize: 20,
+                                  color: moodStaticsticsPageController
+                                              .standardDeviation.value <
+                                          1.8
+                                      ? Colors.amber
+                                      : moodStaticsticsPageController
+                                                  .standardDeviation.value <
+                                              0.8
+                                          ? Colors.green
+                                          : Colors.red,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )),
+                      ],
+                    ),
+                  ),
+                ),
                 SizedBox(height: Get.height * 0.05),
-                // SizedBox(height: Get.height * 0.05),
                 SizedBox(
                   height: Get.height * 0.4,
                   width: Get.width * 0.9,

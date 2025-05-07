@@ -26,7 +26,9 @@ class TempChatPage extends StatefulWidget {
     required this.chatRoomId,
     required this.users,
     required this.timestamp,
+    required this.onExit,
   }) : super(key: key);
+  final Function onExit;
   final String chatRoomId;
   final Timestamp timestamp;
   final List<String> users;
@@ -94,8 +96,6 @@ class _TempChatPageState extends State<TempChatPage>
 
   @override
   void dispose() {
-    matchingController.removeRoom(widget.chatRoomId);
-    matchingController.stopMatching(FirebaseAuth.instance.currentUser!.uid);
     messageController.dispose();
     _controller.dispose();
     _countdownTimer.cancel();
@@ -435,8 +435,6 @@ class _TempChatPageState extends State<TempChatPage>
           ),
           TextButton(
             onPressed: () async {
-              await matchingController.removeRoom(widget.chatRoomId);
-
               Get.back();
               Get.off(
                 const ReviewProfilePage(

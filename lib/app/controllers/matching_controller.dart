@@ -1,28 +1,35 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
-import 'package:emotion_tracker/app/data/models/profile.dart';
-import 'package:emotion_tracker/app/ui/pages/temp_chat_page/temp_chat_page.dart';
-import 'package:flutter/material.dart';
+import 'package:emotion_tracker/app/data/models/matching_profile.dart';
 import 'package:get/get.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class MatchingController extends GetxController {
   final profilePageController = Get.put(ProfilePageController());
   final isMatching = false.obs;
+  var cuid = "".obs;
+  var cdob = DateTime.now().obs;
+  var cgender = "gender.other".obs;
 
   final filterMinAge = 17.obs;
   final filterMaxAge = 45.obs;
-  final filterGender = Icons.female.obs;
+  final filterGender = "gender.male".obs;
 
   StreamSubscription<DatabaseEvent>? _matchSubscription;
-  StreamSubscription<DatabaseEvent>? _roomSubscription;
+  // StreamSubscription<DatabaseEvent>? _roomSubscription;
+  // StreamSubscription<DatabaseEvent>? _exitSubscription;
 
   @override
   void onInit() {
     super.onInit();
+    profilePageController.getCurrentUserProfile().then((v) {
+      cuid.value = profilePageController.userProfile.value!.uid;
+      cdob.value = profilePageController.userProfile.value!.dob.toDate();
+      cgender.value =
+          profilePageController.userProfile.value!.gender.toLowerCase();
+    });
     log("🔧 MatchingController initialized");
   }
 
@@ -36,159 +43,121 @@ class MatchingController extends GetxController {
     return age;
   }
 
-  Future<void> startMatching(Profile profile) async {
-    try {
-      final dob = profilePageController.userProfile.value?.dob.toDate();
-      if (dob == null) throw Exception("DOB is null");
-
-      final age = _calculateAge(dob);
-      final uid = profile.uid;
-      final ref = FirebaseDatabase.instance.ref("searching_users/$uid");
-
-      final genderFilterValue = filterGender.value == Icons.male
-          ? "Gender.Male"
-          : filterGender.value == Icons.female
-              ? "Gender.Female"
-              : "Gender.Both";
-
-      await ref.set({
-        "gender": profile.gender,
-        "age": age,
-        "filterGender": genderFilterValue,
-        "filterMaxAge": filterMaxAge.value,
-        "filterMinAge": filterMinAge.value,
-        "timestamp": ServerValue.timestamp,
-      });
-
-      await ref.onDisconnect().remove();
-
-      isMatching.value = true;
-
-      _listenForRoom(profile.uid);
-      _listenForMatch(profile, genderFilterValue);
-    } catch (e) {
-      log("❌ startMatching error: $e");
-    }
+  Future<void> setMatchingData() async {
+    final age = _calculateAge(cdob.value);
+    final ref = FirebaseDatabase.instance.ref("searching_users/$cuid");
+    await ref
+        .set({
+          "age": age,
+          "gender": cgender.value,
+          "filterMinAge": filterMinAge.value,
+          "filterMaxAge": filterMaxAge.value,
+          "filterGender": filterGender.value,
+        })
+        .then((v) {})
+        .onError((e, stackTrace) {
+          log(e.toString(), error: e, name: "error-seting-matching-data");
+        })
+        .then((v) {
+          isMatching.value = true;
+        });
+    ref.onDisconnect().remove();
   }
 
-  void _listenForMatch(Profile profile, String genderFilter) {
-    final ref = FirebaseDatabase.instance.ref("searching_users");
-
-    _matchSubscription = ref.onChildAdded.listen((event) async {
-      final otherUid = event.snapshot.key;
-      if (otherUid == profile.uid) return;
-
-      final data = Map<String, dynamic>.from(event.snapshot.value as Map);
-      final gender = data["gender"]?.toString().toLowerCase();
-      final age = int.tryParse(data["age"].toString());
-      final otherMinAge = int.tryParse(data["filterMinAge"].toString());
-      final otherMaxAge = int.tryParse(data["filterMaxAge"].toString());
-
-      final userAge = _calculateAge(profile.dob.toDate());
-
-      final isGenderMatch = (gender == genderFilter.toLowerCase() ||
-              genderFilter.toLowerCase() == "gender.both") &&
-          (data["filterGender"]?.toString().toLowerCase() ==
-                  profile.gender.toLowerCase() ||
-              data["filterGender"]?.toString().toLowerCase() == "gender.both");
-
-      final isAgeMatch = age != null &&
-          age >= filterMinAge.value &&
-          age <= filterMaxAge.value &&
-          userAge >= (otherMinAge ?? 0) &&
-          userAge <= (otherMaxAge ?? 100);
-
-      if (isGenderMatch && isAgeMatch) {
-        log("🎯 Match found: $otherUid");
-        await stopMatching(profile.uid);
-        await stopMatching(otherUid!);
-
-        final sorted = [profile.uid, otherUid]..sort();
-        final roomId = "${sorted[0]}_${sorted[1]}";
-
-        final roomRef = FirebaseDatabase.instance.ref("matched_users/$roomId");
-        await roomRef.set({
-          "users": sorted,
-          "timestamp": DateTime.now().microsecondsSinceEpoch,
-        });
-
-        await ref.onDisconnect().remove();
-
-        _cancelMatchSubscription();
-        isMatching.value = false;
-      } else {
-        log("❌ Not a match: $otherUid");
-      }
+  Future<void> removeMatchingData() async {
+    final ref = FirebaseDatabase.instance.ref("searching_users/$cuid");
+    await ref.remove().then((v) {
+      isMatching.value = false;
+      _matchSubscription?.cancel();
+    }).onError((e, stackTrace) {
+      log(e.toString(), error: e, name: "error-removing-matching-data");
+      isMatching.value = true;
+      _matchSubscription?.cancel();
     });
   }
 
-  void _listenForRoom(String uid) {
-    final roomRef = FirebaseDatabase.instance.ref("matched_users");
+  void findingMatchPerson() async {
+    final ref = FirebaseDatabase.instance.ref("searching_users");
+    log("Listening for matching users");
+    await setMatchingData();
+    _matchSubscription = ref.onValue.listen((event) {
+      log("Snapshot: ${event.snapshot}", name: "null-check");
+      log("Snapshot value: ${event.snapshot.value}", name: "null-check");
 
-    _roomSubscription = roomRef.onValue.listen((event) {
-      final data = event.snapshot.value as Map?;
-      if (data == null) return;
+      if (event.snapshot.value == null || !event.snapshot.exists) {
+        return;
+      }
 
-      data.forEach((roomId, value) {
-        final users = List<String>.from(value["users"]);
-        if (users.contains(uid)) {
-          final timestamp =
-              Timestamp.fromMicrosecondsSinceEpoch(value["timestamp"]);
-          log("💬 Navigating to TempChatPage: $roomId");
+      final data = Map<String, dynamic>.from(event.snapshot.value as Map);
 
-          Get.to(
-            () => TempChatPage(
-              chatRoomId: roomId,
-              users: users,
-              timestamp: timestamp,
-            ),
-            transition: Transition.rightToLeft,
-          );
+      // Loop through each user's data
+      data.forEach((key, value) async {
+        final userData = Map<String, dynamic>.from(value);
+        final matchingProfile = MatchingProfile.fromDocument(userData);
+        log(isValidForMe(matchingProfile).toString(), name: "isValidForMe");
+        log(isValidForOther(matchingProfile).toString(),
+            name: "isValidForOther");
 
-          _cancelRoomSubscription();
+        if (isValidForMe(matchingProfile) && isValidForOther(matchingProfile)) {
+          log("Found valid match: $key");
+          await removeMatchingData();
+          // Proceed with matching logic here
         }
       });
     });
   }
 
-  Future<void> stopMatching(String uid) async {
-    try {
-      log("🛑 Stopping match for $uid");
-      await FirebaseDatabase.instance.ref("searching_users/$uid").remove();
-
-      _cancelMatchSubscription();
-      _cancelRoomSubscription();
-
+  void stopFindingMatch() async {
+    await removeMatchingData().then((v) {
+      _matchSubscription?.cancel();
       isMatching.value = false;
-    } catch (e) {
-      log("❌ stopMatching error: $e");
+    }).onError((err, stackTrace) {
+      log(err.toString(), error: err, name: "error-stopFindingMatching");
+      isMatching.value = true;
+    });
+  }
+
+  bool isValidForMe(MatchingProfile data) {
+    log(data.toString(), name: "null-check-valid");
+    if (filterMaxAge > data.age && filterMinAge < data.age) {
+      log("\t[*]other person meet your req in age");
+      if (filterGender != "gender.other") {
+        if (filterGender.toLowerCase() == data.gender.toLowerCase()) {
+          log("other person meet your req in gender");
+          return true;
+        }
+      } else {
+        return true;
+      }
+    } else {
+      log("other person doesn't meet your req in age");
     }
+    return false;
   }
 
-  Future<void> removeRoom(String roomId) async {
-    try {
-      log("🗑️ Removing room: $roomId");
-      await FirebaseDatabase.instance.ref("matched_users/$roomId").remove();
-      _cancelRoomSubscription();
-    } catch (e) {
-      log("❌ removeRoom error: $e");
+  bool isValidForOther(MatchingProfile data) {
+    log(data.toString(), name: "null-check-valid");
+
+    final currentAge = _calculateAge(cdob.value);
+    if (data.filterMaxAge > currentAge && data.filterMinAge < currentAge) {
+      log("other person meet your req in age");
+      if (data.filterGender != "gender.other") {
+        if (data.filterGender.toLowerCase() == cgender.toLowerCase()) {
+          log("other person meet your req in gender");
+          return true;
+        }
+      } else {
+        return true;
+      }
+    } else {
+      log("other person doesn't meet your req in age");
     }
-  }
-
-  void _cancelMatchSubscription() {
-    _matchSubscription?.cancel();
-    _matchSubscription = null;
-  }
-
-  void _cancelRoomSubscription() {
-    _roomSubscription?.cancel();
-    _roomSubscription = null;
+    return false;
   }
 
   @override
   void onClose() {
-    _cancelMatchSubscription();
-    _cancelRoomSubscription();
+    _matchSubscription?.cancel();
     super.onClose();
   }
 }
