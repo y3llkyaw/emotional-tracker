@@ -1,3 +1,4 @@
+import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +7,9 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MoodMatePage extends StatelessWidget {
-  const MoodMatePage({Key? key}) : super(key: key);
-
+  MoodMatePage({Key? key}) : super(key: key);
+  final ProfilePageController profilePageController =
+      Get.put(ProfilePageController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(

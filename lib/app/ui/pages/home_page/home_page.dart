@@ -35,7 +35,7 @@ class HomePage extends GetView<HomeController> {
               CalendarPage(),
               const FriendsPage(),
               // const NotificationPage(),
-              const MoodMatePage(),
+              MoodMatePage(),
               const MessagePage(),
               const ProfilePage(),
             ],

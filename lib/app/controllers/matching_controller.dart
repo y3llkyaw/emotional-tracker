@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/matching_profile.dart';
 import 'package:emotion_tracker/app/ui/pages/temp_chat_page/temp_chat_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -47,7 +48,11 @@ class MatchingController extends GetxController {
 
   Future<void> setMatchingData() async {
     final age = _calculateAge(cdob.value);
-    final ref = FirebaseDatabase.instance.ref("searching_users/$cuid");
+    final userId = cuid.value.isEmpty
+        ? FirebaseAuth.instance.currentUser!.uid
+        : cuid.value;
+    final ref = FirebaseDatabase.instance.ref("searching_users/$userId");
+
     await ref
         .set({
           "age": age,
