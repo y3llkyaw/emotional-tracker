@@ -1,3 +1,4 @@
+import 'package:emotion_tracker/app/controllers/matching_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,8 +11,11 @@ class MoodMatePage extends StatelessWidget {
   MoodMatePage({Key? key}) : super(key: key);
   final ProfilePageController profilePageController =
       Get.put(ProfilePageController());
+
+  final MatchingController matchingController = Get.put(MatchingController());
   @override
   Widget build(BuildContext context) {
+    profilePageController.getCurrentUserProfile();
     return Scaffold(
       appBar: AppBar(
         shadowColor: Colors.grey,
@@ -125,13 +129,23 @@ class MoodMatePage extends StatelessWidget {
                       ),
                       SizedBox(
                         width: Get.width * 0.04,
-                      )
+                      ),
                     ],
                   ),
                 ),
               ),
             ),
           ),
+          Column(
+            children: [
+              Text(matchingController.cdob.value.toString()),
+              Text(matchingController.cgender.value.toString()),
+              Text(matchingController.cuid.value.toString()),
+              Text(matchingController.filterGender.value.toString()),
+              Text(matchingController.filterMaxAge.value.toString()),
+              Text(matchingController.filterMinAge.value.toString()),
+            ],
+          )
         ],
       ),
     );
