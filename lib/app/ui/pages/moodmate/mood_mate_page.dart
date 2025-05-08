@@ -15,7 +15,7 @@ class MoodMatePage extends StatelessWidget {
   final MatchingController matchingController = Get.put(MatchingController());
   @override
   Widget build(BuildContext context) {
-    profilePageController.getCurrentUserProfile();
+    // profilePageController.getCurrentUserProfile();
     return Scaffold(
       appBar: AppBar(
         shadowColor: Colors.grey,
@@ -67,6 +67,7 @@ class MoodMatePage extends StatelessWidget {
                   margin: EdgeInsets.all(Get.width * 0.005),
                   width: Get.width * 0.8,
                   height: Get.height * 0.1,
+
                   // color: Colors.amber,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,

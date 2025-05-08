@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 version: 1.0.0+1
 
-environment: 
+environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
@@ -45,7 +45,7 @@ dependencies:
   shimmer: ^3.0.0
   google_sign_in: ^6.2.2
   pretty_qr_code: ^3.3.0
-  qr_code_scanner: 
+  qr_code_scanner:
   quickalert: ^1.1.0
   flutter_debouncer: ^2.0.0
   url_launcher: ^6.3.1
@@ -85,7 +85,6 @@ fonts:
   - family: PlayfairDisplay
     fonts:
       - asset: assets/fonts/playfiar/PlayfairDisplay-Regular.ttf
-
 
 flutter:
   assets:
