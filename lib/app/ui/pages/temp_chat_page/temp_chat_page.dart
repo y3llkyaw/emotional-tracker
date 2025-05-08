@@ -62,7 +62,7 @@ class _TempChatPageState extends State<TempChatPage>
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       final now = DateTime.now();
       final targetTime =
-          widget.timestamp.toDate().add(const Duration(seconds: 7));
+          widget.timestamp.toDate().add(const Duration(minutes: 3));
       final difference = targetTime.difference(now);
       var otherId;
       for (var uid in widget.users) {
@@ -76,7 +76,10 @@ class _TempChatPageState extends State<TempChatPage>
         tempChatController.timeRemaining.value = "Time is up!";
         Get.back();
         matchingController.removeMatchingData();
-        Get.to(() => ReviewProfilePage(uid: otherId));
+        Get.to(
+          () => ReviewProfilePage(uid: otherId),
+          transition: Transition.downToUp,
+        );
       } else {
         tempChatController.timeRemaining.value =
             "${difference.inMinutes} minutes and ${difference.inSeconds % 60} seconds left";

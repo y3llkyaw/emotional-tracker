@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/matching_profile.dart';
+import 'package:emotion_tracker/app/ui/pages/review_profile_page/review_profile_page.dart';
 import 'package:emotion_tracker/app/ui/pages/temp_chat_page/temp_chat_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -21,7 +22,7 @@ class MatchingController extends GetxController {
   final filterGender = "gender.male".obs;
 
   StreamSubscription<DatabaseEvent>? _matchSubscription;
-  // StreamSubscription<DatabaseEvent>? _roomSubscription;
+  StreamSubscription<DatabaseEvent>? _roomSubscription;
   // StreamSubscription<DatabaseEvent>? _exitSubscription;
 
   @override
@@ -74,7 +75,7 @@ class MatchingController extends GetxController {
   }
 
   Future<void> removeMatchingData() async {
-    final ref = FirebaseDatabase.instance.ref("searching_users/$cuid");
+    final ref = FirebaseDatabase.instance.ref("searching_users/${cuid.value}");
     await ref.remove().then((v) {
       isMatching.value = false;
       _matchSubscription?.cancel();
@@ -84,33 +85,6 @@ class MatchingController extends GetxController {
       _matchSubscription?.cancel();
     });
   }
-
-  // Future<void> setRoomData(String uid) async {
-  //   final user = [cuid.value, uid]..sort();
-  //   final roomId = "${user[0]}_${user[1]}";
-  //   final ref = FirebaseDatabase.instance.ref("rooms/$roomId");
-  //   await ref.set({
-  //     "users": user,
-  //     "timestamp": Timestamp.now(),
-  //   }).onError((e, stackTrace) {
-  //     log(e.toString(), error: e, name: "error-setting-room-data");
-  //   }).then((v) {
-  //     isMatching.value = true;
-  //   });
-  //   // ref.onDisconnect().remove();
-  // }
-
-  // Future<void> removeRoomData(String roomId) async {
-  //   final ref = FirebaseDatabase.instance.ref("rooms/$roomId");
-  //   await ref.remove().then((v) {
-  //     isMatching.value = false;
-  //     _matchSubscription?.cancel();
-  //   }).onError((e, stackTrace) {
-  //     log(e.toString(), error: e, name: "error-removing-matching-data");
-  //     isMatching.value = true;
-  //     _roomSubscription?.cancel();
-  //   });
-  // }
 
   void findingMatchPerson() async {
     await setMatchingData();
@@ -130,7 +104,9 @@ class MatchingController extends GetxController {
       data.forEach((key, value) async {
         final userData = Map<String, dynamic>.from(value);
         final matchingProfile = MatchingProfile.fromDocument(userData);
-        if (matchingProfile.isIdel) {
+
+        if (matchingProfile.isIdel &&
+            key != FirebaseAuth.instance.currentUser!.uid) {
           log(
             isValidForMe(matchingProfile).toString(),
             name: "isValidForMe",
@@ -162,8 +138,21 @@ class MatchingController extends GetxController {
                 timestamp: Timestamp.now(),
                 onExit: () {},
               ),
+              transition: Transition.downToUp,
             );
             _matchSubscription?.cancel();
+            _roomSubscription = FirebaseDatabase.instance
+                .ref("searching_users/$key")
+                .onChildRemoved
+                .listen((event) {
+              Get.to(
+                () => ReviewProfilePage(uid: key),
+                transition: Transition.downToUp,
+              );
+              _roomSubscription?.cancel();
+              isMatching.value = false;
+              // print(event.snapshot.value);
+            });
           }
         }
       });
