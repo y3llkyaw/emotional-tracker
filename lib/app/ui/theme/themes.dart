@@ -27,7 +27,7 @@ class Themes {
       secondary: Colors.grey,
       onSecondary: Colors.grey.shade800,
       error: const Color.fromRGBO(1, 85, 145, 1),
-      onError: Colors.white60,
+      onError: Colors.white,
       surface: Colors.transparent,
       onSurface: Colors.grey.shade300,
     ),

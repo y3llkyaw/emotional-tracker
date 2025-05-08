@@ -97,7 +97,7 @@ class MatchingPage extends StatelessWidget {
                 onPressed: () async {
                   // await matchingController
                   //     .stopMatching(FirebaseAuth.instance.currentUser!.uid);
-                  
+
                   matchingController.stopFindingMatch();
                   Get.back();
                 },

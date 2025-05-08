@@ -362,7 +362,9 @@ class _ProfilePageState extends State<ProfilePage> {
         if (isOn) _buildSetAlarmTile(),
         _buildListTile(
           onTap: () {
-            Get.to(() => const QrCodePage());
+            Get.to(
+              () => const QrCodePage(),
+            );
           },
           leading: const Icon(CupertinoIcons.qrcode),
           title: "QR Code",
@@ -379,7 +381,10 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         _buildListTile(
           onTap: () {
-            Get.to(() => const AboutPage());
+            Get.to(
+              () => const AboutPage(),
+              transition: Transition.rightToLeft,
+            );
           },
           leading: const Icon(CupertinoIcons.exclamationmark_bubble),
           title: "About Our App",

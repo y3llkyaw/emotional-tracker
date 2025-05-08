@@ -23,13 +23,13 @@ import 'package:timeago/timeago.dart' as timeago;
 class TempChatPage extends StatefulWidget {
   const TempChatPage({
     Key? key,
-    required this.chatRoomId,
+    // required this.chatRoomId,
     required this.users,
     required this.timestamp,
     required this.onExit,
   }) : super(key: key);
   final Function onExit;
-  final String chatRoomId;
+  // final String chatRoomId;
   final Timestamp timestamp;
   final List<String> users;
 
@@ -62,17 +62,21 @@ class _TempChatPageState extends State<TempChatPage>
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       final now = DateTime.now();
       final targetTime =
-          widget.timestamp.toDate().add(const Duration(minutes: 1));
+          widget.timestamp.toDate().add(const Duration(seconds: 7));
       final difference = targetTime.difference(now);
-
+      var otherId;
+      for (var uid in widget.users) {
+        if (uid != FirebaseAuth.instance.currentUser!.uid) {
+          otherId = uid;
+          chatController.getUserMessages(uid);
+        }
+      }
       if (difference.isNegative) {
         timer.cancel();
         tempChatController.timeRemaining.value = "Time is up!";
         Get.back();
-        // Get.to(
-        //   () => const ReviewProfilePage(),
-        //   transition: Transition.rightToLeft,
-        // );
+        matchingController.removeMatchingData();
+        Get.to(() => ReviewProfilePage(uid: otherId));
       } else {
         tempChatController.timeRemaining.value =
             "${difference.inMinutes} minutes and ${difference.inSeconds % 60} seconds left";
@@ -84,13 +88,14 @@ class _TempChatPageState extends State<TempChatPage>
   void initState() {
     super.initState();
     _startCountdown();
-    tempChatController.roomId.value = widget.chatRoomId;
+    final sorted = widget.users..sort();
+    tempChatController.roomId.value = "${sorted[0]}_${sorted[1]}";
     for (var uid in widget.users) {
       if (uid != FirebaseAuth.instance.currentUser!.uid) {
         chatController.getUserMessages(uid);
       }
     }
-    tempChatController.listenRoom();
+    // tempChatController.listenRoom();
     _controller = AnimationController(vsync: this);
   }
 
@@ -436,8 +441,9 @@ class _TempChatPageState extends State<TempChatPage>
           TextButton(
             onPressed: () async {
               Get.back();
+              matchingController.removeMatchingData();
               Get.off(
-                const ReviewProfilePage(
+                () => const ReviewProfilePage(
                   uid: "",
                 ),
               );

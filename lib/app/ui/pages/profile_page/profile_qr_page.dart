@@ -3,6 +3,7 @@ import 'package:emotion_tracker/app/ui/pages/friends_pages/add_friends_qr.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 
@@ -21,17 +22,13 @@ class _QrCodePageState extends State<QrCodePage> {
     final avatar = "$uid$displayName";
 
     return Scaffold(
-      backgroundColor: Get.isDarkMode
-          ? const Color.fromARGB(255, 66, 37, 0)
-          : Colors.amberAccent,
+      backgroundColor: Get.theme.colorScheme.error,
       appBar: AppBar(
-        backgroundColor: Get.isDarkMode
-            ? const Color.fromARGB(255, 66, 37, 0)
-            : Colors.amberAccent,
+        backgroundColor: Colors.transparent,
         actions: [
           ElevatedButton.icon(
             onPressed: () {
-              Get.to(() => QRScannerPage());
+              Get.to(() => const QRScannerPage());
             },
             label: Text(
               "scan QR code",
@@ -61,7 +58,7 @@ class _QrCodePageState extends State<QrCodePage> {
                   Container(
                     width: Get.width * 0.8,
                     decoration: BoxDecoration(
-                      color: Get.isDarkMode ? Colors.grey : Colors.white,
+                      color: Get.theme.colorScheme.onError,
                       borderRadius: const BorderRadius.all(
                         Radius.circular(20),
                       ),
@@ -81,6 +78,7 @@ class _QrCodePageState extends State<QrCodePage> {
                             fontWeight: FontWeight.bold,
                             fontSize: Get.width * 0.04,
                             overflow: TextOverflow.fade,
+                            color: Colors.white,
                           ),
                         ),
                         SizedBox(
@@ -91,25 +89,41 @@ class _QrCodePageState extends State<QrCodePage> {
                           child: PrettyQrView.data(
                             data: uid,
                             decoration: PrettyQrDecoration(
-                              background:
-                                  Get.isDarkMode ? Colors.grey : Colors.white,
+                              // image: PrettyQrDecorationImage(image: ),
+                              background: Get.theme.colorScheme.onError,
                             ),
                           ),
                         ),
                         SizedBox(
                           height: Get.height * 0.03,
                         ),
-                        const Text("Scan this QR code to add friend."),
+                        const Text(
+                          "Scan this QR code to add friend.",
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
                         SizedBox(
                           height: Get.height * 0.03,
                         ),
-                        Text(
-                          "MoodMate",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: Get.width * 0.04,
-                            overflow: TextOverflow.fade,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: Get.width * 0.15,
+                              width: Get.width * 0.15,
+                              child: SvgPicture.asset('assets/icons/logo.svg'),
+                            ),
+                            Text(
+                              "MoodMate",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: Get.width * 0.04,
+                                overflow: TextOverflow.fade,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

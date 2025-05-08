@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/matching_profile.dart';
+import 'package:emotion_tracker/app/ui/pages/temp_chat_page/temp_chat_page.dart';
 import 'package:get/get.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -140,14 +142,22 @@ class MatchingController extends GetxController {
             mateRef.update({
               "isIdel": false,
               "mateId": cuid.value,
+              "timestamp": ServerValue.timestamp,
             });
             final myRef =
                 FirebaseDatabase.instance.ref("searching_users/${cuid.value}");
             myRef.update({
               "isIdel": false,
-              "mateId": cuid.value,
+              "mateId": key,
+              "timestamp": ServerValue.timestamp,
             });
-
+            Get.to(
+              () => TempChatPage(
+                users: [key, cuid.value],
+                timestamp: Timestamp.now(),
+                onExit: () {},
+              ),
+            );
             _matchSubscription?.cancel();
           }
         }
