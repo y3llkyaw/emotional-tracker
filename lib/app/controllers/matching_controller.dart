@@ -39,7 +39,7 @@ class MatchingController extends GetxController {
 
   int _calculateAge(DateTime dob) {
     final today = DateTime.now();
-    int age = today.year - dob.year;
+    int age = today.year - cdob.value.year;
     if (today.month < dob.month ||
         (today.month == dob.month && today.day < dob.day)) {
       age--;

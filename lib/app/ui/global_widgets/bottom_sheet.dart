@@ -19,6 +19,7 @@ final ProfilePageController profilePageController =
     Get.put(ProfilePageController());
 
 void showEmojiBottomSheet(DateTime date) {
+  profilePageController.getCurrentUserProfile();
   AnimatedEmojiData selectedEmoji = AnimatedEmojis.neutralFace;
   final messageController = TextEditingController();
   Get.bottomSheet(
