@@ -78,7 +78,7 @@ class _QrCodePageState extends State<QrCodePage> {
                             fontWeight: FontWeight.bold,
                             fontSize: Get.width * 0.04,
                             overflow: TextOverflow.fade,
-                            color: Colors.white,
+                            color: Colors.black,
                           ),
                         ),
                         SizedBox(
@@ -100,7 +100,7 @@ class _QrCodePageState extends State<QrCodePage> {
                         const Text(
                           "Scan this QR code to add friend.",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.black,
                           ),
                         ),
                         SizedBox(
@@ -120,7 +120,7 @@ class _QrCodePageState extends State<QrCodePage> {
                                 fontWeight: FontWeight.bold,
                                 fontSize: Get.width * 0.04,
                                 overflow: TextOverflow.fade,
-                                color: Colors.white,
+                                color: Colors.black,
                               ),
                             ),
                           ],
@@ -134,8 +134,6 @@ class _QrCodePageState extends State<QrCodePage> {
                       transform:
                           Matrix4.translationValues(0, -Get.height * 0.05, 0),
                       child: CircleAvatar(
-                        backgroundColor:
-                            Get.isDarkMode ? Colors.grey : Colors.white,
                         radius: Get.width * 0.11,
                         child: AvatarPlus(
                           avatar,

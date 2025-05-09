@@ -78,7 +78,7 @@ class _ProfileNamePageState extends State<ProfileNamePage> {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(
-          horizontal: Get.width * 0.06,
+            horizontal: Get.width * 0.06,
             // vertical: Get.height * 0.03,
           ),
           child: Column(
@@ -111,23 +111,24 @@ class _ProfileNamePageState extends State<ProfileNamePage> {
                   width: Get.width * 0.4,
                 ),
               ),
-              GenderPickerWithImage(
-                onChanged: (value) {
-                  profileSetupController.gender.value = value!;
-                },
-                selectedGender: gender,
-                selectedGenderTextStyle: const TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
+              Center(
+                child: GenderPickerWithImage(
+                  onChanged: (value) {
+                    profileSetupController.gender.value = value!;
+                  },
+                  selectedGender: gender,
+                  selectedGenderTextStyle: const TextStyle(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  unSelectedGenderTextStyle: const TextStyle(
+                    // color: Colors.black,
+                    fontWeight: FontWeight.normal,
+                  ),
+                  equallyAligned: true,
+                  showOtherGender: false,
                 ),
-                unSelectedGenderTextStyle: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.normal,
-                ),
-                equallyAligned: true,
-                showOtherGender: true,
               ),
-
               // textfield goes here
               FormContainerWidget(
                 hintText: "Your Name",

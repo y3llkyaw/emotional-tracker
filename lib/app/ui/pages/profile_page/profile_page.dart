@@ -272,7 +272,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   profilePageController.userProfile.value?.name ??
                       FirebaseAuth.instance.currentUser!.displayName ??
                       '',
-                  style: const TextStyle(
+                  style: TextStyle(
+                    color: profilePageController.userProfile.value?.gender ==
+                            "Gender.Female"
+                        ? Colors.pink
+                        : Colors.blue,
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
                   ),
@@ -296,16 +300,27 @@ class _ProfilePageState extends State<ProfilePage> {
                       height: 20,
                     ),
                     profilePageController.userProfile.value != null
-                        ? Icon(
-                            profilePageController.userProfile.value!.gender ==
-                                    "Gender.Male"
-                                ? Icons.male
-                                : profilePageController
-                                            .userProfile.value!.gender ==
-                                        "Gender.Female"
-                                    ? Icons.female
-                                    : CupertinoIcons.question_circle,
-                            color: Colors.blue,
+                        ? Tooltip(
+                            triggerMode: TooltipTriggerMode.tap,
+                            message: profilePageController
+                                .userProfile.value!.gender
+                                .split(".")
+                                .last,
+                            child: Icon(
+                              profilePageController.userProfile.value!.gender ==
+                                      "Gender.Male"
+                                  ? Icons.male
+                                  : profilePageController
+                                              .userProfile.value!.gender ==
+                                          "Gender.Female"
+                                      ? Icons.female
+                                      : CupertinoIcons.question_circle,
+                              color: profilePageController
+                                          .userProfile.value!.gender ==
+                                      "Gender.Female"
+                                  ? Colors.pink
+                                  : Colors.blue,
+                            ),
                           )
                         : Container(),
                   ],

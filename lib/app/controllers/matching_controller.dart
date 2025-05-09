@@ -142,7 +142,6 @@ class MatchingController extends GetxController {
                 .onChildRemoved
                 .listen((event) async {
               await removeMatchingData();
-
               Get.back();
               Get.to(
                 () => ReviewProfilePage(uid: key),
@@ -196,7 +195,7 @@ class MatchingController extends GetxController {
         _calculateAge(profilePageController.userProfile.value!.dob.toDate());
     if (data.filterMaxAge > currentAge && data.filterMinAge < currentAge) {
       log("other person meet your req in age");
-      if (data.filterGender != "gender.other") {
+      if (data.filterGender != "gender.both") {
         if (data.filterGender.toLowerCase() ==
             profilePageController.userProfile.value!.gender.toLowerCase()) {
           log("other person meet your req in gender");

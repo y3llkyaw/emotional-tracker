@@ -393,7 +393,7 @@ void showDatingFilterSheet() {
                   ),
                   InkWell(
                     onTap: () {
-                      matchingController.filterGender.value = "gender.other";
+                      matchingController.filterGender.value = "gender.both";
                     },
                     child: Column(
                       children: [
@@ -403,10 +403,10 @@ void showDatingFilterSheet() {
                           decoration: BoxDecoration(
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(20)),
-                            color: matchingController.filterGender ==
-                                    "gender.other"
-                                ? Get.theme.colorScheme.error
-                                : Colors.blueGrey,
+                            color:
+                                matchingController.filterGender == "gender.both"
+                                    ? Get.theme.colorScheme.error
+                                    : Colors.blueGrey,
                           ),
                           child: Icon(
                             Icons.transgender,
