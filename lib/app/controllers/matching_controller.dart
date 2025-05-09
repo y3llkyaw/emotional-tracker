@@ -152,8 +152,9 @@ class MatchingController extends GetxController {
               );
               _matchSubscription?.cancel();
               _roomSubscription?.cancel();
-              await removeMatchingData();
-              isMatching.value = false;
+              await removeMatchingData().then((v) {
+                isMatching.value = false;
+              });
               // print(event.snapshot.value);
             });
           }
