@@ -53,7 +53,7 @@ dependencies:
   firebase_database: ^11.3.5
   carousel_slider: ^5.0.0
   stats: ^2.1.0
-  animated_rating_bar: ^0.0.8
+  # animated_rating_bar: ^0.0.8
 
 dev_dependencies:
   build_runner:

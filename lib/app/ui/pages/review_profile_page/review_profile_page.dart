@@ -1,4 +1,4 @@
-import 'package:animated_rating_bar/animated_rating_bar.dart';
+// import 'package:animated_rating_bar/animated_rating_bar.dart';
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
@@ -140,11 +140,11 @@ class _ReviewProfilePageState extends State<ReviewProfilePage> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            AnimatedRatingBar(
-              activeFillColor: Get.theme.colorScheme.error,
-              initialRating: 3,
-              onRatingUpdate: (rating) {},
-            ),
+            // AnimatedRatingBar(
+            //   activeFillColor: Get.theme.colorScheme.error,
+            //   initialRating: 3,
+            //   onRatingUpdate: (rating) {},
+            // ),
             SizedBox(
               height: Get.height * 0.02,
             ),
