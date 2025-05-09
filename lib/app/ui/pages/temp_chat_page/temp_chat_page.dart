@@ -135,176 +135,164 @@ class _TempChatPageState extends State<TempChatPage>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Builder(
-                builder: (context) {
-                  return Container(
-                    height: Get.height * 0.1,
-                    padding: EdgeInsets.symmetric(
-                      vertical: Get.height * 0.01,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Get.theme.colorScheme.primary,
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(10),
-                        bottomRight: Radius.circular(10),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        SizedBox(
-                          width: Get.width * 0.2,
-                          child: FutureBuilder(
-                            future:
-                                profilePageController.getProfileByUid(otherUid),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return SpinKitCircle(
-                                  itemBuilder: (context, index) => DecoratedBox(
-                                    decoration: BoxDecoration(
-                                      color: index.isEven
-                                          ? Colors.red
-                                          : Colors.green,
-                                    ),
-                                  ),
-                                  size: 15.0,
-                                );
-                              } else if (snapshot.hasData) {
-                                final profile = snapshot.data as Profile;
-                                return Column(
+              Container(
+                height: Get.height * 0.1,
+                padding: EdgeInsets.symmetric(
+                  vertical: Get.height * 0.01,
+                ),
+                decoration: BoxDecoration(
+                  color: Get.theme.colorScheme.primary,
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    SizedBox(
+                      width: Get.width * 0.2,
+                      child: FutureBuilder(
+                        future: profilePageController.getProfileByUid(otherUid),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return SpinKitCircle(
+                              itemBuilder: (context, index) => DecoratedBox(
+                                decoration: BoxDecoration(
+                                  color:
+                                      index.isEven ? Colors.red : Colors.green,
+                                ),
+                              ),
+                              size: 15.0,
+                            );
+                          } else if (snapshot.hasData) {
+                            final profile = snapshot.data as Profile;
+                            return Column(
+                              children: [
+                                CircleAvatar(
+                                  radius: 20,
+                                  child: AvatarPlus(
+                                      "${profile.uid}${profile.name}"),
+                                ),
+                                SizedBox(
+                                  height: Get.height * 0.01,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    CircleAvatar(
-                                      radius: 20,
-                                      child: AvatarPlus(
-                                          "${profile.uid}${profile.name}"),
-                                    ),
-                                    SizedBox(
-                                      height: Get.height * 0.01,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Tooltip(
-                                          triggerMode: TooltipTriggerMode.tap,
-                                          message: "age",
-                                          child: Text(
-                                            _calculateAge(profile.dob.toDate())
-                                                .toString(),
-                                            style: GoogleFonts.aBeeZee(
-                                              fontWeight: FontWeight.bold,
-                                              color: Get
-                                                  .theme.colorScheme.onSurface,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(width: Get.width * 0.015),
-                                        Container(
-                                          width: 1,
-                                          height: 20,
+                                    Tooltip(
+                                      triggerMode: TooltipTriggerMode.tap,
+                                      message: "age",
+                                      child: Text(
+                                        _calculateAge(profile.dob.toDate())
+                                            .toString(),
+                                        style: GoogleFonts.aBeeZee(
+                                          fontWeight: FontWeight.bold,
                                           color:
                                               Get.theme.colorScheme.onSurface,
                                         ),
-                                        SizedBox(width: Get.width * 0.015),
-                                        Tooltip(
-                                          triggerMode: TooltipTriggerMode.tap,
-                                          message:
-                                              profile.gender == "Gender.Male"
-                                                  ? "Male"
-                                                  : profile.gender ==
-                                                          "Gender.Female"
-                                                      ? "Female"
-                                                      : "Other",
-                                          child: Icon(
-                                            profile.gender == "Gender.Male"
-                                                ? Icons.male
-                                                : profile.gender ==
-                                                        "Gender.Female"
-                                                    ? Icons.female
-                                                    : Icons.transgender,
-                                            color:
-                                                Get.theme.colorScheme.onSurface,
-                                          ),
-                                        ),
-                                      ],
+                                      ),
+                                    ),
+                                    SizedBox(width: Get.width * 0.015),
+                                    Container(
+                                      width: 1,
+                                      height: 20,
+                                      color: Get.theme.colorScheme.onSurface,
+                                    ),
+                                    SizedBox(width: Get.width * 0.015),
+                                    Tooltip(
+                                      triggerMode: TooltipTriggerMode.tap,
+                                      message: profile.gender == "Gender.Male"
+                                          ? "Male"
+                                          : profile.gender == "Gender.Female"
+                                              ? "Female"
+                                              : "Other",
+                                      child: Icon(
+                                        profile.gender == "Gender.Male"
+                                            ? Icons.male
+                                            : profile.gender == "Gender.Female"
+                                                ? Icons.female
+                                                : Icons.transgender,
+                                        color: Get.theme.colorScheme.onSurface,
+                                      ),
                                     ),
                                   ],
-                                );
-                              } else {
-                                return Container();
-                              }
-                            },
+                                ),
+                              ],
+                            );
+                          } else {
+                            return Container();
+                          }
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: Get.width * 0.4,
+                      child: Obx(
+                        () => Text(
+                          tempChatController.timeRemaining.value,
+                          style: GoogleFonts.aBeeZee(
+                            fontSize: 15,
                           ),
+                          textAlign: TextAlign.center,
                         ),
-                        SizedBox(
-                          width: Get.width * 0.4,
-                          child: Obx(
-                            () => Text(
-                              tempChatController.timeRemaining.value,
-                              style: GoogleFonts.aBeeZee(
-                                fontSize: 15,
+                      ),
+                    ),
+                    SizedBox(
+                      width: Get.width * 0.3,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          SizedBox(
+                            height: Get.height * 0.035,
+                            child: ElevatedButton.icon(
+                              style: ButtonStyle(
+                                backgroundColor: WidgetStateProperty.all(
+                                  Colors.red,
+                                ),
                               ),
-                              textAlign: TextAlign.center,
+                              onPressed: () {},
+                              label: const Text(
+                                "report",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              icon: const Icon(
+                                CupertinoIcons.exclamationmark_bubble,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          width: Get.width * 0.3,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              SizedBox(
-                                height: Get.height * 0.035,
-                                child: ElevatedButton.icon(
-                                  style: ButtonStyle(
-                                    backgroundColor: WidgetStateProperty.all(
-                                      Colors.red,
-                                    ),
-                                  ),
-                                  onPressed: () {},
-                                  label: const Text(
-                                    "report",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  icon: const Icon(
-                                    CupertinoIcons.exclamationmark_bubble,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: Get.height * 0.01,
-                              ),
-                              SizedBox(
-                                height: Get.height * 0.035,
-                                child: ElevatedButton.icon(
-                                  style: ButtonStyle(
-                                    backgroundColor: WidgetStateProperty.all(
-                                      Get.theme.colorScheme.error,
-                                    ),
-                                    // textStyle: TextStyle()
-                                  ),
-                                  onPressed: () {},
-                                  label: const Text(
-                                    "follow",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  icon: const Icon(
-                                    Icons.person_add,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ],
+                          SizedBox(
+                            height: Get.height * 0.01,
                           ),
-                        ),
-                      ],
+                          SizedBox(
+                            height: Get.height * 0.035,
+                            child: ElevatedButton.icon(
+                              style: ButtonStyle(
+                                backgroundColor: WidgetStateProperty.all(
+                                  Get.theme.colorScheme.error,
+                                ),
+                                // textStyle: TextStyle()
+                              ),
+                              onPressed: () {},
+                              label: const Text(
+                                "follow",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              icon: const Icon(
+                                Icons.person_add,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  );
-                },
+                  ],
+                ),
               ),
               Expanded(
                 child: Obx(

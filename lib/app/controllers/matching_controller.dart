@@ -7,14 +7,13 @@ import 'package:emotion_tracker/app/data/models/matching_profile.dart';
 import 'package:emotion_tracker/app/ui/pages/review_profile_page/review_profile_page.dart';
 import 'package:emotion_tracker/app/ui/pages/temp_chat_page/temp_chat_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class MatchingController extends GetxController {
   final profilePageController = Get.put(ProfilePageController());
   final isMatching = false.obs;
-  var cuid = "".obs;
 
   final filterMinAge = 17.obs;
   final filterMaxAge = 45.obs;
@@ -43,11 +42,9 @@ class MatchingController extends GetxController {
   }
 
   Future<void> setMatchingData() async {
+    final userId = profilePageController.userProfile.value?.uid ?? "";
     final age =
         _calculateAge(profilePageController.userProfile.value!.dob.toDate());
-    final userId = cuid.value.isEmpty
-        ? FirebaseAuth.instance.currentUser!.uid
-        : cuid.value;
     final ref = FirebaseDatabase.instance.ref("searching_users/$userId");
 
     await ref
@@ -80,10 +77,21 @@ class MatchingController extends GetxController {
     await ref.remove().then((v) {
       isMatching.value = false;
       _matchSubscription?.cancel();
+      _roomSubscription?.cancel();
+      log("Removed matching data");
     }).onError((e, stackTrace) {
       log(e.toString(), error: e, name: "error-removing-matching-data");
       isMatching.value = true;
       _matchSubscription?.cancel();
+      _roomSubscription?.cancel();
+      log("Error removing matching data");
+      log(e.toString(), error: e, name: "error-removing-matching-data");
+      Get.snackbar("", e.toString(),
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 2),
+          isDismissible: true);
     });
   }
 
@@ -122,11 +130,11 @@ class MatchingController extends GetxController {
                 FirebaseDatabase.instance.ref("searching_users/$key");
             mateRef.update({
               "isIdel": false,
-              "mateId": cuid.value,
+              "mateId": profilePageController.userProfile.value?.uid ?? "",
               "timestamp": ServerValue.timestamp,
             });
-            final myRef =
-                FirebaseDatabase.instance.ref("searching_users/${cuid.value}");
+            final myRef = FirebaseDatabase.instance.ref(
+                "searching_users/${profilePageController.userProfile.value?.uid ?? ""}");
             myRef.update({
               "isIdel": false,
               "mateId": key,
@@ -134,7 +142,10 @@ class MatchingController extends GetxController {
             });
             Get.to(
               () => TempChatPage(
-                users: [key, cuid.value],
+                users: [
+                  key,
+                  profilePageController.userProfile.value?.uid ?? ""
+                ],
                 timestamp: Timestamp.now(),
                 onExit: () {},
               ),
