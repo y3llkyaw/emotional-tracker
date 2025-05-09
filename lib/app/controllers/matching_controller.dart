@@ -26,9 +26,9 @@ class MatchingController extends GetxController {
   // StreamSubscription<DatabaseEvent>? _exitSubscription;
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    profilePageController.getCurrentUserProfile().then((v) {
+    await profilePageController.getCurrentUserProfile().then((v) {
       cuid.value = profilePageController.userProfile.value!.uid;
       cdob.value = profilePageController.userProfile.value!.dob.toDate();
       cgender.value =

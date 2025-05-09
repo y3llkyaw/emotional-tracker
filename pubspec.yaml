@@ -90,7 +90,6 @@ flutter:
   assets:
     - assets/icons/
     - assets/image/
-    - assets/animation/
     - assets/audio/
     - packages/animated_emoji/lottie/smile.json
     - packages/animated_emoji/lottie/smileWithBigEyes.json
