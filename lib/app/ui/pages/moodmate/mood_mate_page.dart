@@ -139,9 +139,18 @@ class MoodMatePage extends StatelessWidget {
           ),
           Column(
             children: [
-              Text(matchingController.cdob.value.toString()),
-              Text(matchingController.cgender.value.toString()),
-              Text(matchingController.cuid.value.toString()),
+              Text(profilePageController.userProfile.value?.name.toString() ??
+                  ""),
+              Text(profilePageController.userProfile.value?.gender.toString() ??
+                  ""),
+              Text(profilePageController.userProfile.value?.dob.toString() ??
+                  ""),
+              Text(profilePageController.userProfile.value?.uid.toString() ??
+                  ""),
+              const SizedBox(
+                height: 20,
+                child: Divider(),
+              ),
               Text(matchingController.filterGender.value.toString()),
               Text(matchingController.filterMaxAge.value.toString()),
               Text(matchingController.filterMinAge.value.toString()),

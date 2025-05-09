@@ -14,8 +14,6 @@ class MatchingController extends GetxController {
   final profilePageController = Get.put(ProfilePageController());
   final isMatching = false.obs;
   var cuid = "".obs;
-  var cdob = DateTime.now().obs;
-  var cgender = "gender.other".obs;
 
   final filterMinAge = 17.obs;
   final filterMaxAge = 45.obs;
@@ -28,18 +26,14 @@ class MatchingController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    await profilePageController.getCurrentUserProfile().then((v) {
-      cuid.value = profilePageController.userProfile.value!.uid;
-      cdob.value = profilePageController.userProfile.value!.dob.toDate();
-      cgender.value =
-          profilePageController.userProfile.value!.gender.toLowerCase();
-    });
+    await profilePageController.getCurrentUserProfile();
     log("🔧 MatchingController initialized");
   }
 
   int _calculateAge(DateTime dob) {
     final today = DateTime.now();
-    int age = today.year - cdob.value.year;
+    int age = today.year - dob.year;
+    // Check if the birthday has occurred this year
     if (today.month < dob.month ||
         (today.month == dob.month && today.day < dob.day)) {
       age--;
@@ -48,8 +42,8 @@ class MatchingController extends GetxController {
   }
 
   Future<void> setMatchingData() async {
-    final age = _calculateAge(
-        cdob.value = profilePageController.userProfile.value!.dob.toDate());
+    final age =
+        _calculateAge(profilePageController.userProfile.value!.dob.toDate());
     final userId = cuid.value.isEmpty
         ? FirebaseAuth.instance.currentUser!.uid
         : cuid.value;
@@ -58,7 +52,8 @@ class MatchingController extends GetxController {
     await ref
         .set({
           "age": age,
-          "gender": cgender.value,
+          "gender":
+              profilePageController.userProfile.value!.gender.toLowerCase(),
           "filterMinAge": filterMinAge.value,
           "filterMaxAge": filterMaxAge.value,
           "filterGender": filterGender.value,
@@ -197,11 +192,13 @@ class MatchingController extends GetxController {
   bool isValidForOther(MatchingProfile data) {
     log(data.toString(), name: "null-check-valid");
 
-    final currentAge = _calculateAge(cdob.value);
+    final currentAge =
+        _calculateAge(profilePageController.userProfile.value!.dob.toDate());
     if (data.filterMaxAge > currentAge && data.filterMinAge < currentAge) {
       log("other person meet your req in age");
       if (data.filterGender != "gender.other") {
-        if (data.filterGender.toLowerCase() == cgender.toLowerCase()) {
+        if (data.filterGender.toLowerCase() ==
+            profilePageController.userProfile.value!.gender.toLowerCase()) {
           log("other person meet your req in gender");
           return true;
         }
