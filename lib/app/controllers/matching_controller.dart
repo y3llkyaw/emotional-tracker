@@ -7,6 +7,7 @@ import 'package:emotion_tracker/app/data/models/matching_profile.dart';
 import 'package:emotion_tracker/app/ui/pages/review_profile_page/review_profile_page.dart';
 import 'package:emotion_tracker/app/ui/pages/temp_chat_page/temp_chat_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -71,7 +72,11 @@ class MatchingController extends GetxController {
   }
 
   Future<void> removeMatchingData() async {
-    final ref = FirebaseDatabase.instance.ref("searching_users/${cuid.value}");
+    if (FirebaseAuth.instance.currentUser == null) {
+      return;
+    }
+    final ref = FirebaseDatabase.instance
+        .ref("searching_users/${FirebaseAuth.instance.currentUser?.uid}");
     await ref.remove().then((v) {
       isMatching.value = false;
       _matchSubscription?.cancel();
