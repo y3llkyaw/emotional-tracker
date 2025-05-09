@@ -48,7 +48,8 @@ class MatchingController extends GetxController {
   }
 
   Future<void> setMatchingData() async {
-    final age = _calculateAge(cdob.value);
+    final age = _calculateAge(
+        cdob.value = profilePageController.userProfile.value!.dob.toDate());
     final userId = cuid.value.isEmpty
         ? FirebaseAuth.instance.currentUser!.uid
         : cuid.value;
