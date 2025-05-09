@@ -145,6 +145,8 @@ class MatchingController extends GetxController {
                 .ref("searching_users/$key")
                 .onChildRemoved
                 .listen((event) async {
+              await removeMatchingData();
+
               Get.back();
               Get.to(
                 () => ReviewProfilePage(uid: key),
@@ -152,9 +154,7 @@ class MatchingController extends GetxController {
               );
               _matchSubscription?.cancel();
               _roomSubscription?.cancel();
-              await removeMatchingData().then((v) {
-                isMatching.value = false;
-              });
+              isMatching.value = false;
               // print(event.snapshot.value);
             });
           }

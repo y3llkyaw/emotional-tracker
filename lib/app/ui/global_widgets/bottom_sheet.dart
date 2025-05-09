@@ -18,8 +18,8 @@ final MatchingController matchingController = Get.put(MatchingController());
 final ProfilePageController profilePageController =
     Get.put(ProfilePageController());
 
-void showEmojiBottomSheet(DateTime date) {
-  profilePageController.getCurrentUserProfile();
+void showEmojiBottomSheet(DateTime date) async {
+  await profilePageController.getCurrentUserProfile();
   AnimatedEmojiData selectedEmoji = AnimatedEmojis.neutralFace;
   final messageController = TextEditingController();
   Get.bottomSheet(
