@@ -1,12 +1,17 @@
+import 'package:animated_emoji/animated_emoji.dart';
+import 'package:animated_emoji/emoji.dart';
 import 'package:emotion_tracker/app/controllers/mood_slider_controller.dart';
 import 'package:emotion_tracker/app/ui/utils/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class MoodSliderWidget extends StatefulWidget {
-  const MoodSliderWidget({Key? key, required this.onChange}) : super(key: key);
+  const MoodSliderWidget(
+      {Key? key, required this.onChange, required this.isColumn})
+      : super(key: key);
 
   final Function onChange;
+  final bool isColumn;
   @override
   State<MoodSliderWidget> createState() => _MoodSliderWidgetState();
 }
@@ -30,26 +35,73 @@ class _MoodSliderWidgetState extends State<MoodSliderWidget> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Obx(
-            () => Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: _moods.reversed.map(
-                (mood) {
-                  int index = _moods.indexOf(mood);
-                  return Text(
-                    mood,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: moodSliderController.sliderValue.value == index
-                          ? valueToColor(index)
-                          : Colors.grey.shade600,
-                    ),
-                  );
-                },
-              ).toList(),
-            ),
+            () => widget.isColumn
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: _moods.reversed.map(
+                      (mood) {
+                        int index = _moods.indexOf(mood);
+                        return Text(
+                          mood,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color:
+                                moodSliderController.sliderValue.value == index
+                                    ? valueToColor(index)
+                                    : Colors.grey.shade600,
+                          ),
+                        );
+                      },
+                    ).toList(),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: _moods.reversed
+                        .map(
+                          (mood) {
+                            int index = _moods.indexOf(mood);
+                            return Column(
+                              children: [
+                                CircleAvatar(
+                                  radius: 20,
+                                  backgroundColor: Colors.transparent,
+                                  child: CircleAvatar(
+                                    radius: 20,
+                                    backgroundColor: moodSliderController
+                                                .sliderValue.value ==
+                                            index
+                                        ? valueToColor(index)
+                                        : Colors.grey.shade600,
+                                    child: const AnimatedEmoji(
+                                      AnimatedEmojis.glowingStar,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  mood,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    // fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: moodSliderController
+                                                .sliderValue.value ==
+                                            index
+                                        ? valueToColor(index)
+                                        : Colors.grey.shade600,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        )
+                        .toList()
+                        .reversed
+                        .toList(),
+                  ),
           ),
           SizedBox(
             height: Get.height * 0.03,
@@ -63,14 +115,11 @@ class _MoodSliderWidgetState extends State<MoodSliderWidget> {
                   valueToColor(moodSliderController.sliderValue.value.toInt()),
               secondaryActiveColor:
                   valueToColor(moodSliderController.sliderValue.value.toInt()),
-              divisions: 4, // Number of steps for the slider
-              label: _moods[moodSliderController.sliderValue.value
-                  .toInt()], // Show the mood label
+              divisions: 4,
+              label: _moods[moodSliderController.sliderValue.value.toInt()],
               onChanged: (value) {
                 moodSliderController.sliderValue.value = value;
-                widget.onChange(
-                  value.toInt(),
-                );
+                widget.onChange(value.toInt());
               },
             ),
           ),

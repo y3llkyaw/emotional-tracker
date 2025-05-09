@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CustomButton extends StatelessWidget {
   const CustomButton({
@@ -10,6 +11,7 @@ class CustomButton extends StatelessWidget {
     this.isLoading = false,
     this.color = Colors.blueAccent,
     this.fontSize = 14.0,
+    this.fontColor = Colors.white,
   }) : super(key: key);
 
   final bool isLoading;
@@ -17,6 +19,7 @@ class CustomButton extends StatelessWidget {
   final bool isDisabled;
   final Function onPressed;
   final Color color;
+  final Color fontColor;
   final double fontSize;
   @override
   Widget build(BuildContext context) {
@@ -52,7 +55,7 @@ class CustomButton extends StatelessWidget {
                   style: TextStyle(
                       // wordSpacing: 4,
                       fontSize: fontSize,
-                      color: Colors.white,
+                      color: fontColor,
                       fontWeight: FontWeight.bold),
                 ),
         ),

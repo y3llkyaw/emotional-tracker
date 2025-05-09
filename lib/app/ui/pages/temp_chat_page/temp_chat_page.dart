@@ -77,7 +77,7 @@ class _TempChatPageState extends State<TempChatPage>
         Get.back();
         matchingController.removeMatchingData();
         Get.to(
-          () => ReviewProfilePage(uid: otherId),
+          () => ReviewProfilePage(uid: "SZfAMFmhrfX0EZwNtuW1wIJL1Uf1"),
           transition: Transition.downToUp,
         );
       } else {
@@ -426,6 +426,13 @@ class _TempChatPageState extends State<TempChatPage>
   }
 
   Future<bool> _confirmExit() async {
+    var ouid = "";
+    for (var uid in widget.users) {
+      if (uid != FirebaseAuth.instance.currentUser!.uid) {
+        ouid = uid;
+        chatController.getUserMessages(uid);
+      }
+    }
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -446,8 +453,8 @@ class _TempChatPageState extends State<TempChatPage>
               Get.back();
               matchingController.removeMatchingData();
               Get.off(
-                () => const ReviewProfilePage(
-                  uid: "",
+                () => ReviewProfilePage(
+                  uid: ouid,
                 ),
               );
             },

@@ -2,13 +2,23 @@ import 'package:flutter/material.dart';
 
 class Themes {
   final lightTheme = ThemeData.light().copyWith(
-    primaryColor: Colors.blue,
-    dividerColor: Colors.grey.shade200,
-    primaryColorDark: Colors.blue,
+    tooltipTheme: TooltipThemeData(
+      textStyle: const TextStyle(
+        color: Colors.white,
+        fontSize: 14,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.orange.shade800,
+        borderRadius: BorderRadius.circular(10),
+      ),
+    ),
+    // primaryColor: Colors.blue,
+    // dividerColor: Colors.grey.shade200,
+    // primaryColorDark: Colors.blue,
     colorScheme: ColorScheme(
       brightness: Brightness.light,
       primary: Colors.grey.shade300,
-      onPrimary: Colors.blue.shade800,
+      onPrimary: Colors.white,
       secondary: Colors.white,
       onSecondary: Colors.black12,
       error: const Color.fromRGBO(1, 85, 145, 0.7),
@@ -19,11 +29,21 @@ class Themes {
   );
 
   final darkTheme = ThemeData.dark().copyWith(
+    tooltipTheme: TooltipThemeData(
+      textStyle: const TextStyle(
+        color: Colors.white,
+        fontSize: 14,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade800,
+        borderRadius: BorderRadius.circular(10),
+      ),
+    ),
     primaryColorDark: Colors.blue,
     colorScheme: ColorScheme(
       brightness: Brightness.dark,
       primary: Colors.grey.shade800,
-      onPrimary: const Color.fromRGBO(1, 85, 145, 1),
+      onPrimary: Colors.white,
       secondary: Colors.grey,
       onSecondary: Colors.grey.shade800,
       error: const Color.fromRGBO(1, 85, 145, 1),

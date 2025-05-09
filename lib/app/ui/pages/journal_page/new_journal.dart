@@ -142,6 +142,7 @@ class _NewJournalPageState extends State<NewJournalPage> {
                         ),
                       ),
                       MoodSliderWidget(
+                        isColumn: true,
                         onChange: (value) {
                           journalController.moodSlider.value = value;
                         },

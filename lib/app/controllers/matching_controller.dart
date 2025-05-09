@@ -98,7 +98,6 @@ class MatchingController extends GetxController {
       if (event.snapshot.value == null || !event.snapshot.exists) {
         return;
       }
-
       final data = Map<String, dynamic>.from(event.snapshot.value as Map);
 
       // Loop through each user's data
@@ -178,7 +177,7 @@ class MatchingController extends GetxController {
   bool isValidForMe(MatchingProfile data) {
     log(data.toString(), name: "null-check-valid");
     if (filterMaxAge > data.age && filterMinAge < data.age) {
-      log("\t[*]other person meet your req in age");
+      log("[*]other person meet your req in age");
       if (filterGender != "gender.both") {
         if (filterGender.toLowerCase() == data.gender.toLowerCase()) {
           log("other person meet your req in gender");
