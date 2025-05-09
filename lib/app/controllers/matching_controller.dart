@@ -71,7 +71,7 @@ class MatchingController extends GetxController {
         .then((v) {
           isMatching.value = true;
         });
-    ref.onDisconnect().remove();
+    // ref.onDisconnect().remove();
   }
 
   Future<void> removeMatchingData() async {
@@ -144,12 +144,15 @@ class MatchingController extends GetxController {
             _roomSubscription = FirebaseDatabase.instance
                 .ref("searching_users/$key")
                 .onChildRemoved
-                .listen((event) {
+                .listen((event) async {
+              Get.back();
               Get.to(
                 () => ReviewProfilePage(uid: key),
                 transition: Transition.downToUp,
               );
+              _matchSubscription?.cancel();
               _roomSubscription?.cancel();
+              await removeMatchingData();
               isMatching.value = false;
               // print(event.snapshot.value);
             });
@@ -175,7 +178,7 @@ class MatchingController extends GetxController {
     log(data.toString(), name: "null-check-valid");
     if (filterMaxAge > data.age && filterMinAge < data.age) {
       log("\t[*]other person meet your req in age");
-      if (filterGender != "gender.other") {
+      if (filterGender != "gender.both") {
         if (filterGender.toLowerCase() == data.gender.toLowerCase()) {
           log("other person meet your req in gender");
           return true;
