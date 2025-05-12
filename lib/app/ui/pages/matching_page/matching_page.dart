@@ -89,15 +89,12 @@ class MatchingPage extends StatelessWidget {
                 },
               ),
               SizedBox(
-                height: Get.height * 0.01,
+                height: Get.height * 0.02,
               ),
               CustomButton(
                 color: Colors.red.shade600,
                 text: "Quit Finding Your Matches",
                 onPressed: () async {
-                  // await matchingController
-                  //     .stopMatching(FirebaseAuth.instance.currentUser!.uid);
-
                   matchingController.stopFindingMatch();
                   Get.back();
                 },

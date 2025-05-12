@@ -65,7 +65,7 @@ class MatchingController extends GetxController {
         .then((v) {
           isMatching.value = true;
         });
-    // ref.onDisconnect().remove();
+    ref.onDisconnect().remove();
   }
 
   Future<void> removeMatchingData() async {
@@ -178,6 +178,7 @@ class MatchingController extends GetxController {
   void stopFindingMatch() async {
     await removeMatchingData().then((v) {
       _matchSubscription?.cancel();
+      _roomSubscription?.cancel();
       isMatching.value = false;
     }).onError((err, stackTrace) {
       log(err.toString(), error: err, name: "error-stopFindingMatching");

@@ -1,8 +1,6 @@
 import 'package:emotion_tracker/app/controllers/matching_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
-import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
-import 'package:emotion_tracker/app/ui/pages/review_profile_page/review_profile_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -139,35 +137,6 @@ class MoodMatePage extends StatelessWidget {
               ),
             ),
           ),
-          Column(
-            children: [
-              Text(profilePageController.userProfile.value?.name.toString() ??
-                  ""),
-              Text(profilePageController.userProfile.value?.gender.toString() ??
-                  ""),
-              Text(profilePageController.userProfile.value?.dob.toString() ??
-                  ""),
-              Text(profilePageController.userProfile.value?.uid.toString() ??
-                  ""),
-              const SizedBox(
-                height: 20,
-                child: Divider(),
-              ),
-              Text(matchingController.filterGender.value.toString()),
-              Text(matchingController.filterMaxAge.value.toString()),
-              Text(matchingController.filterMinAge.value.toString()),
-              CustomButton(
-                text: "Go to Review",
-                onPressed: () {
-                  Get.to(
-                    () => const ReviewProfilePage(
-                        uid: "SZfAMFmhrfX0EZwNtuW1wIJL1Uf1"),
-                    transition: Transition.downToUp,
-                  );
-                },
-              ),
-            ],
-          )
         ],
       ),
     );

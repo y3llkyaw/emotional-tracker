@@ -77,7 +77,7 @@ class _TempChatPageState extends State<TempChatPage>
         Get.back();
         matchingController.removeMatchingData();
         Get.to(
-          () => ReviewProfilePage(uid: "SZfAMFmhrfX0EZwNtuW1wIJL1Uf1"),
+          () => ReviewProfilePage(uid: otherId),
           transition: Transition.downToUp,
         );
       } else {
