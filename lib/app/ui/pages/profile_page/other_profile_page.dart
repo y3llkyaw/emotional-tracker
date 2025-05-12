@@ -36,6 +36,7 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: null,
         actions: [
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -74,6 +75,9 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
                       style: TextStyle(
                         fontSize: Get.width * 0.045,
                         fontWeight: FontWeight.bold,
+                        color: widget.profile.gender == "Gender.Female"
+                            ? Colors.pink
+                            : Colors.blue,
                       ),
                     ),
                     Row(
@@ -110,7 +114,9 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
                                 : widget.profile.gender == "Gender.Female"
                                     ? Icons.female
                                     : CupertinoIcons.news,
-                            color: Colors.blue,
+                            color: widget.profile.gender == "Gender.Female"
+                                ? Colors.pink
+                                : Colors.blue,
                           ),
                         ),
                       ],

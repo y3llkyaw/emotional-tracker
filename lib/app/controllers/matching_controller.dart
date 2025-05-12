@@ -56,6 +56,7 @@ class MatchingController extends GetxController {
           "filterMaxAge": filterMaxAge.value,
           "filterGender": filterGender.value,
           "isIdel": true,
+          "isOnline": true,
           "mateId": null,
         })
         .then((v) {})

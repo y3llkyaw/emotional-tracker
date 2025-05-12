@@ -43,7 +43,7 @@ class Themes {
     colorScheme: ColorScheme(
       brightness: Brightness.dark,
       primary: Colors.grey.shade800,
-      onPrimary: Colors.white,
+      onPrimary: Colors.indigo,
       secondary: Colors.grey,
       onSecondary: Colors.grey.shade800,
       error: const Color.fromRGBO(1, 85, 145, 1),

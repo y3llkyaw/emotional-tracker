@@ -190,7 +190,9 @@ class _TempChatPageState extends State<TempChatPage>
                                         style: GoogleFonts.aBeeZee(
                                           fontWeight: FontWeight.bold,
                                           color:
-                                              Get.theme.colorScheme.onSurface,
+                                              profile.gender == "Gender.Female"
+                                                  ? Colors.pink
+                                                  : Colors.blue,
                                         ),
                                       ),
                                     ),
@@ -198,7 +200,9 @@ class _TempChatPageState extends State<TempChatPage>
                                     Container(
                                       width: 1,
                                       height: 20,
-                                      color: Get.theme.colorScheme.onSurface,
+                                      color: profile.gender == "Gender.Female"
+                                          ? Colors.pink
+                                          : Colors.blue,
                                     ),
                                     SizedBox(width: Get.width * 0.015),
                                     Tooltip(
@@ -214,7 +218,9 @@ class _TempChatPageState extends State<TempChatPage>
                                             : profile.gender == "Gender.Female"
                                                 ? Icons.female
                                                 : Icons.transgender,
-                                        color: Get.theme.colorScheme.onSurface,
+                                        color: profile.gender == "Gender.Female"
+                                            ? Colors.pink
+                                            : Colors.blue,
                                       ),
                                     ),
                                   ],
