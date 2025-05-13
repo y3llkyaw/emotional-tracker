@@ -20,15 +20,15 @@ class ReviewProfilePageController extends GetxController {
         .collection("reviews")
         .add({
       "rating": rating.value,
-      "review": "This is a review",
+      "review": reviewText.value,
       "createdAt": DateTime.now(),
     }).then((value) {
       Get.snackbar("Success", "Review added successfully");
-    }).catchError((error) {
-      Get.snackbar("Error", "Failed to add review: $error");
-    }).then((v) {
       reviewText.value = "";
       isLoading.value = false;
+      Get.back();
+    }).catchError((error) {
+      Get.snackbar("Error", "Failed to add review: $error");
     });
   }
 }

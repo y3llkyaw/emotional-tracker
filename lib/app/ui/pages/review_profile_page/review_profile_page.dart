@@ -219,7 +219,8 @@ class _ReviewProfilePageState extends State<ReviewProfilePage> {
               () => Column(
                 children: [
                   CustomButton(
-                    isDisabled: reviewProfilePageController.isLoading.value,
+                    isLoading: reviewProfilePageController.isLoading.value,
+                    // isDisabled: reviewProfilePageController.isLoading.value,
                     text: "Skip",
                     color: const Color.fromARGB(255, 128, 128, 128)
                         .withOpacity(0.5),
@@ -231,6 +232,7 @@ class _ReviewProfilePageState extends State<ReviewProfilePage> {
                     height: Get.height * 0.02,
                   ),
                   CustomButton(
+                    isLoading: reviewProfilePageController.isLoading.value,
                     color: Get.theme.colorScheme.error,
                     isDisabled: reviewProfilePageController.reviewText.value
                         .trim()
@@ -239,9 +241,11 @@ class _ReviewProfilePageState extends State<ReviewProfilePage> {
                     onPressed: () async {
                       // print("object");
                       if (_reviewTxtController.text.isNotEmpty) {
-                        await reviewProfilePageController.giveReview(
-                            widget.uid, _reviewTxtController.text);
-                        Get.back();
+                        await reviewProfilePageController
+                            .giveReview(widget.uid, _reviewTxtController.text)
+                            .then((v) {
+                          Get.back();
+                        });
                       }
                     },
                   ),

@@ -94,6 +94,8 @@ class MatchingController extends GetxController {
           duration: const Duration(seconds: 2),
           isDismissible: true);
     });
+    _matchSubscription?.cancel();
+    _roomSubscription?.cancel();
   }
 
   void findingMatchPerson() async {
