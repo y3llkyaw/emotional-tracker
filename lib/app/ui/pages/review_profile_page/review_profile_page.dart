@@ -1,6 +1,7 @@
 // import 'package:animated_rating_bar/animated_rating_bar.dart';
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
+import 'package:emotion_tracker/app/controllers/review_profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,8 @@ class ReviewProfilePage extends StatefulWidget {
 class _ReviewProfilePageState extends State<ReviewProfilePage> {
   final TextEditingController _reviewTxtController = TextEditingController();
   final ProfilePageController profilePageController = ProfilePageController();
+  final ReviewProfilePageController reviewProfilePageController =
+      Get.put(ReviewProfilePageController());
   @override
   void dispose() {
     _reviewTxtController.dispose();
@@ -38,6 +41,9 @@ class _ReviewProfilePageState extends State<ReviewProfilePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            SizedBox(
+              height: Get.height * 0.08,
+            ),
             FutureBuilder(
                 future: profilePageController.getProfileByUid(widget.uid),
                 builder: (context, snapshot) {
@@ -140,21 +146,12 @@ class _ReviewProfilePageState extends State<ReviewProfilePage> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            // AnimatedRatingBar(
-            //   activeFillColor: Get.theme.colorScheme.error,
-            //   initialRating: 3,
-            //   onRatingUpdate: (rating) {},
-            // ),
             SizedBox(
               height: Get.height * 0.02,
             ),
             TextField(
               maxLength: 100,
-              onChanged: (text) {
-                setState(() {
-                  _reviewTxtController.text = text;
-                });
-              },
+              onChanged: (text) {},
               controller: _reviewTxtController,
               maxLines: 5,
               minLines: 3,
@@ -177,29 +174,38 @@ class _ReviewProfilePageState extends State<ReviewProfilePage> {
             SizedBox(
               height: Get.height * 0.04,
             ),
-            Column(
-              children: [
-                CustomButton(
-                  text: "Skip",
-                  color:
-                      const Color.fromARGB(255, 128, 128, 128).withOpacity(0.5),
-                  onPressed: () {
-                    Get.back();
-                  },
-                ),
-                SizedBox(
-                  height: Get.height * 0.04,
-                ),
-                CustomButton(
-                  color: Get.theme.colorScheme.error,
-                  isDisabled: _reviewTxtController.text.isEmpty,
-                  text: "Review",
-                  onPressed: () {},
-                ),
-                SizedBox(
-                  height: Get.height * 0.04,
-                ),
-              ],
+            Obx(
+              () => Column(
+                children: [
+                  CustomButton(
+                    isDisabled: reviewProfilePageController.isLoading.value,
+                    text: "Skip",
+                    color: const Color.fromARGB(255, 128, 128, 128)
+                        .withOpacity(0.5),
+                    onPressed: () {
+                      Get.back();
+                    },
+                  ),
+                  SizedBox(
+                    height: Get.height * 0.04,
+                  ),
+                  CustomButton(
+                    color: Get.theme.colorScheme.error,
+                    isDisabled: _reviewTxtController.text.isEmpty,
+                    text: "Review",
+                    onPressed: () async {
+                      if (_reviewTxtController.text.isNotEmpty) {
+                        await reviewProfilePageController.giveReview(
+                            widget.uid, _reviewTxtController.text);
+                        Get.back();
+                      }
+                    },
+                  ),
+                  SizedBox(
+                    height: Get.height * 0.04,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
