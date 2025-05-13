@@ -5,6 +5,7 @@ import 'package:emotion_tracker/app/controllers/review_profile_page_controller.d
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:get/get.dart';
 
 class ReviewProfilePage extends StatefulWidget {
@@ -140,10 +141,47 @@ class _ReviewProfilePageState extends State<ReviewProfilePage> {
               height: Get.height * 0.02,
             ),
             const Text(
-              "rate this person",
+              "Please provide your rating for this person",
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
+              ),
+            ),
+            SizedBox(
+              height: Get.height * 0.02,
+            ),
+            Obx(
+              () => Column(
+                children: [
+                  RatingStars(
+                    value: reviewProfilePageController.rating.value,
+                    onValueChanged: (value) {
+                      // profilePageController.updateReviewText(value.toString());
+                      reviewProfilePageController.rating.value = value;
+                    },
+                    starBuilder: (index, color) => Icon(
+                      Icons.star,
+                      color: color,
+                      size: 30,
+                    ),
+                    starCount: 5,
+                    starSize: 30,
+                    valueLabelVisibility: false,
+                  ),
+                  SizedBox(
+                    height: Get.height * 0.01,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Get.theme.colorScheme.error,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                        "${reviewProfilePageController.rating.toInt()} / 5"),
+                  ),
+                ],
               ),
             ),
             SizedBox(
@@ -151,7 +189,10 @@ class _ReviewProfilePageState extends State<ReviewProfilePage> {
             ),
             TextField(
               maxLength: 100,
-              onChanged: (text) {},
+              onChanged: (text) {
+                // profilePageController.updateReviewText(text);
+                reviewProfilePageController.reviewText.value = text;
+              },
               controller: _reviewTxtController,
               maxLines: 5,
               minLines: 3,
@@ -172,7 +213,7 @@ class _ReviewProfilePageState extends State<ReviewProfilePage> {
               ),
             ),
             SizedBox(
-              height: Get.height * 0.04,
+              height: Get.height * 0.02,
             ),
             Obx(
               () => Column(
@@ -187,13 +228,16 @@ class _ReviewProfilePageState extends State<ReviewProfilePage> {
                     },
                   ),
                   SizedBox(
-                    height: Get.height * 0.04,
+                    height: Get.height * 0.02,
                   ),
                   CustomButton(
                     color: Get.theme.colorScheme.error,
-                    isDisabled: _reviewTxtController.text.isEmpty,
+                    isDisabled: reviewProfilePageController.reviewText.value
+                        .trim()
+                        .isEmpty,
                     text: "Review",
                     onPressed: () async {
+                      // print("object");
                       if (_reviewTxtController.text.isNotEmpty) {
                         await reviewProfilePageController.giveReview(
                             widget.uid, _reviewTxtController.text);
@@ -202,7 +246,7 @@ class _ReviewProfilePageState extends State<ReviewProfilePage> {
                     },
                   ),
                   SizedBox(
-                    height: Get.height * 0.04,
+                    height: Get.height * 0.02,
                   ),
                 ],
               ),

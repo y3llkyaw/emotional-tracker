@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 
 class ReviewProfilePageController extends GetxController {
   final isLoading = false.obs;
+  final reviewText = "".obs;
+  final rating = 3.0.obs;
 
   @override
   void onInit() {
@@ -17,6 +19,7 @@ class ReviewProfilePageController extends GetxController {
         .doc(uid)
         .collection("reviews")
         .add({
+      "rating": rating.value,
       "review": "This is a review",
       "createdAt": DateTime.now(),
     }).then((value) {
@@ -24,6 +27,7 @@ class ReviewProfilePageController extends GetxController {
     }).catchError((error) {
       Get.snackbar("Error", "Failed to add review: $error");
     }).then((v) {
+      reviewText.value = "";
       isLoading.value = false;
     });
   }
