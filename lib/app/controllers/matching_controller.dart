@@ -14,6 +14,7 @@ import 'package:firebase_database/firebase_database.dart';
 class MatchingController extends GetxController {
   final profilePageController = Get.put(ProfilePageController());
   final isMatching = false.obs;
+  final isInChat = false.obs;
 
   final filterMinAge = 17.obs;
   final filterMaxAge = 45.obs;
@@ -21,7 +22,7 @@ class MatchingController extends GetxController {
 
   StreamSubscription<DatabaseEvent>? _matchSubscription;
   StreamSubscription<DatabaseEvent>? _roomSubscription;
-  // StreamSubscription<DatabaseEvent>? _exitSubscription;
+  StreamSubscription<DatabaseEvent>? _chatStatusSubscription;
 
   @override
   void onInit() async {
@@ -33,7 +34,6 @@ class MatchingController extends GetxController {
   int _calculateAge(DateTime dob) {
     final today = DateTime.now();
     int age = today.year - dob.year;
-    // Check if the birthday has occurred this year
     if (today.month < dob.month ||
         (today.month == dob.month && today.day < dob.day)) {
       age--;
@@ -58,6 +58,7 @@ class MatchingController extends GetxController {
           "isIdel": true,
           "isOnline": true,
           "mateId": null,
+          "inChat": false,
         })
         .then((v) {})
         .onError((e, stackTrace) {
@@ -77,25 +78,24 @@ class MatchingController extends GetxController {
         .ref("searching_users/${FirebaseAuth.instance.currentUser?.uid}");
     await ref.remove().then((v) {
       isMatching.value = false;
+      isInChat.value = false;
       _matchSubscription?.cancel();
       _roomSubscription?.cancel();
+      _chatStatusSubscription?.cancel();
       log("Removed matching data");
     }).onError((e, stackTrace) {
       log(e.toString(), error: e, name: "error-removing-matching-data");
       isMatching.value = true;
       _matchSubscription?.cancel();
       _roomSubscription?.cancel();
-      log("Error removing matching data");
-      log(e.toString(), error: e, name: "error-removing-matching-data");
-      Get.snackbar("", e.toString(),
+      _chatStatusSubscription?.cancel();
+      Get.snackbar("Error", e.toString(),
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,
           duration: const Duration(seconds: 2),
           isDismissible: true);
     });
-    _matchSubscription?.cancel();
-    _roomSubscription?.cancel();
   }
 
   void findingMatchPerson() async {
@@ -103,58 +103,61 @@ class MatchingController extends GetxController {
     final listRef = FirebaseDatabase.instance.ref("searching_users");
     log("Listening for matching users");
     _matchSubscription = listRef.onValue.listen((event) {
-      log("Snapshot: ${event.snapshot}", name: "null-check");
-      log("Snapshot value: ${event.snapshot.value}", name: "null-check");
-
       if (event.snapshot.value == null || !event.snapshot.exists) {
         return;
       }
       final data = Map<String, dynamic>.from(event.snapshot.value as Map);
 
-      // Loop through each user's data
       data.forEach((key, value) async {
         final userData = Map<String, dynamic>.from(value);
         final matchingProfile = MatchingProfile.fromDocument(userData);
 
         if (matchingProfile.isIdel &&
-            key != FirebaseAuth.instance.currentUser!.uid) {
-          log(
-            isValidForMe(matchingProfile).toString(),
-            name: "isValidForMe",
-          );
-          log(
-            isValidForOther(matchingProfile).toString(),
-            name: "isValidForOther",
-          );
+            key != FirebaseAuth.instance.currentUser!.uid &&
+            !isInChat.value) {
           if (isValidForMe(matchingProfile) &&
               isValidForOther(matchingProfile)) {
             log("Found valid match: $key");
-            final mateRef =
-                FirebaseDatabase.instance.ref("searching_users/$key");
-            mateRef.update({
-              "isIdel": false,
-              "mateId": profilePageController.userProfile.value?.uid ?? "",
-              "timestamp": ServerValue.timestamp,
-            });
-            final myRef = FirebaseDatabase.instance.ref(
-                "searching_users/${profilePageController.userProfile.value?.uid ?? ""}");
-            myRef.update({
-              "isIdel": false,
-              "mateId": key,
-              "timestamp": ServerValue.timestamp,
-            });
-            Get.to(
-              () => TempChatPage(
-                users: [
+
+            // Update both users' status atomically
+            final updates = {
+              "searching_users/$key/isIdel": false,
+              "searching_users/$key/mateId":
+                  profilePageController.userProfile.value?.uid ?? "",
+              "searching_users/$key/inChat": true,
+              "searching_users/${profilePageController.userProfile.value?.uid}/isIdel":
+                  false,
+              "searching_users/${profilePageController.userProfile.value?.uid}/mateId":
                   key,
-                  profilePageController.userProfile.value?.uid ?? ""
-                ],
-                timestamp: Timestamp.now(),
-                onExit: () {},
-              ),
-              transition: Transition.downToUp,
-            );
-            _matchSubscription?.cancel();
+              "searching_users/${profilePageController.userProfile.value?.uid}/inChat":
+                  true,
+            };
+
+            await FirebaseDatabase.instance.ref().update(updates);
+            isInChat.value = true;
+
+            // Listen for mate's chat status
+            _chatStatusSubscription = FirebaseDatabase.instance
+                .ref("searching_users/$key/inChat")
+                .onValue
+                .listen((event) {
+              if (event.snapshot.exists && event.snapshot.value == true) {
+                if (!Get.isDialogOpen! && isInChat.value) {
+                  Get.to(
+                    () => TempChatPage(
+                      users: [
+                        key,
+                        profilePageController.userProfile.value?.uid ?? ""
+                      ],
+                      timestamp: Timestamp.now(),
+                      onExit: () {},
+                    ),
+                    transition: Transition.downToUp,
+                  );
+                }
+              }
+            });
+
             _roomSubscription = FirebaseDatabase.instance
                 .ref("searching_users/$key")
                 .onChildRemoved
@@ -165,10 +168,6 @@ class MatchingController extends GetxController {
                 () => ReviewProfilePage(uid: key),
                 transition: Transition.downToUp,
               );
-              _matchSubscription?.cancel();
-              _roomSubscription?.cancel();
-              isMatching.value = false;
-              // print(event.snapshot.value);
             });
           }
         }
@@ -176,13 +175,13 @@ class MatchingController extends GetxController {
     });
   }
 
-  void startListeningRoom() {}
-
   void stopFindingMatch() async {
     await removeMatchingData().then((v) {
       _matchSubscription?.cancel();
       _roomSubscription?.cancel();
+      _chatStatusSubscription?.cancel();
       isMatching.value = false;
+      isInChat.value = false;
     }).onError((err, stackTrace) {
       log(err.toString(), error: err, name: "error-stopFindingMatching");
       isMatching.value = true;
@@ -190,41 +189,30 @@ class MatchingController extends GetxController {
   }
 
   bool isValidForMe(MatchingProfile data) {
-    log(data.toString(), name: "null-check-valid");
     if (filterMaxAge > data.age && filterMinAge < data.age) {
-      log("[*]other person meet your req in age");
       if (filterGender != "gender.both") {
         if (filterGender.toLowerCase() == data.gender.toLowerCase()) {
-          log("other person meet your req in gender");
           return true;
         }
       } else {
         return true;
       }
-    } else {
-      log("other person doesn't meet your req in age");
     }
     return false;
   }
 
   bool isValidForOther(MatchingProfile data) {
-    log(data.toString(), name: "null-check-valid");
-
     final currentAge =
         _calculateAge(profilePageController.userProfile.value!.dob.toDate());
     if (data.filterMaxAge > currentAge && data.filterMinAge < currentAge) {
-      log("other person meet your req in age");
       if (data.filterGender != "gender.both") {
         if (data.filterGender.toLowerCase() ==
             profilePageController.userProfile.value!.gender.toLowerCase()) {
-          log("other person meet your req in gender");
           return true;
         }
       } else {
         return true;
       }
-    } else {
-      log("other person doesn't meet your req in age");
     }
     return false;
   }
@@ -232,6 +220,8 @@ class MatchingController extends GetxController {
   @override
   void onClose() {
     _matchSubscription?.cancel();
+    _roomSubscription?.cancel();
+    _chatStatusSubscription?.cancel();
     super.onClose();
   }
 }

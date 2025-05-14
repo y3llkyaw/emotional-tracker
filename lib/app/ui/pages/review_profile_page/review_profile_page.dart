@@ -241,11 +241,8 @@ class _ReviewProfilePageState extends State<ReviewProfilePage> {
                     onPressed: () async {
                       // print("object");
                       if (_reviewTxtController.text.isNotEmpty) {
-                        await reviewProfilePageController
-                            .giveReview(widget.uid, _reviewTxtController.text)
-                            .then((v) {
-                          Get.back();
-                        });
+                        await reviewProfilePageController.giveReview(
+                            widget.uid, _reviewTxtController.text);
                       }
                     },
                   ),

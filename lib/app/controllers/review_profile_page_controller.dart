@@ -23,10 +23,10 @@ class ReviewProfilePageController extends GetxController {
       "review": reviewText.value,
       "createdAt": DateTime.now(),
     }).then((value) {
-      Get.snackbar("Success", "Review added successfully");
       reviewText.value = "";
       isLoading.value = false;
       Get.back();
+      Get.snackbar("Success", "Review added successfully");
     }).catchError((error) {
       Get.snackbar("Error", "Failed to add review: $error");
     });

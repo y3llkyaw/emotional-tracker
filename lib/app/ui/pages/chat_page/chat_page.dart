@@ -75,20 +75,6 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ),
         ),
-        // actions: [
-        //   Padding(
-        //     padding: EdgeInsets.only(right: Get.width * 0.02),
-        //     child: IconButton(
-        //       onPressed: () {
-        //         Get.to(
-        //           () => ChatInfoPage(),
-        //           transition: Transition.rightToLeft,
-        //         );
-        //       },
-        //       icon: const Icon(CupertinoIcons.info),
-        //     ),
-        //   ),
-        // ],
       ),
       body: Column(
         children: [
@@ -879,5 +865,4 @@ class _ChatPageState extends State<ChatPage> {
       ),
     );
   }
-
 }

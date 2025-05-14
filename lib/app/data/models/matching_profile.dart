@@ -21,13 +21,14 @@ class MatchingProfile {
 
   factory MatchingProfile.fromDocument(Map<String, dynamic> json) {
     return MatchingProfile(
-        age: json['age'],
-        gender: json['gender'],
-        isIdel: json['isIdel'],
-        filterMinAge: json['filterMinAge'],
-        filterMaxAge: json['filterMaxAge'],
-        filterGender: json['filterGender'],
-        isOnline: json['isOnline'],
-        mateId: json["mateId"]);
+      age: json['age'],
+      gender: json['gender'],
+      isIdel: json['isIdel'],
+      filterMinAge: json['filterMinAge'],
+      filterMaxAge: json['filterMaxAge'],
+      filterGender: json['filterGender'],
+      isOnline: json['isOnline'],
+      mateId: json["mateId"],
+    );
   }
 }

@@ -85,21 +85,32 @@ class MoodCard extends StatelessWidget {
               ),
             ],
           ),
+          // SizedBox(
+          //   height: Get.height * 0.03,
+          // ),
 
-          const Spacer(),
+          // const Spacer(),
 
           // Mood Entry
           Container(
             padding: EdgeInsets.symmetric(horizontal: Get.width * 0.03),
+            margin: EdgeInsets.symmetric(
+                horizontal: Get.width * 0.03, vertical: Get.height * 0.01),
             width: Get.width * 0.6,
             height: Get.height * 0.06,
-            child: Text(
-              journal.content,
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.fade,
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(8, 255, 255, 255),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Center(
+              child: Text(
+                journal.content,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.fade,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),

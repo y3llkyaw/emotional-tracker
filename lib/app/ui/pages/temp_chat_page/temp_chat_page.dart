@@ -57,20 +57,14 @@ class _TempChatPageState extends State<TempChatPage>
 
   final messageController = TextEditingController();
   late Timer _countdownTimer;
-
+  var otherId = "";
   void _startCountdown() {
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       final now = DateTime.now();
       final targetTime =
           widget.timestamp.toDate().add(const Duration(minutes: 3));
       final difference = targetTime.difference(now);
-      var otherId;
-      for (var uid in widget.users) {
-        if (uid != FirebaseAuth.instance.currentUser!.uid) {
-          otherId = uid;
-          chatController.getUserMessages(uid);
-        }
-      }
+
       if (difference.isNegative) {
         timer.cancel();
         tempChatController.timeRemaining.value = "Time is up!";
@@ -97,8 +91,12 @@ class _TempChatPageState extends State<TempChatPage>
       if (uid != FirebaseAuth.instance.currentUser!.uid) {
         chatController.getUserMessages(uid);
       }
+      if (uid != FirebaseAuth.instance.currentUser!.uid) {
+        setState(() {
+          otherId = uid;
+        });
+      }
     }
-    // tempChatController.listenRoom();
     _controller = AnimationController(vsync: this);
   }
 
@@ -118,7 +116,6 @@ class _TempChatPageState extends State<TempChatPage>
         otherUid = uid;
       }
     }
-
     return WillPopScope(
       onWillPop: _confirmExit,
       child: Scaffold(
@@ -307,6 +304,18 @@ class _TempChatPageState extends State<TempChatPage>
                     itemCount: chatController.messages.length,
                     itemBuilder: (context, index) {
                       final message = chatController.messages[index];
+                      var otherId = "";
+                      for (var uid in widget.users) {
+                        if (uid != FirebaseAuth.instance.currentUser!.uid) {
+                          otherId = uid;
+                          chatController.getUserMessages(uid);
+                        }
+                      }
+                      if (message.uid ==
+                              FirebaseAuth.instance.currentUser!.uid &&
+                          (message.read == false)) {
+                        chatController.readMessage(message, otherId);
+                      }
                       if (message.type == "text") {
                         return _buildMessageWidget(message, index, otherUid);
                       } else if (message.type == "sticker") {
