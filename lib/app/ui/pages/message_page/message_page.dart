@@ -166,8 +166,7 @@ class _MessagePageState extends State<MessagePage> {
                   children: [
                     Text(
                       timeago.format(
-                        onlineController.friendsOnlineStatus[friend.uid]
-                                ?.toDate() ??
+                        onlineController.friendsOnlineStatus[friend.uid] ??
                             DateTime.now(),
                       ),
                       style: TextStyle(

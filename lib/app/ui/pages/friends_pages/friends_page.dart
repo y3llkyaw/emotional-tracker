@@ -146,7 +146,8 @@ class _FriendsPageState extends State<FriendsPage> {
                         children: <Widget>[
                           addFrinedCard(),
                           ...filteredFriends.map<Widget>((friend) {
-                            onlineController.getFriendsOnlineStatus(friend.uid);
+                            onlineController
+                                .getFriendsOnlineStatus([friend.uid]);
                             return InkWell(
                               onTap: () async {
                                 FocusManager.instance.primaryFocus?.unfocus();
@@ -154,7 +155,7 @@ class _FriendsPageState extends State<FriendsPage> {
                                   () => OtherProfilePage(profile: friend),
                                   transition: Transition.downToUp,
                                 );
-                                friendsController.getFriends();
+                                // friendsController.getFriends();
                               },
                               child: UserCard(profile: friend),
                             );

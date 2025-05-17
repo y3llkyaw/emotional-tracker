@@ -63,8 +63,7 @@ class UserCard extends StatelessWidget {
           ),
           Text(
             timeago
-                .format(onlineController.friendsOnlineStatus[profile!.uid]
-                        ?.toDate() ??
+                .format(onlineController.friendsOnlineStatus[profile!.uid] ??
                     Timestamp.now().toDate())
                 .toString(),
             style: const TextStyle(
