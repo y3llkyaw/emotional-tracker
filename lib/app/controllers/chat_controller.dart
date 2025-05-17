@@ -46,11 +46,11 @@ class ChatController extends GetxController {
     message.value = '';
   }
 
-  Future<void> sendMessage(String uid) async {
+  Future<void> sendMessage(String uid, {isRead = false}) async {
     final m = Message(
       id: "${_cuid}_${uid}_${DateTime.now().microsecondsSinceEpoch}",
       uid: uid,
-      read: false,
+      read: isRead,
       message: message.value,
       timestamp: Timestamp.now(),
       type: "text",
@@ -100,7 +100,7 @@ class ChatController extends GetxController {
     clearMessage();
   }
 
-Future<void> readMessage(Message message, String uid) async {
+  Future<void> readMessage(Message message, String uid) async {
     await chatService.readMessage(message, uid).then((v) {});
   }
 }
