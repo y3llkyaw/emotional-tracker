@@ -306,13 +306,6 @@ class _TempChatPageState extends State<TempChatPage>
                     itemBuilder: (context, index) {
                       final message = chatController.messages[index];
 
-                      for (var uid in widget.users) {
-                        if (uid != FirebaseAuth.instance.currentUser!.uid) {
-                          otherId = uid;
-                          chatController.getUserMessages(uid);
-                        }
-                      }
-
                       if (message.type == "text") {
                         return _buildMessageWidget(message, index, otherUid);
                       } else if (message.type == "sticker") {
@@ -368,8 +361,9 @@ class _TempChatPageState extends State<TempChatPage>
                       color: Get.theme.colorScheme.onSurface,
                       onPressed: () async {
                         chatController.message.value = messageController.text;
-                        await chatController.sendMessage(otherUid,
-                            isRead: true);
+                        await chatController
+                            .sendMessage(otherUid, isRead: true)
+                            .then((v) {});
                         messageController.clear();
                       },
                     ),
