@@ -215,7 +215,7 @@ class _MoodStaticsticsPageState extends State<MoodStaticsticsPage> {
                         horizontal: 16, vertical: 12),
                     margin: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
-                      color: Get.theme.colorScheme.surface.withOpacity(0.2),
+                      // color: Get.theme.colorScheme.surface.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                           color:
@@ -233,7 +233,7 @@ class _MoodStaticsticsPageState extends State<MoodStaticsticsPage> {
                                 .style, // Base style
                             children: [
                               const TextSpan(
-                                text: 'Mood Swign Level:  ',
+                                text: 'Mood Swing Level:  ',
                               ),
                               TextSpan(
                                 text: moodStaticsticsPageController
@@ -245,7 +245,7 @@ class _MoodStaticsticsPageState extends State<MoodStaticsticsPage> {
                                   color: moodStaticsticsPageController
                                               .standardDeviation.value <
                                           1.8
-                                      ? Colors.amber
+                                      ? Colors.orange
                                       : moodStaticsticsPageController
                                                   .standardDeviation.value <
                                               0.8

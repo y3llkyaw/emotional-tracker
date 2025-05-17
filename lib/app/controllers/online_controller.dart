@@ -1,37 +1,65 @@
 import 'dart:developer';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:get/get.dart';
 
 class OnlineController extends GetxController {
   final _cuid = FirebaseAuth.instance.currentUser!.uid;
-  var lastSeem = Timestamp.now().obs;
+  var lastSeem = DateTime.now().obs;
   var friendsOnlineStatus = {}.obs;
 
-  //update user's online status
+  @override
+  onInit() {
+    super.onInit();
+    setOnlineStatus();
+  }
+
+  // Update user's online status
   Future<void> updateOnlineStatus() async {
-    await FirebaseFirestore.instance.collection("isOnline").doc(_cuid).set({
+    final onlineRef = FirebaseDatabase.instance.ref("isOnline/$_cuid");
+    await onlineRef.set({
+      "isOnline": true,
       "uid": _cuid,
-      "lastSeem": Timestamp.now(),
+      "lastSeem": DateTime.now().toIso8601String(),
     });
   }
 
-  // get user's online status
-  Future<void> getFriendOnlineStatus(String uid) async {
-    final doc =
-        await FirebaseFirestore.instance.collection("isOnline").doc(uid).get();
-    lastSeem.value = doc.data()!["lastSeem"] as Timestamp;
+  void setOnlineStatus() {
+    final onlineRef = FirebaseDatabase.instance.ref("isOnline/$_cuid");
+    onlineRef.set({
+      "isOnline": true,
+      "uid": _cuid,
+      "lastSeem": DateTime.now().toIso8601String(),
+    });
+    onlineRef.onDisconnect().set({
+      "isOnline": false,
+      "uid": _cuid,
+      "lastSeem": DateTime.now().toIso8601String(),
+    });
   }
 
-  // get all friends online status
-  Future<void> getFriendsOnlineStatus(String uid) async {
+  // Get user's online status
+  Future<void> getFriendOnlineStatus(String uid) async {
+    final ref = FirebaseDatabase.instance.ref("isOnline/$uid");
+    final snapshot = await ref.get();
+    if (snapshot.exists && snapshot.value != null) {
+      final data = Map<String, dynamic>.from(snapshot.value as Map);
+      lastSeem.value = DateTime.parse(data["lastSeem"]);
+    }
+  }
+
+  // Get all friends online status (for a list of uids)
+  Future<void> getFriendsOnlineStatus(List<String> uids) async {
     try {
-      final doc = await FirebaseFirestore.instance
-          .collection("isOnline")
-          .doc(uid)
-          .get();
-      friendsOnlineStatus[uid] = doc.data()!["lastSeem"] as Timestamp;
+      for (final uid in uids) {
+        final ref = FirebaseDatabase.instance.ref("isOnline/$uid");
+        final snapshot = await ref.get();
+        if (snapshot.exists && snapshot.value != null) {
+          final data = Map<String, dynamic>.from(snapshot.value as Map);
+          friendsOnlineStatus[uid] = DateTime.parse(data["lastSeem"]);
+        }
+      }
     } catch (e) {
       log(e.toString());
     }

@@ -13,6 +13,7 @@ class MoodMatePage extends StatelessWidget {
       Get.put(ProfilePageController());
 
   final MatchingController matchingController = Get.put(MatchingController());
+
   @override
   Widget build(BuildContext context) {
     // profilePageController.getCurrentUserProfile();
@@ -67,7 +68,6 @@ class MoodMatePage extends StatelessWidget {
                   margin: EdgeInsets.all(Get.width * 0.005),
                   width: Get.width * 0.8,
                   height: Get.height * 0.1,
-
                   // color: Colors.amber,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -103,7 +103,7 @@ class MoodMatePage extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(
-                                  width: Get.width * 0.03,
+                                  width: Get.width * 0.02,
                                 ),
                                 Text(
                                   "10",
@@ -111,7 +111,7 @@ class MoodMatePage extends StatelessWidget {
                                   style: GoogleFonts.aBeeZee(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
-                                    fontSize: 14,
+                                    fontSize: 16,
                                   ),
                                 ),
                               ],

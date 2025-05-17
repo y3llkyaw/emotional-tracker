@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'package:alarm/alarm.dart';
+import 'package:animated_emoji/animated_emoji.dart';
+import 'package:animated_emoji/emojis.g.dart';
 import 'package:avatar_plus/avatar_plus.dart';
-import 'package:chat_bubbles/bubbles/bubble_special_three.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
 import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/controllers/uid_controller.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/hobbies_stone.dart';
 import 'package:emotion_tracker/app/ui/pages/about_page/about_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/dark_mode_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/profile_qr_page.dart';
@@ -32,7 +35,6 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final box = GetStorage();
   bool isOn = false;
-  bool _showBubble = false;
 
   final ProfilePageController profilePageController = Get.find();
   final JournalController journalController = Get.find();
@@ -46,20 +48,6 @@ class _ProfilePageState extends State<ProfilePage> {
     uidController.getCurrentUserUid(FirebaseAuth.instance.currentUser!.uid);
     isOn = box.read('isOn') ?? false;
     selectedTime = readTime();
-  }
-
-  void _onAvatarTap() {
-    setState(() {
-      _showBubble = true;
-    });
-
-    Timer(const Duration(seconds: 3), () {
-      if (mounted) {
-        setState(() {
-          _showBubble = false;
-        });
-      }
-    });
   }
 
   Time readTime() {
@@ -183,9 +171,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildProfileSection() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Stack(
-          alignment: Alignment.center,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Center(
               child: Hero(
@@ -195,75 +184,17 @@ class _ProfilePageState extends State<ProfilePage> {
                   width: Get.width * 0.3,
                   child: Obx(
                     () => profilePageController.userProfile.value != null
-                        ? InkWell(
-                            borderRadius: BorderRadius.circular(80),
-                            onTap: _onAvatarTap,
-                            child: AvatarPlus(
-                              "${FirebaseAuth.instance.currentUser!.uid}${profilePageController.userProfile.value!.name}",
-                            ),
+                        ? AvatarPlus(
+                            "${FirebaseAuth.instance.currentUser!.uid}${profilePageController.userProfile.value!.name}",
                           )
-                        : InkWell(
-                            borderRadius: BorderRadius.circular(80),
-                            onTap: _onAvatarTap,
-                            child: SvgPicture.asset('assets/image/avatar.svg'),
-                          ),
+                        : SvgPicture.asset('assets/image/avatar.svg'),
                   ),
                 ),
               ),
             ),
-            // Transform(
-            //   transform: Matrix4.translationValues(
-            //     Get.width * 0.15,
-            //     -Get.height * 0.08,
-            //     0,
-            //   ),
-            //   child: InkWell(
-            //     customBorder: RoundedRectangleBorder(
-            //         borderRadius: BorderRadius.circular(20)),
-            //     onTap: () {},
-            //     child: Obx(
-            //       () => profilePageController.userProfile.value?.emoji != null
-            //           ? const CircleAvatar(
-            //               backgroundColor: Colors.black38,
-            //               child: AnimatedEmoji(
-            //                 AnimatedEmojis.dizzy,
-            //                 errorWidget: Text('💫'),
-            //               ),
-            //             )
-            //           : const CircleAvatar(
-            //               backgroundColor: Colors.black38,
-            //               child: Icon(
-            //                 CupertinoIcons.add,
-            //                 color: Colors.white,
-            //               ),
-            //             ),
-            //     ),
-            //   ),
-            // ),
-            if (_showBubble)
-              Transform(
-                transform: Matrix4.translationValues(
-                  -Get.width * 0.28,
-                  -Get.height * 0.04,
-                  0,
-                ),
-                child: SizedBox(
-                  width: Get.width * 0.4,
-                  child: const BubbleSpecialThree(
-                    color: Colors.black26,
-                    text:
-                        "you have to change your name to change your profile picture",
-                    textStyle: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                    ),
-                    tail: true,
-                  ),
-                ),
-              ),
           ],
         ),
-        SizedBox(height: Get.height * 0.05),
+        SizedBox(height: Get.height * 0.01),
         Center(
           child: Obx(
             () => Column(
@@ -296,7 +227,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Container(
                       margin: const EdgeInsets.all(10),
                       width: 2,
-                      color: Colors.black,
+                      color: Colors.grey,
                       height: 20,
                     ),
                     profilePageController.userProfile.value != null
@@ -346,7 +277,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               IconButton(
-                iconSize: Get.width * 0.04,
+                iconSize: Get.width * 0.03,
                 onPressed: () async {
                   await Clipboard.setData(
                     ClipboardData(
@@ -356,7 +287,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   );
                 },
-                icon: const Icon(Icons.copy),
+                icon: const Icon(
+                  Icons.copy,
+                ),
               ),
             ],
           ),

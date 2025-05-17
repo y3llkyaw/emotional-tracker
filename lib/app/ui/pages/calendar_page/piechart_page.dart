@@ -153,7 +153,7 @@ class PiechartPage extends StatelessWidget {
                   SizedBox(
                     height: Get.height * 0.02,
                   ),
-                  ElevatedButton(
+                  ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Get.theme.colorScheme.error,
                     ),
@@ -163,7 +163,12 @@ class PiechartPage extends StatelessWidget {
                         transition: Transition.rightToLeft,
                       );
                     },
-                    child: const Text(
+                    icon: Icon(
+                      Icons.insights,
+                      color: Colors.white,
+                      size: Get.width * 0.05,
+                    ),
+                    label: const Text(
                       "Mood Insight",
                       style: TextStyle(
                         color: Colors.white,

@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Profile {
   final String uid;
   final String name;
+  final String? bio;
   final String nameLowerCase;
   final String gender;
   final Timestamp dob;
@@ -16,11 +17,11 @@ class Profile {
   Profile({
     required this.uid,
     required this.name,
+    this.bio,
     required this.nameLowerCase,
     required this.gender,
     required this.dob,
     required this.recentEmojis,
-    // this.emoji,
     this.avatar,
   });
 
@@ -28,6 +29,7 @@ class Profile {
     return {
       "uid": uid,
       "name": name,
+      "bio": bio,
       "name_lowercase": nameLowerCase,
       "gender": gender.toString(),
       "dob": dob, // Store Timestamp directly
@@ -41,10 +43,10 @@ class Profile {
     return Profile(
       uid: json['uid'],
       name: json['name'],
+      bio: json['bio'],
       nameLowerCase: json['name_lowercase'],
       gender: json['gender'],
       dob: _parseTimestamp(json['dob']),
-      // emoji: _getEmojiFromJson(json),
       recentEmojis: _getEmojiList(json),
       avatar: json['avatar'],
     );
@@ -61,16 +63,16 @@ class Profile {
     }
   }
 
-  static AnimatedEmojiData? _getEmojiFromJson(Map<String, dynamic> json) {
-    try {
-      return json['emoji'] != null
-          ? AnimatedEmojis.fromId(json['emoji'].toString())
-          : null;
-    } catch (e) {
-      log('Emoji parse error: $e');
-      return null;
-    }
-  }
+  // static AnimatedEmojiData? _getEmojiFromJson(Map<String, dynamic> json) {
+  //   try {
+  //     return json['emoji'] != null
+  //         ? AnimatedEmojis.fromId(json['emoji'].toString())
+  //         : null;
+  //   } catch (e) {
+  //     log('Emoji parse error: $e');
+  //     return null;
+  //   }
+  // }
 
   static List<AnimatedEmojiData> _getEmojiList(Map<String, dynamic> json) {
     try {
