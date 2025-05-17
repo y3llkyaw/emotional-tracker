@@ -120,6 +120,7 @@ class _TempChatPageState extends State<TempChatPage>
       onWillPop: _confirmExit,
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: const Text("Chat Page"),
           actions: [
             IconButton(

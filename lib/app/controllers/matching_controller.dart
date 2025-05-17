@@ -21,6 +21,7 @@ class MatchingController extends GetxController {
 
   StreamSubscription<DatabaseEvent>? _matchSubscription;
   StreamSubscription<DatabaseEvent>? _roomSubscription;
+  StreamSubscription<DatabaseEvent>? _enterSubscription;
   // StreamSubscription<DatabaseEvent>? _exitSubscription;
 
   @override
@@ -110,49 +111,7 @@ class MatchingController extends GetxController {
         return;
       }
       final data = Map<String, dynamic>.from(event.snapshot.value as Map);
-      final room = FirebaseDatabase.instance.ref(
-          "searching_users/${profilePageController.userProfile.value?.uid ?? "log"}");
-      room.onValue.listen((event) {
-        print(event.snapshot.value);
-        if (event.snapshot.value == null || !event.snapshot.exists) {
-          return;
-        }
-        final data = Map<String, dynamic>.from(event.snapshot.value as Map);
-        data.forEach((key, value) {
-          final userData = Map<String, dynamic>.from(value);
-          final matchingProfile = MatchingProfile.fromDocument(userData);
-          if (matchingProfile.mateId != null) {
-            Get.to(
-              () => TempChatPage(
-                users: [
-                  matchingProfile.mateId ?? "hello",
-                  profilePageController.userProfile.value?.uid ?? ""
-                ],
-                timestamp: Timestamp.now(),
-                onExit: () {},
-              ),
-              transition: Transition.downToUp,
-            );
-            _matchSubscription?.cancel();
-            _roomSubscription = FirebaseDatabase.instance
-                .ref("searching_users/$key")
-                .onChildRemoved
-                .listen((event) async {
-              await removeMatchingData();
-              Get.back();
-              Get.to(
-                () => ReviewProfilePage(uid: key),
-                transition: Transition.downToUp,
-              );
-              _matchSubscription?.cancel();
-              _roomSubscription?.cancel();
-              isMatching.value = false;
-              // print(event.snapshot.value);
-            });
-          }
-        });
-      }, onError: (error) {});
-      // Loop through each user's data
+      listenMateID();
       data.forEach((key, value) async {
         final userData = Map<String, dynamic>.from(value);
         final matchingProfile = MatchingProfile.fromDocument(userData);
@@ -217,12 +176,37 @@ class MatchingController extends GetxController {
     });
   }
 
-  void startListeningRoom() {}
+  void listenMateID() {
+    final listMatchId = FirebaseDatabase.instance.ref(
+        "searching_users/${profilePageController.userProfile.value?.uid ?? FirebaseAuth.instance.currentUser?.uid}/mateId");
+    _enterSubscription = listMatchId.onValue.listen((event) {
+      log("Snapshot: ${event.snapshot.value}",
+          name: "null-check-listen-MateId");
+      if (event.snapshot.value == null || !event.snapshot.exists) {
+        return;
+      }
+      final mateId = event.snapshot.value as String;
+      if (mateId.isNotEmpty) {
+        Get.to(
+          () => TempChatPage(
+            users: [mateId, profilePageController.userProfile.value?.uid ?? ""],
+            timestamp: Timestamp.now(),
+            onExit: () {},
+          ),
+          transition: Transition.downToUp,
+        );
+        _enterSubscription?.cancel();
+        isMatching.value = false;
+      }
+    });
+    // log("Listening for matching users");
+  }
 
   void stopFindingMatch() async {
     await removeMatchingData().then((v) {
       _matchSubscription?.cancel();
       _roomSubscription?.cancel();
+      _enterSubscription?.cancel();
       isMatching.value = false;
     }).onError((err, stackTrace) {
       log(err.toString(), error: err, name: "error-stopFindingMatching");
