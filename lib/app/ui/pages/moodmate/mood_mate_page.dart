@@ -2,6 +2,7 @@ import 'package:emotion_tracker/app/controllers/matching_controller.dart';
 import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
+import 'package:emotion_tracker/app/ui/pages/posts_page.dart/post_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -143,6 +144,12 @@ class MoodMatePage extends StatelessWidget {
                 ),
               ),
             ),
+          ),
+          SizedBox(
+            height: Get.height * 0.02,
+          ),
+          const Expanded(
+            child: PostPage(),
           ),
         ],
       ),
