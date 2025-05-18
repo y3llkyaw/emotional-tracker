@@ -37,22 +37,6 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
     return Scaffold(
       appBar: AppBar(
         leading: null,
-        actions: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                onPressed: () {
-                  Get.back();
-                },
-                icon: const Icon(CupertinoIcons.xmark),
-              ),
-              SizedBox(
-                width: Get.width * 0.03,
-              ),
-            ],
-          ),
-        ],
       ),
       body: SafeArea(
         child: Column(

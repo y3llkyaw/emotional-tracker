@@ -203,13 +203,13 @@ class _ChatPageState extends State<ChatPage> {
                                   if (controller.text.isNotEmpty) {
                                     // Send message logic here
                                     chatController.setMessage(controller.text);
+                                    controller.clear();
+
                                     chatController
                                         .sendMessage(widget.profile.uid)
                                         .then((v) {
-                                      controller.clear();
                                       chatController.clearMessage();
                                       // final player = AudioPlayer();
-
                                       // player.play(AssetSource("audio/pop.mp3"));
                                     });
                                     // Clear both the text controller and GetX state

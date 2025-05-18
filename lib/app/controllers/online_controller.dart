@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 class OnlineController extends GetxController {
   final _cuid = FirebaseAuth.instance.currentUser!.uid;
   var lastSeem = DateTime.now().obs;
+  var isOnline = false.obs;
   var friendsOnlineStatus = {}.obs;
 
   @override
@@ -45,8 +46,25 @@ class OnlineController extends GetxController {
     final snapshot = await ref.get();
     if (snapshot.exists && snapshot.value != null) {
       final data = Map<String, dynamic>.from(snapshot.value as Map);
+      isOnline.value = data["isOnline"];
       lastSeem.value = DateTime.parse(data["lastSeem"]);
     }
+  }
+
+  Future<int> getOnlineUserCount() async {
+    final ref = FirebaseDatabase.instance.ref("isOnline");
+    final snapshot = await ref.get();
+    if (snapshot.exists && snapshot.value != null) {
+      final data = Map<String, dynamic>.from(snapshot.value as Map);
+      // Count users where "isOnline" is true
+      int onlineCount = data.values
+          .where((user) => user is Map && user["isOnline"] == true)
+          .length;
+      // Optionally, you can store or use onlineCount as needed
+      log('Online user count: $onlineCount');
+      return onlineCount;
+    }
+    return 0; // Return 0 if no users are online
   }
 
   // Get all friends online status (for a list of uids)

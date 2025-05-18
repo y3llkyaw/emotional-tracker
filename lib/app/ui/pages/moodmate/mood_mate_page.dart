@@ -1,4 +1,5 @@
 import 'package:emotion_tracker/app/controllers/matching_controller.dart';
+import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,6 +14,7 @@ class MoodMatePage extends StatelessWidget {
       Get.put(ProfilePageController());
 
   final MatchingController matchingController = Get.put(MatchingController());
+  final onlineController = Get.put(OnlineController());
 
   @override
   Widget build(BuildContext context) {
@@ -105,15 +107,20 @@ class MoodMatePage extends StatelessWidget {
                                 SizedBox(
                                   width: Get.width * 0.02,
                                 ),
-                                Text(
-                                  "10",
-                                  textAlign: TextAlign.left,
-                                  style: GoogleFonts.aBeeZee(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  ),
-                                ),
+                                FutureBuilder(
+                                    future:
+                                        onlineController.getOnlineUserCount(),
+                                    builder: (context, snapshot) {
+                                      return Text(
+                                        snapshot.data.toString(),
+                                        textAlign: TextAlign.left,
+                                        style: GoogleFonts.aBeeZee(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                        ),
+                                      );
+                                    }),
                               ],
                             ),
                           ],

@@ -84,7 +84,7 @@ class AboutPage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             _teamMember(
-              name: 'Shun Lei Aung',
+              name: 'thway.i.am',
               role: 'Graphic Designer',
               description: 'Designed the official app logo for MoodMate.',
             ),

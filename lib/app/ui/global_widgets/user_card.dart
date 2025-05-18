@@ -46,15 +46,6 @@ class UserCard extends StatelessWidget {
                   "${profile!.uid.toString()}${profile!.name}",
                 ),
               ),
-              // Transform(
-              //   transform: Matrix4.translationValues(40, -60, 0),
-              //   child: CircleAvatar(
-              //     backgroundColor: Colors.grey.shade300,
-              //     child: profile!.emoji != null
-              //         ? AnimatedEmoji(profile!.emoji!)
-              //         : const Text(""),
-              //   ),
-              // )
             ],
           ),
           Text(
@@ -62,10 +53,14 @@ class UserCard extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           Text(
-            timeago
-                .format(onlineController.friendsOnlineStatus[profile!.uid] ??
-                    Timestamp.now().toDate())
-                .toString(),
+            onlineController.isOnline.value
+                ? "online"
+                : timeago
+                    .format(
+                      onlineController.friendsOnlineStatus[profile!.uid] ??
+                          Timestamp.now().toDate(),
+                    )
+                    .toString(),
             style: const TextStyle(
               fontSize: 12,
             ),
