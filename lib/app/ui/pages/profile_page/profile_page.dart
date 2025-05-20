@@ -1,15 +1,11 @@
 import 'dart:async';
 import 'package:alarm/alarm.dart';
-import 'package:animated_emoji/animated_emoji.dart';
-import 'package:animated_emoji/emojis.g.dart';
 import 'package:avatar_plus/avatar_plus.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
 import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/controllers/uid_controller.dart';
-import 'package:emotion_tracker/app/ui/global_widgets/hobbies_stone.dart';
 import 'package:emotion_tracker/app/ui/pages/about_page/about_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/dark_mode_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/profile_qr_page.dart';

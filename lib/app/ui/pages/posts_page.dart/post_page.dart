@@ -1,16 +1,24 @@
 import 'package:avatar_plus/avatar_plus.dart';
+import 'package:emotion_tracker/app/controllers/post_controller.dart';
+import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
+import 'package:emotion_tracker/app/data/models/post.dart';
+import 'package:emotion_tracker/app/data/models/profile.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_page/other_profile_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class PostPage extends StatelessWidget {
-  const PostPage({Key? key}) : super(key: key);
+  PostPage({Key? key}) : super(key: key);
+
+  final PostController postPageController = Get.put(PostController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 25),
+        margin: EdgeInsets.symmetric(horizontal: Get.width * 0.12),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,7 +36,7 @@ class PostPage extends StatelessWidget {
                     Text(
                       "Public",
                       style: TextStyle(
-                        fontSize: 16,
+                        overflow: TextOverflow.ellipsis,
                         color: Colors.blue,
                         fontWeight: FontWeight.bold,
                       ),
@@ -43,66 +51,215 @@ class PostPage extends StatelessWidget {
                     Text("Friends", style: TextStyle(fontSize: 16)),
                   ],
                 ),
+                // SizedBox(width: 20),
+                Spacer(),
               ],
             ),
             SizedBox(height: Get.height * 0.02),
             Expanded(
-              child: ListView.builder(
-                itemCount: 10,
-                itemBuilder: (_, index) {
-                  return Container(
-                    margin: EdgeInsets.only(bottom: Get.height * 0.02),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: Get.width * 0.02,
-                      vertical: Get.height * 0.02,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.indigo.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: ListTile(
-                      isThreeLine: true,
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.blue,
-                        child: AvatarPlus(
-                          "${index}Post",
-                        ),
-                      ),
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Post Title $index",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue,
-                            ),
-                          ),
-                          const Icon(Icons.more_horiz),
-                        ],
-                      ),
-                      subtitle: Column(
-                        children: [
-                          Text(
-                              "Post Content $index Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliquafakdsfj ak. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."),
-                          SizedBox(height: Get.height * 0.02),
-                          const Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(CupertinoIcons.heart),
-                              Icon(CupertinoIcons.chat_bubble_2),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  postPageController.getMyPosts();
                 },
+                child: Obx(
+                  () => ListView.builder(
+                    itemCount: postPageController.posts.length,
+                    itemBuilder: (_, index) {
+                      return PostWidget(
+                        post: postPageController.posts[index],
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class PostWidget extends StatelessWidget {
+  PostWidget({Key? key, required this.post}) : super(key: key);
+
+  final Post post;
+  final ProfilePageController profilePageController =
+      Get.put(ProfilePageController());
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: Get.height * 0.02),
+      padding: EdgeInsets.symmetric(
+        vertical: Get.height * 0.01,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.indigo.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: FutureBuilder(
+          future: profilePageController.getProfileByUid(post.uid),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text("Error loading post"),
+              );
+            }
+            if (!snapshot.hasData) {
+              return const Center(
+                child: Text("No data found"),
+              );
+            }
+            if (snapshot.data == null) {
+              return const Center(
+                child: Text("No data found"),
+              );
+            }
+            final snapshotData = snapshot.data as Profile;
+            return ListTile(
+              isThreeLine: true,
+              leading: InkWell(
+                onTap: () {
+                  Get.to(
+                    () => OtherProfilePage(
+                      profile: snapshotData,
+                    ),
+                    transition: Transition.rightToLeft,
+                  );
+                },
+                child: Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.blue,
+                      child: AvatarPlus(
+                        "${post.uid}${snapshotData.name}",
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Get.to(
+                            () => OtherProfilePage(
+                              profile: snapshotData,
+                            ),
+                            transition: Transition.rightToLeft,
+                          );
+                        },
+                        child: Text(
+                          snapshotData.name,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: snapshotData.gender.toLowerCase() ==
+                                    "gender.male"
+                                ? Colors.blue
+                                : Colors.pink,
+                          ),
+                        ),
+                      ),
+                      const Icon(Icons.more_horiz),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: Get.width * 0.1,
+                        decoration: BoxDecoration(
+                          color:
+                              snapshotData.gender.toLowerCase() == "gender.male"
+                                  ? Colors.blue.withOpacity(0.2)
+                                  : Colors.pink.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              snapshotData.gender.toLowerCase() == "gender.male"
+                                  ? Icons.male
+                                  : Icons.female,
+                              size: 15,
+                              color: snapshotData.gender.toLowerCase() ==
+                                      "gender.male"
+                                  ? Colors.blue
+                                  : Colors.pink,
+                            ),
+                            const SizedBox(width: 5),
+                            Text(
+                              snapshotData.age.toString(),
+                              style: TextStyle(
+                                fontSize: Get.width * 0.025,
+                                color: snapshotData.gender.toLowerCase() ==
+                                        "gender.male"
+                                    ? Colors.blue
+                                    : Colors.pink,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        timeago.format(
+                          post.createdAt,
+                          locale: 'en_short',
+                          allowFromNow: true,
+                          clock: DateTime.now(),
+                        ),
+                        style: TextStyle(
+                          fontSize: Get.width * 0.025,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: Get.height * 0.01),
+                ],
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    child: Text(
+                      post.body.trim(),
+                      textAlign: TextAlign.start,
+                      maxLines: 9,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  SizedBox(height: Get.height * 0.02),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(CupertinoIcons.heart),
+                      ),
+                      SizedBox(width: Get.width * 0.05),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(CupertinoIcons.chat_bubble_2),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          }),
     );
   }
 }

@@ -88,4 +88,16 @@ class Profile {
       return [];
     }
   }
+
+  // Age getter
+  int get age {
+    final now = DateTime.now();
+    final birthDate = dob.toDate();
+    int years = now.year - birthDate.year;
+    if (now.month < birthDate.month ||
+        (now.month == birthDate.month && now.day < birthDate.day)) {
+      years--;
+    }
+    return years;
+  }
 }
