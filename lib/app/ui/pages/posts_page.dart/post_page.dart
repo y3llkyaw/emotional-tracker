@@ -13,6 +13,7 @@ class PostPage extends StatelessWidget {
   PostPage({Key? key}) : super(key: key);
 
   final PostController postPageController = Get.put(PostController());
+  final PageController _pageController = PageController();
 
   @override
   Widget build(BuildContext context) {
@@ -20,57 +21,115 @@ class PostPage extends StatelessWidget {
       body: Container(
         margin: EdgeInsets.symmetric(horizontal: Get.width * 0.12),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Row(
+            Obx(
+              () => AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                child: Row(
                   children: [
-                    Icon(
-                      Icons.public,
-                      color: Colors.blue,
-                    ),
-                    SizedBox(width: 8),
-                    Text(
-                      "Public",
-                      style: TextStyle(
-                        overflow: TextOverflow.ellipsis,
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
+                    InkWell(
+                      onTap: () {
+                        _pageController.animateToPage(
+                          0,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.public,
+                            color: postPageController.index.value == 0
+                                ? Colors.blue
+                                : Get.theme.colorScheme.onSurface,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            "Public",
+                            style: TextStyle(
+                              color: postPageController.index.value == 0
+                                  ? Colors.blue
+                                  : Get.theme.colorScheme.onSurface,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+                    const SizedBox(width: 20),
+                    InkWell(
+                      onTap: () {
+                        _pageController.animateToPage(
+                          1,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.people,
+                            color: postPageController.index.value == 1
+                                ? Colors.blue
+                                : Get.theme.colorScheme.onSurface,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            "Friends",
+                            style: TextStyle(
+                              color: postPageController.index.value == 1
+                                  ? Colors.blue
+                                  : Get.theme.colorScheme.onSurface,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Spacer(),
                   ],
                 ),
-                SizedBox(width: 20),
-                Row(
-                  children: [
-                    Icon(Icons.people),
-                    SizedBox(width: 8),
-                    Text("Friends", style: TextStyle(fontSize: 16)),
-                  ],
-                ),
-                // SizedBox(width: 20),
-                Spacer(),
-              ],
+              ),
             ),
             SizedBox(height: Get.height * 0.02),
             Expanded(
-              child: RefreshIndicator(
-                onRefresh: () async {
-                  postPageController.getMyPosts();
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (int page) {
+                  postPageController.index.value = page;
                 },
-                child: Obx(
-                  () => ListView.builder(
-                    itemCount: postPageController.posts.length,
-                    itemBuilder: (_, index) {
-                      return PostWidget(
-                        post: postPageController.posts[index],
-                      );
-                    },
-                  ),
-                ),
+                children: [
+                  Obx(() {
+                    return postPageController.isLoading.value
+                        ? const Center(child: CircularProgressIndicator())
+                        : RefreshIndicator(
+                            onRefresh: () => postPageController.getPublicPost(),
+                            child: ListView.builder(
+                              itemCount: postPageController.publicPosts.length,
+                              itemBuilder: (context, index) {
+                                final post =
+                                    postPageController.publicPosts[index];
+                                return PostWidget(post: post);
+                              },
+                            ),
+                          );
+                  }),
+                  Obx(() {
+                    return postPageController.isLoading.value
+                        ? const Center(child: CircularProgressIndicator())
+                        : RefreshIndicator(
+                            onRefresh: () => postPageController.getMyPosts(),
+                            child: ListView.builder(
+                              itemCount: postPageController.myPosts.length,
+                              itemBuilder: (context, index) {
+                                final post = postPageController.myPosts[index];
+                                return PostWidget(post: post);
+                              },
+                            ),
+                          );
+                  }),
+                ],
               ),
             ),
           ],

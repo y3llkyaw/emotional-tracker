@@ -4,8 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
 class PostController extends GetxController {
+  final index = 0.obs;
   final post = {}.obs;
-  final posts = [].obs;
+  final publicPosts = [].obs;
+  final friendPosts = [].obs;
+  final myPosts = [].obs;
+
   final isLoading = false.obs;
   final isDeleting = false.obs;
   final body = ''.obs;
@@ -14,17 +18,33 @@ class PostController extends GetxController {
   void onInit() {
     super.onInit();
     getMyPosts();
+    getPublicPost();
   }
 
   final myPostsRef = FirebaseFirestore.instance
       .collection("posts")
       .where("uid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
       .orderBy("createdAt", descending: true);
+  final pubPostsRef = FirebaseFirestore.instance
+      .collection("posts")
+      .orderBy("createdAt", descending: true);
 
-  void getMyPosts() {
+  Future<void> getMyPosts() async {
     isLoading.value = true;
-    myPostsRef.get().then((value) {
-      posts.value = value.docs.map((e) => Post.fromJson(e.data())).toList();
+    await myPostsRef.get().then((value) {
+      myPosts.value = value.docs.map((e) => Post.fromJson(e.data())).toList();
+      isLoading.value = false;
+    }).onError((error, stackTrace) {
+      Get.snackbar("Error", error.toString());
+      isLoading.value = false;
+    });
+  }
+
+  Future<void> getPublicPost() async {
+    isLoading.value = true;
+    await pubPostsRef.get().then((value) {
+      publicPosts.value =
+          value.docs.map((e) => Post.fromJson(e.data())).toList();
       isLoading.value = false;
     }).onError((error, stackTrace) {
       Get.snackbar("Error", error.toString());
