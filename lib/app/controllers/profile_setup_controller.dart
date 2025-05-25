@@ -18,7 +18,7 @@ class ProfileSetupController extends GetxController {
   var dob = DateTime(DateTime.now().year - 18).obs;
 
   bool is16OrOlder(DateTime birthDate) {
-    print(birthDate);
+    log(birthDate.toString());
     final today = DateTime.now();
     final sixteenYearsAgo = DateTime(today.year - 16, today.month, today.day);
     return birthDate.isBefore(sixteenYearsAgo) ||

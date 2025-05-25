@@ -20,14 +20,12 @@ class _UsernameUpdatePageState extends State<UsernameUpdatePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     usernameController.text = uidController.username.toString();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     usernameController.dispose();
     _debounce?.cancel();

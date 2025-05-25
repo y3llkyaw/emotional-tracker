@@ -22,6 +22,8 @@ class Post {
       id: json['id'] as String,
       uid: json['uid'] as String,
       body: json['body'] as String,
+      type: json['type'] as String? ?? "text",
+      imageUrl: json['imageUrl'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );

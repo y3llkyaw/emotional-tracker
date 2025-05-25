@@ -31,7 +31,7 @@ class FriendPiechart extends StatelessWidget {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           "Mood Count",
                         ),
                         SizedBox(

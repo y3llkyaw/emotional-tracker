@@ -38,7 +38,12 @@ class MoodMatePage extends StatelessWidget {
                 ),
               ),
               SizedBox(width: Get.width * 0.03),
-              const Icon(CupertinoIcons.heart_fill)
+              const Icon(CupertinoIcons.heart_fill),
+              const Spacer(),
+              const Icon(
+                CupertinoIcons.bell_solid,
+                color: Colors.blue,
+              ),
             ],
           ),
         ),

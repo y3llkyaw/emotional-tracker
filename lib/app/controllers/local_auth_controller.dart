@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:local_auth/local_auth.dart';
@@ -38,7 +40,7 @@ class LocalAuthController extends GetxController {
       );
       return didAuthenticate;
     } catch (e) {
-      print('Error using biometric authentication: $e');
+      log('Error using biometric authentication: $e');
       return false;
     }
   }

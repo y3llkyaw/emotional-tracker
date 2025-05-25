@@ -1,7 +1,6 @@
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/ui/pages/friends_pages/add_friends_qr.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';

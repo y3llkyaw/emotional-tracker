@@ -6,12 +6,6 @@ class ReviewProfilePageController extends GetxController {
   final reviewText = "".obs;
   final rating = 3.0.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    // Initialize any necessary data or state here
-  }
-
   Future<void> giveReview(String uid, String review) async {
     isLoading.value = true;
     await FirebaseFirestore.instance

@@ -218,7 +218,7 @@ class MatchingController extends GetxController {
     log(data.toString(), name: "null-check-valid");
     if (filterMaxAge > data.age && filterMinAge < data.age) {
       log("[*]other person meet your req in age");
-      if (filterGender != "gender.both") {
+      if (filterGender.toString() != "gender.both") {
         if (filterGender.toLowerCase() == data.gender.toLowerCase()) {
           log("other person meet your req in gender");
           return true;

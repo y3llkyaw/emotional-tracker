@@ -151,7 +151,6 @@ class ChatService {
             }
           }
         }
-        print(unreadCount);
         return unreadCount;
       });
     }).switchMap((stream) => stream);
@@ -178,7 +177,7 @@ class ChatService {
       // return updatedDoc; // Return updated document snapshot
     } catch (e) {
       log('Error updating and fetching read status: $e');
-      return null; // Return null if an error occurs
+      return; // Return null if an error occurs
     }
   }
 

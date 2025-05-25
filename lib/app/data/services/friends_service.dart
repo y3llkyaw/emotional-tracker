@@ -51,12 +51,12 @@ class FriendService {
           .collection("friends")
           .doc(uid)
           .update({
-        "read": true,
-      }).then((v) {
-        print("read");
-      }).onError((e, stackTrace) {
-        print(e.toString());
-      });
+            "read": true,
+          })
+          .then((v) {})
+          .onError((e, stackTrace) {
+            log(e.toString());
+          });
     } catch (e) {
       log("", name: "friend-end");
     }
@@ -94,7 +94,7 @@ class FriendService {
       }
       return profiles;
     }).handleError((error) {
-      print("Error fetching friend requests: $error");
+      log("Error fetching friend requests: $error");
       return 0; // Return 0 in case of an error
     });
   }
@@ -110,7 +110,7 @@ class FriendService {
         .map((snapshot) {
       return snapshot.docs.length;
     }).handleError((error) {
-      print("Error fetching friend requests: $error");
+      log("Error fetching friend requests: $error");
       return 0; // Return 0 in case of an error
     });
   }
@@ -210,12 +210,12 @@ class FriendService {
         return friends;
       }).onError((error, stackTrace) {
         log(error.toString(), error: error.toString(), name: "error ouccur");
-        print(friends);
+        log(friends.toString(), name: "friends");
         return friends;
       });
       return friends;
     } catch (e) {
-      print(e.toString());
+      log(e.toString());
       return friends;
     }
   }

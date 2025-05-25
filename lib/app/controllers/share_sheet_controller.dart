@@ -8,12 +8,6 @@ class ShareSheetController extends GetxController {
   final chatController = Get.put(ChatController());
   var shareList = [].obs;
 
-  @override
-  void onInit() {
-    // TODO: implement onInit
-    super.onInit();
-  }
-
   Future<void> shareSheet(Journal jid) async {
     try {
       for (var uid in shareList) {

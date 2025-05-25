@@ -37,7 +37,6 @@ class JournalController extends GetxController {
     isLoading.value = true;
     // Save journal to Firestore
     try {
-      print("journal_${date.value.toString().split(" ")[0]}");
       await FirebaseFirestore.instance
           .collection("profile")
           .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -78,7 +77,6 @@ class JournalController extends GetxController {
           .collection("journals")
           .doc(jid)
           .get();
-      print(journal.data());
       if (journal.exists) {
         return Journal.fromDocument(journal.data()!);
       }
@@ -93,7 +91,6 @@ class JournalController extends GetxController {
   Future<void> getJournal(DateTime date) async {
     // Fetch journal from Firestore
     log("get journal");
-    print("date $date");
     try {
       final journal = await FirebaseFirestore.instance
           .collection("profile")

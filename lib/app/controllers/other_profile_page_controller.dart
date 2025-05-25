@@ -33,7 +33,7 @@ class OtherProfilePageController extends GetxController {
     try {
       friendStatus.value = await _friendsController.checkFriendStatus(profile);
     } catch (e) {
-      print('Error checking friend status: $e');
+      log('Error checking friend status: $e');
     }
   }
 
@@ -54,7 +54,7 @@ class OtherProfilePageController extends GetxController {
       await action();
       await checkFriendStatus(profile);
     } catch (e) {
-      print('Error handling friend action: $e');
+      log('Error handling friend action: $e');
     } finally {
       isLoading.value = false;
     }

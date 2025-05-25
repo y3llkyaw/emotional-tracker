@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:get/get.dart';
-import 'package:stats/stats.dart';
 
 class MoodStaticsticsPageController extends GetxController {
   var filteredJournal = [].obs;
@@ -72,9 +71,9 @@ class MoodStaticsticsPageController extends GetxController {
     for (var value in values) {
       a.add(value);
     }
-    final stats = Stats.fromData(a);
-    print(
-        "Manual: ${standardDeviation.value}, Package: ${stats.standardDeviation}");
+    // final stats = Stats.fromData(a);
+    // print(
+    //     "Manual: ${standardDeviation.value}, Package: ${stats.standardDeviation}");
   }
 
   String getStdDevLevel(double stdDev) {
