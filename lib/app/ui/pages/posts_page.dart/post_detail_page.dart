@@ -1,10 +1,12 @@
 import 'package:avatar_plus/avatar_plus.dart';
+import 'package:el_tooltip/el_tooltip.dart';
 import 'package:emotion_tracker/app/controllers/comment_controller.dart';
 import 'package:emotion_tracker/app/controllers/post_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/comment.dart';
 import 'package:emotion_tracker/app/data/models/post.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
+import 'package:emotion_tracker/app/ui/pages/create_post_page/create_post_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -30,12 +32,20 @@ class _PostDetailPageState extends State<PostDetailPage> {
   final CommentController commentController = Get.put(CommentController());
   final PostController postController = Get.put(PostController());
   final TextEditingController _commentController = TextEditingController();
+  final ElTooltipController _tooltipController = ElTooltipController();
 
   @override
   void initState() {
     super.initState();
     commentController.commentList.clear();
     commentController.getComments(widget.postData);
+  }
+
+  @override
+  void dispose() {
+    _tooltipController.dispose();
+    _commentController.dispose();
+    super.dispose();
   }
 
   @override
@@ -117,10 +127,109 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 const Spacer(),
                 Column(
                   children: [
-                    const Icon(
-                      Icons.more_horiz,
-                      size: 15,
-                      color: Colors.grey,
+                    SafeArea(
+                      child: ElTooltip(
+                        controller: _tooltipController,
+                        showArrow: true,
+                        color: Colors.blue.withOpacity(0.4),
+                        appearAnimationDuration:
+                            const Duration(milliseconds: 300),
+                        disappearAnimationDuration:
+                            const Duration(milliseconds: 300),
+                        position: ElTooltipPosition.bottomEnd,
+                        content: widget.postData.uid ==
+                                FirebaseAuth.instance.currentUser!.uid
+                            ? Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.blue,
+                                    ),
+                                    onPressed: () {
+                                      _tooltipController.hide();
+                                      Get.to(
+                                        () => const CreatePostPage(),
+                                      );
+                                    },
+                                    label: const Text(
+                                      "Edit",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    icon: Icon(
+                                      Icons.edit,
+                                      size: Get.width * 0.04,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                    ),
+                                    onPressed: () {
+                                      _tooltipController.hide();
+                                    },
+                                    label: const Text(
+                                      "Delete",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    icon: Icon(
+                                      Icons.delete,
+                                      size: Get.width * 0.04,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  ElevatedButton.icon(
+                                    onPressed: () {},
+                                    label: const Text(
+                                      "Report",
+                                      style: TextStyle(
+                                          fontSize: 14, color: Colors.white),
+                                    ),
+                                    icon: Icon(
+                                      Icons.report,
+                                      size: Get.width * 0.04,
+                                      color: Colors.white,
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  ),
+                                  ElevatedButton.icon(
+                                    onPressed: () {},
+                                    label: const Text(
+                                      "Hide",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    icon: Icon(
+                                      CupertinoIcons.eye_slash,
+                                      size: Get.width * 0.04,
+                                      color: Colors.white,
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                        child: Icon(
+                          Icons.more_horiz,
+                          color: Colors.grey[600],
+                        ),
+                      ),
                     ),
                     Text(
                       timeago.format(
