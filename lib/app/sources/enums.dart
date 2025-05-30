@@ -1,7 +1,29 @@
-enum Gender { Male, Female, Others }
+enum Gender {
+  Male,
+  Female,
+  Others,
+}
 
-enum FriendStatus { pending, friend, blocked }
+enum FriendStatus {
+  pending,
+  friend,
+  blocked,
+}
 
-enum MessageType { text, sticker, photo }
+enum MessageType {
+  text,
+  sticker,
+  photo,
+}
 
-enum SystemMessage { welcome, friend }
+enum SystemMessage {
+  welcome,
+  friend,
+}
+
+enum ReportType {
+  spam,
+  inappropriateContent,
+  harassment,
+  other,
+}

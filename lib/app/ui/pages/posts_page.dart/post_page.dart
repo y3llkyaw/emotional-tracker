@@ -1,9 +1,11 @@
 import 'package:avatar_plus/avatar_plus.dart';
+import 'package:el_tooltip/el_tooltip.dart';
 import 'package:emotion_tracker/app/controllers/comment_controller.dart';
 import 'package:emotion_tracker/app/controllers/post_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/post.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
+import 'package:emotion_tracker/app/ui/pages/create_post_page/create_post_page.dart';
 import 'package:emotion_tracker/app/ui/pages/posts_page.dart/post_detail_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/other_profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -147,15 +149,28 @@ class PostPage extends StatelessWidget {
   }
 }
 
-class PostWidget extends StatelessWidget {
-  PostWidget({Key? key, required this.post}) : super(key: key);
+class PostWidget extends StatefulWidget {
+  const PostWidget({Key? key, required this.post}) : super(key: key);
 
   final Post post;
+
+  @override
+  State<PostWidget> createState() => _PostWidgetState();
+}
+
+class _PostWidgetState extends State<PostWidget> {
   final ProfilePageController profilePageController =
       Get.put(ProfilePageController());
+  final ElTooltipController _tooltipController = ElTooltipController();
 
   final CommentController commentController = Get.put(CommentController());
   final PostController postController = Get.put(PostController());
+
+  @override
+  void dispose() {
+    _tooltipController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +187,7 @@ class PostWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: FutureBuilder(
-          future: profilePageController.getProfileByUid(post.uid),
+          future: profilePageController.getProfileByUid(widget.post.uid),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Shimmer.fromColors(
@@ -231,7 +246,7 @@ class PostWidget extends StatelessWidget {
                       radius: 20,
                       backgroundColor: Colors.blue,
                       child: AvatarPlus(
-                        "${post.uid}${snapshotData.name}",
+                        "${widget.post.uid}${snapshotData.name}",
                       ),
                     ),
                   ],
@@ -268,7 +283,131 @@ class PostWidget extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const Icon(Icons.more_horiz),
+                      SafeArea(
+                        child: ElTooltip(
+                          controller: _tooltipController,
+                          showArrow: true,
+                          color: Colors.blueGrey.withOpacity(0.8),
+                          appearAnimationDuration:
+                              const Duration(milliseconds: 300),
+                          disappearAnimationDuration:
+                              const Duration(milliseconds: 300),
+                          position: ElTooltipPosition.bottomEnd,
+                          content: widget.post.uid ==
+                                  FirebaseAuth.instance.currentUser!.uid
+                              ? Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blue,
+                                      ),
+                                      onPressed: () {
+                                        if (mounted) {
+                                          _tooltipController.hide();
+                                        }
+                                        Get.to(
+                                          () => CreatePostPage(
+                                            isEditing: true,
+                                            post: widget.post,
+                                          ),
+                                          transition: Transition.rightToLeft,
+                                        );
+                                      },
+                                      label: const Text(
+                                        "Edit",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      icon: Icon(
+                                        Icons.edit,
+                                        size: Get.width * 0.04,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red,
+                                      ),
+                                      onPressed: () async {
+                                        if (mounted) {
+                                          _tooltipController.hide();
+                                        }
+                                        await postController
+                                            .deletePost(widget.post.id!);
+                                      },
+                                      label: const Text(
+                                        "Delete",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      icon: Icon(
+                                        Icons.delete,
+                                        size: Get.width * 0.04,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.grey,
+                                      ),
+                                      onPressed: () async {
+                                        if (mounted) {
+                                          _tooltipController.hide();
+                                        }
+                                        await postController
+                                            .hidePost(widget.post);
+                                      },
+                                      label: const Text(
+                                        "Hide",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      icon: Icon(
+                                        CupertinoIcons.eye_slash,
+                                        size: Get.width * 0.04,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.redAccent,
+                                      ),
+                                      onPressed: () {
+                                        if (mounted) {
+                                          _tooltipController.hide();
+                                        }
+                                      },
+                                      label: const Text(
+                                        "Report",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      icon: Icon(
+                                        Icons.report,
+                                        size: Get.width * 0.04,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                          child: Icon(
+                            Icons.more_horiz,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   Row(
@@ -312,7 +451,7 @@ class PostWidget extends StatelessWidget {
                       ),
                       Text(
                         timeago.format(
-                          post.createdAt,
+                          widget.post.createdAt,
                           locale: 'en_short',
                           allowFromNow: true,
                           clock: DateTime.now(),
@@ -332,7 +471,7 @@ class PostWidget extends StatelessWidget {
                 children: [
                   SizedBox(
                     child: Text(
-                      post.body.trim(),
+                      widget.post.body.trim(),
                       textAlign: TextAlign.start,
                       maxLines: 9,
                       overflow: TextOverflow.ellipsis,
@@ -343,7 +482,7 @@ class PostWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       StreamBuilder(
-                        stream: postController.getLikeStream(post),
+                        stream: postController.getLikeStream(widget.post),
                         builder: (context, snapshot) {
                           // snapshot.data as List<String?>;
                           final likes = snapshot.data as List<String>? ?? [];
@@ -360,9 +499,10 @@ class PostWidget extends StatelessWidget {
                                 onPressed: () async {
                                   if (likes.contains(
                                       FirebaseAuth.instance.currentUser!.uid)) {
-                                    await postController.unlikePost(post);
+                                    await postController
+                                        .unlikePost(widget.post);
                                   } else {
-                                    await postController.likePost(post);
+                                    await postController.likePost(widget.post);
                                   }
                                 },
                               ),
@@ -385,7 +525,7 @@ class PostWidget extends StatelessWidget {
                             onPressed: () {
                               Get.to(
                                 () => PostDetailPage(
-                                  postData: post,
+                                  postData: widget.post,
                                   profileData: snapshotData,
                                 ),
                                 transition: Transition.rightToLeft,
@@ -395,7 +535,7 @@ class PostWidget extends StatelessWidget {
                           ),
                           // SizedBox(width: Get.width * 0.05),
                           FutureBuilder(
-                            future: commentController.getComments(post),
+                            future: commentController.getComments(widget.post),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {

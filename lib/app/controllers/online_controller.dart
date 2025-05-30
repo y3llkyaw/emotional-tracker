@@ -33,7 +33,8 @@ class OnlineController extends GetxController {
       "uid": _cuid,
       "lastSeem": DateTime.now().toIso8601String(),
     });
-    onlineRef.onDisconnect().set({
+    onlineRef.onValue.listen((event) {});
+    onlineRef.onDisconnect().update({
       "isOnline": false,
       "uid": _cuid,
       "lastSeem": DateTime.now().toIso8601String(),

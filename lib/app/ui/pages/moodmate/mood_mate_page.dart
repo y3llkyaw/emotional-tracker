@@ -114,19 +114,19 @@ class MoodMatePage extends StatelessWidget {
                                   width: Get.width * 0.02,
                                 ),
                                 FutureBuilder(
-                                    future:
-                                        onlineController.getOnlineUserCount(),
-                                    builder: (context, snapshot) {
-                                      return Text(
-                                        snapshot.data.toString(),
-                                        textAlign: TextAlign.left,
-                                        style: GoogleFonts.aBeeZee(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                        ),
-                                      );
-                                    }),
+                                  future: onlineController.getOnlineUserCount(),
+                                  builder: (context, snapshot) {
+                                    return Text(
+                                      snapshot.data.toString(),
+                                      textAlign: TextAlign.left,
+                                      style: GoogleFonts.aBeeZee(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    );
+                                  },
+                                ),
                               ],
                             ),
                           ],

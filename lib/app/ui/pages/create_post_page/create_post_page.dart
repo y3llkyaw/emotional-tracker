@@ -1,11 +1,19 @@
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/controllers/post_controller.dart';
+import 'package:emotion_tracker/app/data/models/post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CreatePostPage extends StatefulWidget {
-  const CreatePostPage({Key? key}) : super(key: key);
+  const CreatePostPage({
+    Key? key,
+    this.isEditing = false,
+    this.post,
+  }) : super(key: key);
+
+  final bool isEditing;
+  final Post? post;
 
   @override
   State<CreatePostPage> createState() => _CreatePostPageState();
@@ -14,12 +22,25 @@ class CreatePostPage extends StatefulWidget {
 class _CreatePostPageState extends State<CreatePostPage> {
   final createPostPageController = Get.put(PostController());
   final user = FirebaseAuth.instance.currentUser!;
+  final TextEditingController bodyController = TextEditingController();
+  @override
+  void initState() {
+    bodyController.text = widget.isEditing ? widget.post!.body : "";
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    bodyController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text("Create Posts"),
+          title: Text(widget.isEditing ? "Editing Post" : "Create Post"),
         ),
         body: SafeArea(
           child: Padding(
@@ -67,9 +88,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
                                     await createPostPageController.createPost();
                                     // Get.back();
                                   },
-                            child: const Text(
-                              "Post",
-                              style: TextStyle(
+                            child: Text(
+                              widget.isEditing ? "Update" : "Post",
+                              style: const TextStyle(
                                 color: Colors.white,
                               ),
                             ),
@@ -83,7 +104,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
                   child: TextField(
+                    controller: bodyController,
                     onChanged: (value) {
+                      value = widget.isEditing ? widget.post!.body : value;
                       createPostPageController.body.value = value;
                     },
                     maxLines: 25,

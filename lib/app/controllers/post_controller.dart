@@ -108,7 +108,7 @@ class PostController extends GetxController {
     });
   }
 
-  void deletePost(String postId) async {
+  Future<void> deletePost(String postId) async {
     isDeleting.value = true;
     await FirebaseFirestore.instance
         .collection("posts")
@@ -117,6 +117,27 @@ class PostController extends GetxController {
         .then((value) {
       Get.snackbar("Success", "Post deleted successfully");
       isDeleting.value = false;
+    }).onError((error, stackTrace) {
+      Get.snackbar("Error", error.toString());
+      isDeleting.value = false;
+    });
+  }
+
+  Future<void> hidePost(Post post) async {
+    isDeleting.value = true;
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final postRef = FirebaseFirestore.instance
+        .collection("profile")
+        .doc(uid)
+        .collection("posts")
+        .doc(post.id);
+    await postRef.set({
+      "id": post.id,
+    }).then((value) {
+      isDeleting.value = false;
+      publicPosts.removeWhere((p) => p.id == post.id);
+      friendPosts.removeWhere((p) => p.id == post.id);
+      Get.snackbar("Success", "Post hidden successfully");
     }).onError((error, stackTrace) {
       Get.snackbar("Error", error.toString());
       isDeleting.value = false;

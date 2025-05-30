@@ -150,7 +150,11 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                     onPressed: () {
                                       _tooltipController.hide();
                                       Get.to(
-                                        () => const CreatePostPage(),
+                                        () => CreatePostPage(
+                                          isEditing: true,
+                                          post: widget.postData,
+                                        ),
+                                        transition: Transition.rightToLeft,
                                       );
                                     },
                                     label: const Text(
@@ -169,8 +173,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.red,
                                     ),
-                                    onPressed: () {
+                                    onPressed: () async {
                                       _tooltipController.hide();
+                                      await postController
+                                          .deletePost(widget.postData.id!);
                                     },
                                     label: const Text(
                                       "Delete",
@@ -187,30 +193,21 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                 ],
                               )
                             : Column(
+                                mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   ElevatedButton.icon(
-                                    onPressed: () {},
-                                    label: const Text(
-                                      "Report",
-                                      style: TextStyle(
-                                          fontSize: 14, color: Colors.white),
-                                    ),
-                                    icon: Icon(
-                                      Icons.report,
-                                      size: Get.width * 0.04,
-                                      color: Colors.white,
-                                    ),
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.red,
+                                      backgroundColor: Colors.grey,
                                     ),
-                                  ),
-                                  ElevatedButton.icon(
-                                    onPressed: () {},
+                                    onPressed: () async {
+                                      _tooltipController.hide();
+                                      await postController
+                                          .deletePost(widget.postData.id!);
+                                    },
                                     label: const Text(
                                       "Hide",
                                       style: TextStyle(
-                                        fontSize: 14,
                                         color: Colors.white,
                                       ),
                                     ),
@@ -219,8 +216,24 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                       size: Get.width * 0.04,
                                       color: Colors.white,
                                     ),
+                                  ),
+                                  ElevatedButton.icon(
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.red,
+                                      backgroundColor: Colors.redAccent,
+                                    ),
+                                    onPressed: () {
+                                      _tooltipController.hide();
+                                    },
+                                    label: const Text(
+                                      "Report",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    icon: Icon(
+                                      Icons.report,
+                                      size: Get.width * 0.04,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ],
