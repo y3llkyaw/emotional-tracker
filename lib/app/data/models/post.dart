@@ -1,3 +1,5 @@
+import 'package:emotion_tracker/app/data/models/profile.dart';
+
 class Post {
   final String? id;
   final String uid;
@@ -6,6 +8,7 @@ class Post {
   final DateTime createdAt;
   final DateTime updatedAt;
   final String? imageUrl;
+  Profile? profile;
 
   Post({
     this.id,
@@ -15,6 +18,7 @@ class Post {
     required this.updatedAt,
     this.type = "text", // Default type
     this.imageUrl,
+    this.profile,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) {

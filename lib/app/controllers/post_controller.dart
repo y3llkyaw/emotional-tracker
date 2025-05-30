@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/data/models/post.dart';
+import 'package:emotion_tracker/app/data/models/profile.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
@@ -17,6 +21,10 @@ class PostController extends GetxController {
 
   final friendController = Get.put(FriendsController());
   var friends = <String>[].obs;
+
+  late DocumentSnapshot lastPublicPostDoc;
+  late DocumentSnapshot lastFriendPostDoc;
+
   @override
   void onInit() async {
     super.onInit();
@@ -37,12 +45,14 @@ class PostController extends GetxController {
 
   final pubPostsRef = FirebaseFirestore.instance
       .collection("posts")
-      .orderBy("createdAt", descending: true);
+      .orderBy("createdAt", descending: true)
+      .limit(30);
 
   Query<Map<String, dynamic>> get friPostsRef => FirebaseFirestore.instance
       .collection("posts")
       .where("uid", whereIn: friends)
-      .orderBy("createdAt", descending: true);
+      .orderBy("createdAt", descending: true)
+      .limit(30);
 
   Future<void> getMyPosts() async {
     isLoading.value = true;
@@ -57,9 +67,17 @@ class PostController extends GetxController {
 
   Future<void> getFriendPosts() async {
     isLoading.value = true;
-    await friPostsRef.get().then((value) {
-      friendPosts.value =
-          value.docs.map((e) => Post.fromJson(e.data())).toList();
+    await friPostsRef.get().then((value) async {
+      final posts = await Future.wait(value.docs.map((e) async {
+        var post = Post.fromJson(e.data());
+        Profile profile = await profilePageController.getProfileByUid(post.uid);
+        post.profile = profile;
+        return post;
+      }));
+      friendPosts.value = posts;
+      if (value.docs.isNotEmpty) {
+        lastFriendPostDoc = value.docs.last;
+      }
       isLoading.value = false;
     }).onError((error, stackTrace) {
       Get.snackbar("Error", error.toString());
@@ -67,14 +85,69 @@ class PostController extends GetxController {
     });
   }
 
+  loadmoreFriendPosts() async {
+    isLoading.value = true;
+    await friPostsRef
+        .startAfterDocument(lastFriendPostDoc)
+        .limit(30)
+        .get()
+        .then((value) async {
+      final posts = await Future.wait(value.docs.map((e) async {
+        var post = Post.fromJson(e.data());
+        Profile profile = await profilePageController.getProfileByUid(post.uid);
+        post.profile = profile;
+        return post;
+      }));
+      friendPosts.addAll(posts);
+      isLoading.value = false;
+    }).onError((error, stackTrace) {
+      // Get.snackbar("Error", error.toString());
+      log("Error loading more friend posts: $error");
+      isLoading.value = false;
+    });
+  }
+
   Future<void> getPublicPost() async {
     isLoading.value = true;
-    await pubPostsRef.get().then((value) {
-      publicPosts.value =
-          value.docs.map((e) => Post.fromJson(e.data())).toList();
+    await pubPostsRef.get().then((value) async {
+      final posts = await Future.wait(value.docs.map((e) async {
+        var post = Post.fromJson(e.data());
+        Profile profile = await profilePageController.getProfileByUid(post.uid);
+        post.profile = profile;
+        return post;
+      }));
+      publicPosts.value = posts;
+      if (value.docs.isNotEmpty) {
+        lastPublicPostDoc = value.docs.last;
+      }
       isLoading.value = false;
     }).onError((error, stackTrace) {
       Get.snackbar("Error", error.toString());
+      isLoading.value = false;
+    });
+  }
+
+  loadmorePublicPosts() async {
+    if (isLoading.value) return;
+    isLoading.value = true;
+    await pubPostsRef
+        .startAfterDocument(lastPublicPostDoc)
+        .limit(30)
+        .get()
+        .then((value) async {
+      final posts = await Future.wait(value.docs.map((e) async {
+        var post = Post.fromJson(e.data());
+        Profile profile = await profilePageController.getProfileByUid(post.uid);
+        post.profile = profile;
+        return post;
+      }));
+      publicPosts.addAll(posts);
+      if (value.docs.isNotEmpty) {
+        lastPublicPostDoc = value.docs.last;
+      }
+      isLoading.value = false;
+    }).onError((error, stackTrace) {
+      log("Error loading more friend posts: $error");
       isLoading.value = false;
     });
   }
