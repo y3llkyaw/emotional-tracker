@@ -4,6 +4,7 @@ import 'package:emotion_tracker/app/controllers/comment_controller.dart';
 import 'package:emotion_tracker/app/controllers/post_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/post.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
 import 'package:emotion_tracker/app/ui/pages/create_post_page/create_post_page.dart';
 import 'package:emotion_tracker/app/ui/pages/posts_page.dart/post_detail_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/other_profile_page.dart';
@@ -140,6 +141,7 @@ class _PostPageState extends State<PostPage> {
                       onRefresh: () => postPageController.getPublicPost(),
                       child: ListView.builder(
                         controller: _publicScrollController,
+                        physics: const AlwaysScrollableScrollPhysics(),
                         itemCount: postPageController.publicPosts.length,
                         itemBuilder: (context, index) {
                           final post = postPageController.publicPosts[index];
@@ -152,6 +154,7 @@ class _PostPageState extends State<PostPage> {
                     return RefreshIndicator(
                       onRefresh: () => postPageController.getFriendPosts(),
                       child: ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
                         controller: _friendScrollController,
                         itemCount: postPageController.friendPosts.length,
                         itemBuilder: (context, index) {
@@ -311,7 +314,9 @@ class _PostWidgetState extends State<PostWidget> {
                                 ),
                                 onPressed: () async {
                                   if (mounted) {
-                                    _tooltipController.hide();
+                                    try {
+                                      _tooltipController.hide();
+                                    } catch (_) {}
                                   }
                                   await postController
                                       .deletePost(widget.post.id!);
@@ -340,7 +345,9 @@ class _PostWidgetState extends State<PostWidget> {
                                 ),
                                 onPressed: () async {
                                   if (mounted) {
-                                    _tooltipController.hide();
+                                    try {
+                                      _tooltipController.hide();
+                                    } catch (_) {}
                                   }
                                   await postController.hidePost(widget.post);
                                 },
@@ -362,8 +369,11 @@ class _PostWidgetState extends State<PostWidget> {
                                 ),
                                 onPressed: () {
                                   if (mounted) {
-                                    _tooltipController.hide();
+                                    try {
+                                      _tooltipController.hide();
+                                    } catch (_) {}
                                   }
+                                  showReportBottomSheet(widget.post);
                                 },
                                 label: const Text(
                                   "Report",

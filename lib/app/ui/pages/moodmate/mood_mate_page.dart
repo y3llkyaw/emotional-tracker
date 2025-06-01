@@ -153,7 +153,7 @@ class MoodMatePage extends StatelessWidget {
           SizedBox(
             height: Get.height * 0.02,
           ),
-          Expanded(
+          const Expanded(
             child: PostPage(),
           ),
         ],
@@ -167,7 +167,7 @@ class MoodMatePage extends StatelessWidget {
         },
         backgroundColor: Get.theme.colorScheme.error,
         child: const Icon(
-          CupertinoIcons.add,
+          CupertinoIcons.pencil,
           color: Colors.white,
         ),
       ),

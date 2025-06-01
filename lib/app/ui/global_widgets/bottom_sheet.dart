@@ -2,8 +2,11 @@ import 'package:animated_emoji/animated_emoji.dart';
 import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/controllers/matching_controller.dart';
+import 'package:emotion_tracker/app/controllers/post_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/message.dart';
+import 'package:emotion_tracker/app/data/models/post.dart';
+import 'package:emotion_tracker/app/sources/enums.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/radio_emoji_selction.dart';
 import 'package:flutter/cupertino.dart';
@@ -248,6 +251,152 @@ void showDataBottomSheet(
     elevation: 1,
     backgroundColor: Colors.black54,
     enableDrag: true,
+  );
+}
+
+void showReportBottomSheet(Post post) {
+  final PostController postController = Get.put(PostController());
+
+  Get.bottomSheet(
+    Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Get.theme.scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Center(
+            child: Text(
+              "Report Post",
+              style: GoogleFonts.aBeeZee(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          SizedBox(height: Get.height * 0.02),
+          Row(
+            children: [
+              const Icon(
+                CupertinoIcons.exclamationmark_triangle,
+                color: Colors.red,
+              ),
+              SizedBox(width: Get.width * 0.02),
+              Expanded(
+                child: Text(
+                  "Please provide a reason for reporting this post.",
+                  style: GoogleFonts.aBeeZee(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: Get.height * 0.02),
+          GridView.builder(
+            itemCount: ReportType.values.length,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              childAspectRatio: 3,
+            ),
+            itemBuilder: (context, index) {
+              return Obx(
+                () => InkWell(
+                  onTap: () {
+                    postController.selectedReportType.value =
+                        ReportType.values[index];
+                  },
+                  child: Container(
+                    width: Get.width * 0.4,
+                    decoration: BoxDecoration(
+                      color: postController.selectedReportType.value ==
+                              ReportType.values[index]
+                          ? Colors.blue
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: Get.theme.colorScheme.error,
+                        width: 1,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        ReportType.values[index].toString().split('.').last,
+                        style: GoogleFonts.aBeeZee(
+                          fontSize: 16,
+                          color: Colors.grey[200],
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ); // Placeholder
+            },
+          ),
+          SizedBox(height: Get.height * 0.02),
+          Obx(
+            () => postController.selectedReportType.value == ReportType.other
+                ? Column(
+                    children: [
+                      TextField(
+                        onChanged: (value) {
+                          postController.reportBody.value = value;
+                        },
+                        maxLines: 5,
+                        decoration: InputDecoration(
+                          hintText: "Enter your report here...",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: Get.height * 0.02),
+                    ],
+                  )
+                : Container(),
+          ),
+          Obx(
+            () => SizedBox(
+              height: Get.height * 0.04,
+              width: Get.width * 0.4,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Get.theme.colorScheme.error,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: postController.selectedReportType.value ==
+                            ReportType.other &&
+                        postController.reportBody.value.isEmpty
+                    ? null
+                    : () async {
+                        await postController.reportPost(post);
+                      },
+                label: const Text(
+                  "Submit Report",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: Get.height * 0.02),
+        ],
+      ),
+    ),
+    backgroundColor: Colors.white,
+    isScrollControlled: true,
   );
 }
 

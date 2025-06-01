@@ -6,6 +6,7 @@ import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/comment.dart';
 import 'package:emotion_tracker/app/data/models/post.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
 import 'package:emotion_tracker/app/ui/pages/create_post_page/create_post_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -175,8 +176,13 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                     ),
                                     onPressed: () async {
                                       _tooltipController.hide();
-                                      await postController
-                                          .deletePost(widget.postData.id!);
+                                      Get.to(
+                                        () => CreatePostPage(
+                                          isEditing: true,
+                                          post: widget.postData,
+                                        ),
+                                        transition: Transition.rightToLeft,
+                                      );
                                     },
                                     label: const Text(
                                       "Delete",
@@ -203,7 +209,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                     onPressed: () async {
                                       _tooltipController.hide();
                                       await postController
-                                          .deletePost(widget.postData.id!);
+                                          .hidePost(widget.postData)
+                                          .then((value) {});
+                                      // TODO: Implement hide post functionality
                                     },
                                     label: const Text(
                                       "Hide",
@@ -221,8 +229,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.redAccent,
                                     ),
-                                    onPressed: () {
+                                    onPressed: () async {
                                       _tooltipController.hide();
+                                      showReportBottomSheet(widget.postData);
                                     },
                                     label: const Text(
                                       "Report",

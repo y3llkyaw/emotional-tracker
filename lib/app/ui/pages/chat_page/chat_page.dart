@@ -134,6 +134,8 @@ class _ChatPageState extends State<ChatPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
                               chatController.showEmoji.value
@@ -169,32 +171,36 @@ class _ChatPageState extends State<ChatPage> {
                         // ),
                         Container(
                           width: Get.width * 0.73,
+                          height: Get.height * 0.08,
                           padding: EdgeInsets.only(
                             left: Get.width * 0.03,
                             right: Get.width * 0.03,
                             bottom: Get.height * 0.01,
                           ),
-                          margin: EdgeInsets.only(
-                            top: Get.height * 0.03,
-                          ),
-                          child: TextField(
-                            onTap: () {
-                              chatController.showEmoji.value = false;
-                            },
-                            controller: controller,
-                            maxLines: 2,
-                            decoration: const InputDecoration(
-                              hintText: "Type a message ",
-                              border: InputBorder.none,
-                              hintStyle: TextStyle(color: Colors.grey),
-                              contentPadding: EdgeInsets.symmetric(
-                                horizontal: 15,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextField(
+                                onTap: () {
+                                  chatController.showEmoji.value = false;
+                                },
+                                controller: controller,
+                                maxLines: 1,
+                                decoration: const InputDecoration(
+                                  hintText: "Type a message ",
+                                  border: InputBorder.none,
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  contentPadding: EdgeInsets.symmetric(
+                                    // horizontal: 15,
+                                    vertical: 15,
+                                  ),
+                                ),
+                                textInputAction: TextInputAction.send,
+                                onChanged: (value) {
+                                  Get.find<ChatController>().setMessage(value);
+                                },
                               ),
-                            ),
-                            textInputAction: TextInputAction.send,
-                            onChanged: (value) {
-                              Get.find<ChatController>().setMessage(value);
-                            },
+                            ],
                           ),
                         ),
                         IconButton(
@@ -813,50 +819,44 @@ class _ChatPageState extends State<ChatPage> {
                   : true,
               text: chatController.messages[index].message,
             ),
-            Container(
-              margin: const EdgeInsets.only(right: 20, left: 20),
-              child: Row(
-                mainAxisAlignment: chatController.messages[index].uid ==
+            Row(
+              mainAxisAlignment: chatController.messages[index].uid ==
+                      FirebaseAuth.instance.currentUser!.uid
+                  ? MainAxisAlignment.start
+                  : MainAxisAlignment.end,
+              children: [
+                chatController.messages[index].uid ==
                         FirebaseAuth.instance.currentUser!.uid
-                    ? MainAxisAlignment.start
-                    : MainAxisAlignment.end,
-                children: [
-                  chatController.messages[index].uid ==
-                          FirebaseAuth.instance.currentUser!.uid
-                      ? Icon(
-                          Icons.done_all,
-                          size: Get.width * 0.03,
-                          color: message.read ? Colors.green : Colors.black12,
-                        )
-                      : Container(),
-                  Text(
-                    timeago.format(
-                      chatController.messages[index].timestamp.toDate(),
+                    ? Icon(
+                        Icons.done_all,
+                        size: Get.width * 0.03,
+                        color: message.read ? Colors.green : Colors.black12,
+                      )
+                    : Container(),
+                Text(
+                  timeago.format(
+                    chatController.messages[index].timestamp.toDate(),
 
-                      // locale:
-                      //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
-                    ),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
+                    // locale:
+                    //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
                   ),
-                  SizedBox(
-                    width: Get.width * 0.014,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
                   ),
-                  chatController.messages[index].uid ==
-                          FirebaseAuth.instance.currentUser!.uid
-                      ? Container()
-                      : Icon(
-                          Icons.done_all,
-                          size: Get.width * 0.03,
-                          color: message.read ? Colors.green : Colors.black12,
-                        ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: Get.height * 0.015,
+                ),
+                SizedBox(
+                  width: Get.width * 0.014,
+                ),
+                chatController.messages[index].uid ==
+                        FirebaseAuth.instance.currentUser!.uid
+                    ? Container()
+                    : Icon(
+                        Icons.done_all,
+                        size: Get.width * 0.03,
+                        color: message.read ? Colors.green : Colors.black12,
+                      ),
+              ],
             ),
           ],
         ),

@@ -1,7 +1,7 @@
 import 'package:emotion_tracker/app/data/models/profile.dart';
 
 class Post {
-  final String? id;
+  String? id;
   final String uid;
   final String type;
   final String body;

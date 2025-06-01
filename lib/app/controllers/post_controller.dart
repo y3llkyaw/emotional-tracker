@@ -4,8 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/data/models/post.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
+import 'package:emotion_tracker/app/sources/enums.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class PostController extends GetxController {
@@ -15,6 +17,8 @@ class PostController extends GetxController {
   final friendPosts = [].obs;
   final myPosts = [].obs;
 
+  final selectedReportType = Rx<ReportType?>(ReportType.spam);
+  final reportBody = ''.obs;
   final isLoading = false.obs;
   final isDeleting = false.obs;
   final body = ''.obs;
@@ -152,6 +156,33 @@ class PostController extends GetxController {
     });
   }
 
+  Future<void> updatePost(Post post) async {
+    log("Updating post: ${post.id}");
+    log("Body: ${body.value}");
+    isLoading.value = true;
+    final updatedPost = Post(
+      id: post.id,
+      uid: post.uid,
+      body: body.value,
+      createdAt: post.createdAt,
+      updatedAt: DateTime.now(),
+      type: post.type,
+      imageUrl: post.imageUrl,
+    );
+    await FirebaseFirestore.instance
+        .collection("posts")
+        .doc(post.id)
+        .update(updatedPost.toJson())
+        .then((value) {
+      Get.back();
+      Get.snackbar("Success", "Post updated successfully");
+      isLoading.value = false;
+    }).onError((error, stackTrace) {
+      Get.snackbar("Error", error.toString());
+      isLoading.value = false;
+    });
+  }
+
   Future<void> createPost() async {
     isLoading.value = true;
     final newPost = Post(
@@ -170,7 +201,11 @@ class PostController extends GetxController {
           .doc(value.id)
           .update({
         "id": value.id,
-      }).then((value) {
+      }).then((v) async {
+        newPost.id = value.id;
+        newPost.profile =
+            await profilePageController.getProfileByUid(newPost.uid);
+        publicPosts.insert(0, newPost);
         Get.back();
         Get.snackbar("Success", "Post created successfully");
       });
@@ -188,7 +223,19 @@ class PostController extends GetxController {
         .doc(postId)
         .delete()
         .then((value) {
-      Get.snackbar("Success", "Post deleted successfully");
+      Get.snackbar(
+        "Success",
+        "Post deleted successfully",
+        icon: const Icon(Icons.check_circle, color: Colors.green),
+        snackPosition: SnackPosition.BOTTOM,
+        instantInit: false,
+        shouldIconPulse: true,
+        maxWidth: Get.width * 0.7,
+        duration: const Duration(
+          milliseconds: 800,
+        ),
+      );
+      publicPosts.removeWhere((p) => p.id == postId);
       isDeleting.value = false;
     }).onError((error, stackTrace) {
       Get.snackbar("Error", error.toString());
@@ -250,6 +297,24 @@ class PostController extends GetxController {
         .delete()
         .then((value) {})
         .onError((error, stackTrace) {
+      Get.snackbar("Error", error.toString());
+    });
+  }
+
+  Future<void> reportPost(Post post) async {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final reportRef = FirebaseFirestore.instance.collection("reports").doc();
+    await reportRef.set({
+      "postId": post.id,
+      "uid": uid,
+      "type": selectedReportType.value.toString(),
+      "createdAt": DateTime.now(),
+      "reason": reportBody.value,
+    }).then((value) {
+      reportBody.value = '';
+      Get.back();
+      Get.snackbar("Success", "Post reported successfully");
+    }).onError((error, stackTrace) {
       Get.snackbar("Error", error.toString());
     });
   }

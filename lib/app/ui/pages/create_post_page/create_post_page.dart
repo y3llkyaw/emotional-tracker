@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/controllers/post_controller.dart';
 import 'package:emotion_tracker/app/data/models/post.dart';
@@ -81,13 +83,22 @@ class _CreatePostPageState extends State<CreatePostPage> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-                            onPressed: createPostPageController
-                                    .body.value.isEmpty
-                                ? null
-                                : () async {
-                                    await createPostPageController.createPost();
-                                    // Get.back();
-                                  },
+                            onPressed:
+                                createPostPageController.body.value.isEmpty ||
+                                        createPostPageController.isLoading.value
+                                    ? null
+                                    : () async {
+                                        if (widget.isEditing) {
+                                          log("update post");
+                                          await createPostPageController
+                                              .updatePost(widget.post!);
+                                        } else {
+                                          log("crate post");
+                                          await createPostPageController
+                                              .createPost();
+                                        }
+                                        Get.back();
+                                      },
                             child: Text(
                               widget.isEditing ? "Update" : "Post",
                               style: const TextStyle(
@@ -106,7 +117,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   child: TextField(
                     controller: bodyController,
                     onChanged: (value) {
-                      value = widget.isEditing ? widget.post!.body : value;
+                      // value = widget.isEditing ? widget.post!.body : value;
                       createPostPageController.body.value = value;
                     },
                     maxLines: 25,
