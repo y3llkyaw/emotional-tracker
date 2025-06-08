@@ -200,6 +200,7 @@ class _PostWidgetState extends State<PostWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: Get.width,
       margin: EdgeInsets.only(
         bottom: Get.height * 0.02,
         left: Get.width * 0.01,
@@ -508,6 +509,7 @@ class _PostWidgetState extends State<PostWidget> {
                   children: [
                     IconButton(
                       onPressed: () {
+                        print("Icon Button Pressed");
                         Get.to(
                           () => PostDetailPage(
                             postData: widget.post,

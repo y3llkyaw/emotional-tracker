@@ -42,7 +42,8 @@ class _NewJournalPageState extends State<NewJournalPage> {
   void initState() {
     profilePageController.getCurrentUserProfile();
     textEditingController.text = widget.editContent ?? "";
-    journalController.emotion.value = widget.editEmoji ?? AnimatedEmojis.bat;
+    journalController.emotion.value =
+        widget.editEmoji ?? AnimatedEmojis.fireHeart;
     journalController.content.value = widget.editContent ?? "";
 
     selectedEmoji = widget.editEmoji ?? AnimatedEmojis.neutralFace;

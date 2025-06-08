@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emotion_tracker/app/data/models/profile.dart';
 
 class Comment {
   final String id;
@@ -9,6 +10,7 @@ class Comment {
   final List<Comment>? replies;
   final DateTime createdAt;
   final DateTime updatedAt;
+  Profile? profile;
 
   Comment({
     required this.id,

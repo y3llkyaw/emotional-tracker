@@ -408,7 +408,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 itemCount: commentController.commentList.length,
                 itemBuilder: (context, index) {
                   final comment = commentController.commentList[index];
-                  return CommentWidget(comment: comment);
+                  return CommentWidget(
+                    comment: comment,
+                    post: widget.postData,
+                  );
                 },
               ),
             ),
@@ -465,161 +468,193 @@ class CommentWidget extends StatelessWidget {
   CommentWidget({
     Key? key,
     required this.comment,
+    required this.post,
   }) : super(key: key);
 
   final Comment comment;
-
+  final Post post;
   final ProfilePageController profilePageController =
       Get.put(ProfilePageController());
+  final CommentController commentController = Get.put(CommentController());
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onLongPress: () {},
-      child: FutureBuilder(
-          future: profilePageController.getProfileByUid(comment.uid),
-          builder: (context, snapshot) {
-            final profile = snapshot.data as Profile?;
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              // Shimmer effect while loading profile
-              return Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
-                child: Container(
-                  margin: EdgeInsets.symmetric(
-                    vertical: Get.height * 0.01,
+    return FutureBuilder(
+        future: profilePageController.getProfileByUid(comment.uid),
+        builder: (context, snapshot) {
+          final profile = snapshot.data as Profile?;
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Shimmer effect while loading profile
+            return Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: Container(
+                margin: EdgeInsets.symmetric(
+                  vertical: Get.height * 0.01,
+                ),
+                child: ListTile(
+                  isThreeLine: true,
+                  leading: const CircleAvatar(
+                    backgroundColor: Colors.white,
+                    radius: 20,
                   ),
-                  child: ListTile(
-                    isThreeLine: true,
-                    leading: const CircleAvatar(
-                      backgroundColor: Colors.white,
-                      radius: 20,
-                    ),
-                    title: Container(
-                      width: Get.width * 0.2,
-                      height: 12,
-                      color: Colors.white,
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 6),
-                        Container(
-                          width: Get.width * 0.4,
-                          height: 10,
-                          color: Colors.white,
-                        ),
-                      ],
-                    ),
+                  title: Container(
+                    width: Get.width * 0.2,
+                    height: 12,
+                    color: Colors.white,
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 6),
+                      Container(
+                        width: Get.width * 0.4,
+                        height: 10,
+                        color: Colors.white,
+                      ),
+                    ],
                   ),
                 ),
-              );
-            }
-            if (profile == null) {
-              return const SizedBox.shrink();
-            }
-            return Container(
-              margin: EdgeInsets.symmetric(
-                vertical: Get.height * 0.01,
               ),
-              child: ListTile(
-                isThreeLine: true,
-                leading: CircleAvatar(
-                  child: AvatarPlus(
-                    "${comment.uid}${profile.name}",
-                  ),
+            );
+          }
+          if (profile == null) {
+            return const SizedBox.shrink();
+          }
+          return SafeArea(
+            child: ListTile(
+              onLongPress: () {
+                showDeleteCommentBottomSheet(comment: comment, post: post);
+              },
+              isThreeLine: true,
+              leading: CircleAvatar(
+                child: AvatarPlus(
+                  "${comment.uid}${profile.name}",
                 ),
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          profile.name,
-                          style: TextStyle(
-                            fontSize: Get.width * 0.03,
-                            fontWeight: FontWeight.w600,
-                            color: profile.gender.toLowerCase() == "gender.male"
-                                ? Colors.blue
-                                : Colors.pink,
-                          ),
+              ),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        profile.name,
+                        style: TextStyle(
+                          fontSize: Get.width * 0.03,
+                          fontWeight: FontWeight.w600,
+                          color: profile.gender.toLowerCase() == "gender.male"
+                              ? Colors.blue
+                              : Colors.pink,
                         ),
-                        Container(
-                          width: Get.width * 0.1,
-                          decoration: BoxDecoration(
-                            color: profile.gender.toLowerCase() == "gender.male"
-                                ? Colors.blue.withOpacity(0.1)
-                                : Colors.pink.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                profile.gender.toLowerCase() == "gender.male"
-                                    ? Icons.male
-                                    : Icons.female,
-                                size: 12,
+                      ),
+                      Container(
+                        width: Get.width * 0.1,
+                        decoration: BoxDecoration(
+                          color: profile.gender.toLowerCase() == "gender.male"
+                              ? Colors.blue.withOpacity(0.1)
+                              : Colors.pink.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              profile.gender.toLowerCase() == "gender.male"
+                                  ? Icons.male
+                                  : Icons.female,
+                              size: 12,
+                              color:
+                                  profile.gender.toLowerCase() == "gender.male"
+                                      ? Colors.blue
+                                      : Colors.pink,
+                            ),
+                            const SizedBox(width: 5),
+                            Text(
+                              profile.age.toString(),
+                              style: TextStyle(
+                                fontSize: Get.width * 0.022,
                                 color: profile.gender.toLowerCase() ==
                                         "gender.male"
                                     ? Colors.blue
                                     : Colors.pink,
                               ),
-                              const SizedBox(width: 5),
-                              Text(
-                                profile.age.toString(),
-                                style: TextStyle(
-                                  fontSize: Get.width * 0.022,
-                                  color: profile.gender.toLowerCase() ==
-                                          "gender.male"
-                                      ? Colors.blue
-                                      : Colors.pink,
-                                ),
-                              ),
-                            ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    timeago.format(
+                      comment.createdAt,
+                      locale: 'en_short',
+                      allowFromNow: true,
+                      clock: DateTime.now(),
+                    ),
+                    style: TextStyle(
+                      fontSize: Get.width * 0.025,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    comment.comment,
+                    style: TextStyle(
+                      fontSize: Get.width * 0.03,
+                    ),
+                  ),
+                ],
+              ),
+              trailing: StreamBuilder<List<String>>(
+                  stream:
+                      commentController.commentLikesStream(post, comment.id),
+                  builder: (context, snapshot) {
+                    final likeList = snapshot.data;
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          borderRadius: BorderRadius.circular(20),
+                          onTap: () async {
+                            if (likeList?.contains(
+                                    FirebaseAuth.instance.currentUser!.uid) ??
+                                false) {
+                              await commentController.unlikeComment(
+                                  post, comment.id);
+                            } else {
+                              await commentController.likeComment(
+                                  post, comment.id);
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            child: Icon(
+                              (likeList?.contains(FirebaseAuth
+                                          .instance.currentUser!.uid) ??
+                                      false)
+                                  ? CupertinoIcons.heart_fill
+                                  : CupertinoIcons.heart,
+                              size: Get.width * 0.05,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          snapshot.data?.length.toString() ?? "0",
+                          style: TextStyle(
+                            fontSize: Get.width * 0.02,
                           ),
                         ),
                       ],
-                    ),
-                    Text(
-                      timeago.format(
-                        comment.createdAt,
-                        locale: 'en_short',
-                        allowFromNow: true,
-                        clock: DateTime.now(),
-                      ),
-                      style: TextStyle(
-                        fontSize: Get.width * 0.025,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      comment.comment,
-                      style: TextStyle(
-                        fontSize: Get.width * 0.03,
-                      ),
-                    ),
-                  ],
-                ),
-                trailing: IconButton(
-                  icon: const Icon(
-                    CupertinoIcons.heart,
-                    size: 15,
-                    color: Colors.blue,
-                  ),
-                  onPressed: () {
-                    // Handle like action for comment
-                  },
-                ),
-              ),
-            );
-          }),
-    );
+                    );
+                  }),
+            ),
+          );
+        });
   }
 }

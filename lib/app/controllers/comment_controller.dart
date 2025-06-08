@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/data/models/comment.dart';
 import 'package:emotion_tracker/app/data/models/post.dart';
@@ -8,6 +10,7 @@ class CommentController extends GetxController {
   final comment = ''.obs;
   final isLoading = false.obs;
   final commentList = <Comment>[].obs;
+  final commentLikes = [].obs;
 
   Future<void> addComment(Post post) async {
     isLoading.value = true;
@@ -18,6 +21,7 @@ class CommentController extends GetxController {
           .collection("comments")
           .add({
         'uid': FirebaseAuth.instance.currentUser!.uid,
+        'postId': post.id,
         'comment': comment.value,
         'createdAt': DateTime.now(),
         'updatedAt': DateTime.now(),
@@ -41,14 +45,16 @@ class CommentController extends GetxController {
     }
   }
 
-  Future<void> deleteComment(Post post, String commentId) async {
+  Future<void> deleteComment(Comment comment) async {
+    print(comment.id);
+    print(comment.postId);
     isLoading.value = true;
     try {
       await FirebaseFirestore.instance
           .collection('posts')
-          .doc(post.id)
+          .doc(comment.postId)
           .collection("comments")
-          .doc(commentId)
+          .doc(comment.id)
           .delete()
           .then((value) {
         Get.snackbar("Success", "Comment deleted successfully");
@@ -92,7 +98,7 @@ class CommentController extends GetxController {
           .update({
         'likes': FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid])
       }).then((value) {
-        Get.snackbar("Success", "Comment liked successfully");
+        // Get.snackbar("Success", "Comment liked successfully");
       });
     } catch (e) {
       Get.snackbar("Error", e.toString());
@@ -113,7 +119,7 @@ class CommentController extends GetxController {
         'likes':
             FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid])
       }).then((value) {
-        Get.snackbar("Success", "Comment unliked successfully");
+        // Get.snackbar("Success", "Comment unliked successfully");
       });
     } catch (e) {
       Get.snackbar("Error", e.toString());
@@ -141,5 +147,20 @@ class CommentController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  /// Stream the likes of a comment in real-time
+  Stream<List<String>> commentLikesStream(Post post, String commentId) {
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .doc(post.id)
+        .collection("comments")
+        .doc(commentId)
+        .snapshots()
+        .map((snapshot) {
+      final data = snapshot.data();
+      if (data == null || data['likes'] == null) return <String>[];
+      return List<String>.from(data['likes']);
+    });
   }
 }

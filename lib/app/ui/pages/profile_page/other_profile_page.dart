@@ -72,18 +72,17 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
                           message: "age",
                           child: Text(
                             "${DateTime.now().difference(widget.profile.dob.toDate()).inDays ~/ 365}",
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
+                              color: widget.profile.gender == "Gender.Female"
+                                  ? Colors.pink
+                                  : Colors.blue,
                             ),
                           ),
                         ),
-                        Container(
-                          margin: EdgeInsets.symmetric(
-                              horizontal: Get.width * 0.02),
-                          width: Get.width * 0.005,
-                          height: Get.height * 0.03,
-                          color: Colors.grey,
+                        SizedBox(
+                          width: Get.width * 0.02,
                         ),
                         Tooltip(
                           triggerMode: TooltipTriggerMode.tap,
