@@ -75,7 +75,7 @@ class MoodMatePage extends StatelessWidget {
                   ),
                   margin: EdgeInsets.all(Get.width * 0.005),
                   width: Get.width * 0.8,
-                  height: Get.height * 0.1,
+                  height: Get.height * 0.08,
                   // color: Colors.amber,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -96,7 +96,7 @@ class MoodMatePage extends StatelessWidget {
                               style: GoogleFonts.aBeeZee(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
-                                fontSize: 18,
+                                fontSize: 14,
                               ),
                             ),
                             Row(
@@ -107,7 +107,7 @@ class MoodMatePage extends StatelessWidget {
                                   style: GoogleFonts.aBeeZee(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
-                                    fontSize: 14,
+                                    fontSize: 12,
                                   ),
                                 ),
                                 SizedBox(

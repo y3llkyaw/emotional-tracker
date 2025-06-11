@@ -1,11 +1,11 @@
 import 'dart:developer';
-
 import 'package:audioplayers/audioplayers.dart';
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/controllers/message_page_controller.dart';
 import 'package:emotion_tracker/app/controllers/online_controller.dart';
+import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/ui/pages/chat_page/chat_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -100,7 +100,7 @@ class _MessagePageState extends State<MessagePage> {
       child: ListView.builder(
         itemCount: messages.length,
         itemBuilder: (context, index) {
-          final friend = friendsController.friends.firstWhere(
+          final Profile friend = friendsController.friends.firstWhere(
             (e) => e.uid == messages[index].key,
             orElse: () => null, // Avoids errors if no match is found
           );
@@ -139,9 +139,8 @@ class _MessagePageState extends State<MessagePage> {
                   children: [
                     Text(
                       friend.name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500, color: friend.color),
                     ),
                   ],
                 ),

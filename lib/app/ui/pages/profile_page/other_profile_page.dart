@@ -59,47 +59,41 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
                       style: TextStyle(
                         fontSize: Get.width * 0.045,
                         fontWeight: FontWeight.bold,
-                        color: widget.profile.gender == "Gender.Female"
-                            ? Colors.pink
-                            : Colors.blue,
+                        color: widget.profile.color,
                       ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Tooltip(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: widget.profile.color,
+                          ),
                           triggerMode: TooltipTriggerMode.tap,
-                          message: "age",
-                          child: Text(
-                            "${DateTime.now().difference(widget.profile.dob.toDate()).inDays ~/ 365}",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: widget.profile.gender == "Gender.Female"
-                                  ? Colors.pink
-                                  : Colors.blue,
-                            ),
+                          message: widget.profile.genderString,
+                          child: Icon(
+                            widget.profile.genderIcon,
+                            color: widget.profile.color,
                           ),
                         ),
                         SizedBox(
                           width: Get.width * 0.02,
                         ),
                         Tooltip(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: widget.profile.color,
+                          ),
                           triggerMode: TooltipTriggerMode.tap,
-                          message: widget.profile.gender == "Gender.Male"
-                              ? "Male"
-                              : widget.profile.gender == "Gender.Female"
-                                  ? "Female"
-                                  : "Other",
-                          child: Icon(
-                            widget.profile.gender == "Gender.Male"
-                                ? Icons.male
-                                : widget.profile.gender == "Gender.Female"
-                                    ? Icons.female
-                                    : CupertinoIcons.news,
-                            color: widget.profile.gender == "Gender.Female"
-                                ? Colors.pink
-                                : Colors.blue,
+                          message: "age",
+                          child: Text(
+                            widget.profile.age.toString(),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: widget.profile.color,
+                            ),
                           ),
                         ),
                       ],

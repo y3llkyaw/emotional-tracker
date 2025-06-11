@@ -84,6 +84,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         );
       },
       //! Must change it to true if you want to use the ScreenUtil
+      ensureScreenSize: true,
       designSize: const Size(411, 823),
     );
   }

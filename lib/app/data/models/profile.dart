@@ -1,7 +1,9 @@
 import 'dart:developer';
+import 'dart:ui';
 
 import 'package:animated_emoji/animated_emoji.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class Profile {
   final String uid;
@@ -99,5 +101,23 @@ class Profile {
       years--;
     }
     return years;
+  }
+
+  Color get color {
+    return gender.toLowerCase().toString() == "gender.female"
+        ? Colors.pink
+        : Colors.blue;
+  }
+
+  IconData get genderIcon {
+    return gender.toLowerCase().toString() == "gender.female"
+        ? Icons.female
+        : Icons.male;
+  }
+
+  String get genderString {
+    return gender.toLowerCase().toString() == "gender.female"
+        ? "Female"
+        : "Male";
   }
 }

@@ -21,14 +21,16 @@ dependencies:
   flutter_screenutil:
 
   firebase_messaging:
-  cloud_firestore: ^4.15.8
-  firebase_auth: ^4.17.8
-  firebase_core: ^2.27.0
-  firebase_database: ^10.5.7
-  # firebase_auth:
-  # firebase_core: ^3.8.0
-  # cloud_firestore:
-  # firebase_database: ^11.3.5
+
+  # firebase_auth: ^4.17.8
+  # firebase_core: ^2.27.0
+  # cloud_firestore: ^4.15.8
+  # firebase_database: ^10.5.7
+
+  firebase_auth:
+  firebase_core: ^3.8.0
+  cloud_firestore:
+  firebase_database: ^11.3.5
 
   # flutter_svg: ^2.0.14
   flutter_spinkit: ^5.2.1

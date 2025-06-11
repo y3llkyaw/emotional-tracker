@@ -52,68 +52,95 @@ class FriendsRequestPage extends StatelessWidget {
         ),
       ),
       body: Obx(
-        () => ListView.builder(
-          itemCount: friendsController.friendRequest.length,
-          itemBuilder: (context, index) {
-            log(
-              index.toString(),
+        () {
+          if (friendsController.friendRequest.isEmpty) {
+            return SizedBox(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      CupertinoIcons.person,
+                      color: Colors.grey.withOpacity(0.4),
+                      size: 150,
+                    ),
+                    SizedBox(
+                      height: Get.height * 0.02,
+                    ),
+                    Text(
+                      "There is no Friend Requests",
+                      style: TextStyle(
+                        color: Colors.grey.withOpacity(0.4),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             );
-            final data = friendsController.friendRequest[index];
-            return FutureBuilder(
-                future: profilePageController.getProfileByUid(data),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    final profile = snapshot.data as Profile;
-                    friendsController.readFriendRequest(profile.uid);
-                    return InkWell(
-                      onTap: () {
-                        Get.to(() => OtherProfilePage(profile: profile));
-                      },
-                      child: ListTile(
-                        contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 20),
-                        leading: CircleAvatar(
-                          radius: 20,
-                          child: AvatarPlus(profile.uid + profile.name),
-                        ),
-                        title: Text(profile.name),
-                        subtitle: const Text("requested you to be friend."),
-                        trailing: SizedBox(
-                          width: Get.width * 0.23,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                onPressed: () async {
-                                  await friendsController
-                                      .acceptFriendRequest(profile);
-                                },
-                                icon: const Icon(
-                                  CupertinoIcons
-                                      .person_crop_circle_fill_badge_checkmark,
-                                  color: Colors.blueAccent,
+          }
+          return ListView.builder(
+            itemCount: friendsController.friendRequest.length,
+            itemBuilder: (context, index) {
+              final data = friendsController.friendRequest[index];
+
+              return FutureBuilder(
+                  future: profilePageController.getProfileByUid(data),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      log(snapshot.data.toString(), name: "fr-page");
+                      final profile = snapshot.data as Profile;
+                      friendsController.readFriendRequest(profile.uid);
+
+                      return InkWell(
+                        onTap: () {
+                          Get.to(() => OtherProfilePage(profile: profile));
+                        },
+                        child: ListTile(
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 20),
+                          leading: CircleAvatar(
+                            radius: 20,
+                            child: AvatarPlus(profile.uid + profile.name),
+                          ),
+                          title: Text(profile.name),
+                          subtitle: const Text("requested you to be friend."),
+                          trailing: SizedBox(
+                            width: Get.width * 0.23,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                IconButton(
+                                  onPressed: () async {
+                                    await friendsController
+                                        .acceptFriendRequest(profile);
+                                  },
+                                  icon: const Icon(
+                                    CupertinoIcons
+                                        .person_crop_circle_fill_badge_checkmark,
+                                    color: Colors.blueAccent,
+                                  ),
                                 ),
-                              ),
-                              IconButton(
-                                onPressed: () async {
-                                  await friendsController
-                                      .removeFriendRequest(profile);
-                                },
-                                icon: const Icon(
-                                  CupertinoIcons.delete_solid,
-                                  color: Colors.red,
+                                IconButton(
+                                  onPressed: () async {
+                                    await friendsController
+                                        .removeFriendRequest(profile);
+                                  },
+                                  icon: const Icon(
+                                    CupertinoIcons.delete_solid,
+                                    color: Colors.red,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  }
-                  return Container();
-                });
-          },
-        ),
+                      );
+                    }
+                    return Text("data");
+                  });
+            },
+          );
+        },
       ),
     );
   }

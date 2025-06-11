@@ -66,7 +66,10 @@ class _ChatPageState extends State<ChatPage> {
               ),
             ],
           ),
-          title: Text(widget.profile.name),
+          title: Text(
+            widget.profile.name,
+            style: TextStyle(color: widget.profile.color),
+          ),
           subtitle: Obx(
             () => Text(
               timeago.format(onlineController.lastSeem.value).toString(),

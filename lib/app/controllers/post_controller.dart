@@ -26,8 +26,8 @@ class PostController extends GetxController {
   final friendController = Get.put(FriendsController());
   var friends = <String>[].obs;
 
-  late DocumentSnapshot lastPublicPostDoc;
-  late DocumentSnapshot lastFriendPostDoc;
+  late DocumentSnapshot? lastPublicPostDoc = null;
+  late DocumentSnapshot? lastFriendPostDoc = null;
 
   @override
   void onInit() async {
@@ -91,8 +91,12 @@ class PostController extends GetxController {
 
   loadmoreFriendPosts() async {
     isLoading.value = true;
+    if (lastFriendPostDoc == null) {
+      isLoading.value = false;
+      return;
+    }
     await friPostsRef
-        .startAfterDocument(lastFriendPostDoc)
+        .startAfterDocument(lastFriendPostDoc!)
         .limit(30)
         .get()
         .then((value) async {
@@ -134,8 +138,12 @@ class PostController extends GetxController {
   loadmorePublicPosts() async {
     if (isLoading.value) return;
     isLoading.value = true;
+    if (lastFriendPostDoc == null) {
+      isLoading.value = false;
+      return;
+    }
     await pubPostsRef
-        .startAfterDocument(lastPublicPostDoc)
+        .startAfterDocument(lastPublicPostDoc!)
         .limit(30)
         .get()
         .then((value) async {
