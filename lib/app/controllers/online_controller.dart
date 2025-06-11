@@ -49,10 +49,9 @@ class OnlineController extends GetxController {
     final ref = FirebaseDatabase.instance.ref("isOnline/$uid");
     final snapshot = await ref.get();
     if (snapshot.exists && snapshot.value != null) {
-      final data = Map<String, dynamic>.from(snapshot.value as Map);
-      isOnline.value = data["isOnline"];
-      lastSeem.value = DateTime.parse(data["lastSeem"]);
-      print(lastSeem.value.toString() + "hello");
+      final data = snapshot.value as Map<Object?, Object?>;
+      isOnline.value = (data[uid] as Map)["isOnline"];
+      lastSeem.value = DateTime.parse((data[uid] as Map)["lastSeem"]);
     }
   }
 

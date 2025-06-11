@@ -41,7 +41,7 @@ class _ChatPageState extends State<ChatPage> {
     super.initState();
     chatController.getUserMessages(widget.profile.uid);
     controller = TextEditingController(text: chatController.message.value);
-    // onlineController.getFriendOnlineStatus(widget.profile.uid);
+    onlineController.getFriendOnlineStatus(widget.profile.uid);
   }
 
   @override
@@ -799,7 +799,8 @@ class _ChatPageState extends State<ChatPage> {
         showMessageActionBottomSheet(message, widget.profile.uid);
       },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: Get.height * .005),
+        padding: EdgeInsets.symmetric(
+            vertical: Get.height * .005, horizontal: Get.width * 0.03),
         child: Column(
           crossAxisAlignment:
               message.uid != FirebaseAuth.instance.currentUser!.uid
@@ -819,44 +820,47 @@ class _ChatPageState extends State<ChatPage> {
                   : true,
               text: chatController.messages[index].message,
             ),
-            Row(
-              mainAxisAlignment: chatController.messages[index].uid ==
-                      FirebaseAuth.instance.currentUser!.uid
-                  ? MainAxisAlignment.start
-                  : MainAxisAlignment.end,
-              children: [
-                chatController.messages[index].uid ==
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: chatController.messages[index].uid ==
                         FirebaseAuth.instance.currentUser!.uid
-                    ? Icon(
-                        Icons.done_all,
-                        size: Get.width * 0.03,
-                        color: message.read ? Colors.green : Colors.black12,
-                      )
-                    : Container(),
-                Text(
-                  timeago.format(
-                    chatController.messages[index].timestamp.toDate(),
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.end,
+                children: [
+                  chatController.messages[index].uid ==
+                          FirebaseAuth.instance.currentUser!.uid
+                      ? Icon(
+                          Icons.done_all,
+                          size: Get.width * 0.03,
+                          color: message.read ? Colors.green : Colors.black12,
+                        )
+                      : Container(),
+                  Text(
+                    timeago.format(
+                      chatController.messages[index].timestamp.toDate(),
 
-                    // locale:
-                    //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
+                      // locale:
+                      //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
+                    ),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
                   ),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
+                  SizedBox(
+                    width: Get.width * 0.014,
                   ),
-                ),
-                SizedBox(
-                  width: Get.width * 0.014,
-                ),
-                chatController.messages[index].uid ==
-                        FirebaseAuth.instance.currentUser!.uid
-                    ? Container()
-                    : Icon(
-                        Icons.done_all,
-                        size: Get.width * 0.03,
-                        color: message.read ? Colors.green : Colors.black12,
-                      ),
-              ],
+                  chatController.messages[index].uid ==
+                          FirebaseAuth.instance.currentUser!.uid
+                      ? Container()
+                      : Icon(
+                          Icons.done_all,
+                          size: Get.width * 0.03,
+                          color: message.read ? Colors.green : Colors.black12,
+                        ),
+                ],
+              ),
             ),
           ],
         ),
