@@ -213,11 +213,16 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     Text(
                       profilePageController.userProfile.value != null
-                          ? "age: ${DateTime.now().difference(profilePageController.userProfile.value!.dob.toDate()).inDays ~/ 365}"
+                          ? "${DateTime.now().difference(profilePageController.userProfile.value!.dob.toDate()).inDays ~/ 365}"
                           : "",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
+                        color:
+                            profilePageController.userProfile.value!.gender ==
+                                    "Gender.Female"
+                                ? Colors.pink
+                                : Colors.blue,
                       ),
                     ),
                     Container(

@@ -51,6 +51,11 @@ class UserCard extends StatelessWidget {
           Text(
             profile!.name,
             textAlign: TextAlign.center,
+            style: TextStyle(
+              color: profile!.gender.toLowerCase() == "gender.female"
+                  ? Colors.pink
+                  : Colors.blue,
+            ),
           ),
           Text(
             onlineController.isOnline.value

@@ -52,13 +52,15 @@ class _PostPageState extends State<PostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        margin: EdgeInsets.symmetric(horizontal: Get.width * 0.12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Obx(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: Get.height * 0.02),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: Get.width * 0.1),
+            child: Obx(
               () => AnimatedContainer(
+                margin: const EdgeInsets.symmetric(horizontal: 0.16),
                 duration: const Duration(milliseconds: 300),
                 child: Row(
                   children: [
@@ -128,47 +130,47 @@ class _PostPageState extends State<PostPage> {
                 ),
               ),
             ),
-            SizedBox(height: Get.height * 0.02),
-            Expanded(
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: (int page) {
-                  postPageController.index.value = page;
-                },
-                children: [
-                  Obx(() {
-                    return RefreshIndicator(
-                      onRefresh: () => postPageController.getPublicPost(),
-                      child: ListView.builder(
-                        controller: _publicScrollController,
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        itemCount: postPageController.publicPosts.length,
-                        itemBuilder: (context, index) {
-                          final post = postPageController.publicPosts[index];
-                          return PostWidget(post: post);
-                        },
-                      ),
-                    );
-                  }),
-                  Obx(() {
-                    return RefreshIndicator(
-                      onRefresh: () => postPageController.getFriendPosts(),
-                      child: ListView.builder(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        controller: _friendScrollController,
-                        itemCount: postPageController.friendPosts.length,
-                        itemBuilder: (context, index) {
-                          final post = postPageController.friendPosts[index];
-                          return PostWidget(post: post);
-                        },
-                      ),
-                    );
-                  }),
-                ],
-              ),
+          ),
+          SizedBox(height: Get.height * 0.02),
+          Expanded(
+            child: PageView(
+              controller: _pageController,
+              onPageChanged: (int page) {
+                postPageController.index.value = page;
+              },
+              children: [
+                Obx(() {
+                  return RefreshIndicator(
+                    onRefresh: () => postPageController.getPublicPost(),
+                    child: ListView.builder(
+                      controller: _publicScrollController,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemCount: postPageController.publicPosts.length,
+                      itemBuilder: (context, index) {
+                        final post = postPageController.publicPosts[index];
+                        return PostWidget(post: post);
+                      },
+                    ),
+                  );
+                }),
+                Obx(() {
+                  return RefreshIndicator(
+                    onRefresh: () => postPageController.getFriendPosts(),
+                    child: ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      controller: _friendScrollController,
+                      itemCount: postPageController.friendPosts.length,
+                      itemBuilder: (context, index) {
+                        final post = postPageController.friendPosts[index];
+                        return PostWidget(post: post);
+                      },
+                    ),
+                  );
+                }),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -203,7 +205,8 @@ class _PostWidgetState extends State<PostWidget> {
       width: Get.width,
       margin: EdgeInsets.only(
         bottom: Get.height * 0.02,
-        left: Get.width * 0.01,
+        left: Get.width * 0.1,
+        right: Get.width * 0.1,
       ),
       padding: EdgeInsets.symmetric(
         vertical: Get.height * 0.01,

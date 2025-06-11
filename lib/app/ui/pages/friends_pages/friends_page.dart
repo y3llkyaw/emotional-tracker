@@ -48,127 +48,133 @@ class _FriendsPageState extends State<FriendsPage> {
         ),
       ),
       body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: Get.width * 0.75,
-                    child: SearchWidget(
-                      onSearch: (value) async {
-                        setState(() {
-                          searchBarController.text = value;
-                        });
-                      },
-                      controller: searchBarController,
-                      hintText: "Search for friends",
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      if (searchBarController.text == "") {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        await Get.to(
-                          () => FriendsRequestPage(),
-                          transition: Transition.rightToLeft,
-                        );
-                        friendsController.getFriends();
-                      } else {
-                        setState(() {
-                          searchBarController.text = "";
-                        });
-                      }
+        // padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: Get.width * 0.75,
+                  child: SearchWidget(
+                    onSearch: (value) async {
+                      setState(() {
+                        searchBarController.text = value;
+                      });
                     },
-                    icon: searchBarController.text == ""
-                        ? SizedBox(
-                            width: Get.width * 0.04,
-                            child: Stack(
-                              alignment: Alignment.topRight,
-                              children: [
-                                const Icon(CupertinoIcons.person_fill),
-                                Transform(
-                                  transform: Matrix4.translationValues(
-                                      Get.width * 0.02, 0, 0),
-                                  child: Icon(
-                                    CupertinoIcons.bell_fill,
-                                    size: Get.width * 0.03,
-                                  ),
-                                ),
-                                Transform(
-                                  transform: Matrix4.translationValues(
-                                      Get.width * 0.04, Get.height * 0.015, 0),
-                                  child: Obx(
-                                    () => friendsController.noFriReq != 0
-                                        ? CircleAvatar(
-                                            radius: Get.width * 0.02,
-                                            foregroundColor: Colors.white,
-                                            backgroundColor: Colors.redAccent,
-                                            child: Text(
-                                              friendsController.noFriReq
-                                                  .toString(),
-                                              style: TextStyle(
-                                                  fontSize: Get.width * 0.02),
-                                            ),
-                                          )
-                                        : const SizedBox(),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : SizedBox(
-                            width: Get.width * 0.04,
-                            child: const Icon(CupertinoIcons.xmark),
-                          ),
+                    controller: searchBarController,
+                    hintText: "Search for friends",
                   ),
-                ],
-              ),
-              SizedBox(height: Get.height * 0.025),
-              Center(
-                child: Obx(
-                  () {
-                    final query = searchBarController.text.trim().toLowerCase();
-                    final filteredFriends =
-                        friendsController.friends.where((friend) {
-                      if (query.isEmpty) return true;
-                      return friend.name.toLowerCase().contains(query);
-                    }).toList();
-
-                    return SizedBox(
-                      width: Get.width * 0.8,
-                      child: Wrap(
-                        spacing: Get.width * 0.08,
-                        runSpacing: Get.width * 0.08,
-                        children: <Widget>[
-                          addFrinedCard(),
-                          ...filteredFriends.map<Widget>((friend) {
-                            onlineController
-                                .getFriendsOnlineStatus([friend.uid]);
-                            return InkWell(
-                              onTap: () async {
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                await Get.to(
-                                  () => OtherProfilePage(profile: friend),
-                                  transition: Transition.downToUp,
-                                );
-                                // friendsController.getFriends();
-                              },
-                              child: UserCard(profile: friend),
-                            );
-                          }),
-                        ],
-                      ),
-                    );
-                  },
                 ),
-              ),
-              SizedBox(height: Get.width * 0.04),
-            ],
-          ),
+                IconButton(
+                  onPressed: () async {
+                    if (searchBarController.text == "") {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      await Get.to(
+                        () => FriendsRequestPage(),
+                        transition: Transition.rightToLeft,
+                      );
+                      friendsController.getFriends();
+                    } else {
+                      setState(() {
+                        searchBarController.text = "";
+                      });
+                    }
+                  },
+                  icon: searchBarController.text == ""
+                      ? SizedBox(
+                          width: Get.width * 0.04,
+                          child: Stack(
+                            alignment: Alignment.topRight,
+                            children: [
+                              const Icon(CupertinoIcons.person_fill),
+                              Transform(
+                                transform: Matrix4.translationValues(
+                                    Get.width * 0.02, 0, 0),
+                                child: Icon(
+                                  CupertinoIcons.bell_fill,
+                                  size: Get.width * 0.03,
+                                ),
+                              ),
+                              Transform(
+                                transform: Matrix4.translationValues(
+                                    Get.width * 0.04, Get.height * 0.015, 0),
+                                child: Obx(
+                                  () => friendsController.noFriReq.value != 0
+                                      ? CircleAvatar(
+                                          radius: Get.width * 0.02,
+                                          foregroundColor: Colors.white,
+                                          backgroundColor: Colors.redAccent,
+                                          child: Text(
+                                            friendsController.noFriReq
+                                                .toString(),
+                                            style: TextStyle(
+                                                fontSize: Get.width * 0.02),
+                                          ),
+                                        )
+                                      : const SizedBox(),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : SizedBox(
+                          width: Get.width * 0.04,
+                          child: const Icon(CupertinoIcons.xmark),
+                        ),
+                ),
+              ],
+            ),
+            Obx(() {
+              final query = searchBarController.text.trim().toLowerCase();
+              final filteredFriends = friendsController.friends.where((friend) {
+                if (query.isEmpty) return true;
+                return friend.name.toLowerCase().contains(query);
+              }).toList();
+
+              // Combine addFriendCard and friends into one list
+              final allCards = [
+                addFrinedCard(),
+                ...filteredFriends.map<Widget>((friend) {
+                  onlineController.getFriendsOnlineStatus([friend.uid]);
+                  return InkWell(
+                    onTap: () async {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      await Get.to(
+                        () => OtherProfilePage(profile: friend),
+                        transition: Transition.downToUp,
+                      );
+                    },
+                    child: UserCard(profile: friend),
+                  );
+                }),
+              ];
+
+              return Expanded(
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    await friendsController.getFriends();
+                  },
+                  child: GridView.builder(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Get.width * 0.1,
+                      vertical: Get.height * 0.04,
+                    ),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisExtent: 230,
+                      crossAxisSpacing: Get.width * 0.075,
+                      mainAxisSpacing: Get.width * 0.1,
+                      childAspectRatio: 01, // Adjust for card shape
+                    ),
+                    itemCount: allCards.length,
+                    itemBuilder: (context, index) => allCards[index],
+                  ),
+                ),
+              );
+            }),
+          ],
         ),
       ),
       resizeToAvoidBottomInset: false,
