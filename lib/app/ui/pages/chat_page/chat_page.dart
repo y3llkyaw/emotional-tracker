@@ -41,7 +41,7 @@ class _ChatPageState extends State<ChatPage> {
     super.initState();
     chatController.getUserMessages(widget.profile.uid);
     controller = TextEditingController(text: chatController.message.value);
-    onlineController.getFriendOnlineStatus(widget.profile.uid);
+    // onlineController.getFriendOnlineStatus(widget.profile.uid);
   }
 
   @override

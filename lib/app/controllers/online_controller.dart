@@ -24,6 +24,9 @@ class OnlineController extends GetxController {
       "uid": _cuid,
       "lastSeem": DateTime.now().toIso8601String(),
     });
+    onlineRef.onDisconnect().update({
+      "isOnline": false,
+    });
   }
 
   void setOnlineStatus() {
@@ -49,23 +52,22 @@ class OnlineController extends GetxController {
       final data = Map<String, dynamic>.from(snapshot.value as Map);
       isOnline.value = data["isOnline"];
       lastSeem.value = DateTime.parse(data["lastSeem"]);
+      print(lastSeem.value.toString() + "hello");
     }
   }
 
-  Future<int> getOnlineUserCount() async {
+  Stream<int> getOnlineUserCount() {
     final ref = FirebaseDatabase.instance.ref("isOnline");
-    final snapshot = await ref.get();
-    if (snapshot.exists && snapshot.value != null) {
-      final data = Map<String, dynamic>.from(snapshot.value as Map);
-      // Count users where "isOnline" is true
-      int onlineCount = data.values
-          .where((user) => user is Map && user["isOnline"] == true)
-          .length;
-      // Optionally, you can store or use onlineCount as needed
-      log('Online user count: $onlineCount');
-      return onlineCount;
-    }
-    return 0; // Return 0 if no users are online
+    return ref.onValue.map((event) {
+      if (event.snapshot.exists && event.snapshot.value != null) {
+        final data = Map<String, dynamic>.from(event.snapshot.value as Map);
+        int onlineCount = data.values
+            .where((user) => user is Map && user["isOnline"] == true)
+            .length;
+        return onlineCount;
+      }
+      return 0;
+    });
   }
 
   // Get all friends online status (for a list of uids)

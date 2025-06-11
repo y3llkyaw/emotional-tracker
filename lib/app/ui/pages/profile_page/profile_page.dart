@@ -219,7 +219,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                         color:
-                            profilePageController.userProfile.value!.gender ==
+                            profilePageController.userProfile.value?.gender ==
                                     "Gender.Female"
                                 ? Colors.pink
                                 : Colors.blue,

@@ -113,8 +113,8 @@ class MoodMatePage extends StatelessWidget {
                                 SizedBox(
                                   width: Get.width * 0.02,
                                 ),
-                                FutureBuilder(
-                                  future: onlineController.getOnlineUserCount(),
+                                StreamBuilder(
+                                  stream: onlineController.getOnlineUserCount(),
                                   builder: (context, snapshot) {
                                     return Text(
                                       snapshot.data.toString(),
