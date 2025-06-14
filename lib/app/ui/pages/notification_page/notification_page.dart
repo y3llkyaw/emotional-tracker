@@ -1,10 +1,14 @@
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/controllers/noti_controller.dart';
+import 'package:emotion_tracker/app/controllers/post_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
+import 'package:emotion_tracker/app/data/models/post.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
+import 'package:emotion_tracker/app/ui/pages/posts_page.dart/post_detail_page.dart';
 import 'package:emotion_tracker/app/ui/pages/profile_page/friend_profile_page.dart';
-import 'package:emotion_tracker/app/ui/pages/profile_page/other_profile_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -70,7 +74,7 @@ class _NotificationPageState extends State<NotificationPage> {
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: Get.width * 0.036,
-                            color: Colors.black26,
+                            color: Get.theme.colorScheme.primary,
                           ),
                         ),
                       ),
@@ -78,27 +82,36 @@ class _NotificationPageState extends State<NotificationPage> {
                   );
                 }
                 return ListView.builder(
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      switch (snapshot.data![index]['type']) {
-                        case "fr":
-                          return _buildFriendRequests(
-                            snapshot.data![index]["uid"],
-                            snapshot.data![index]["read"],
-                          );
-                        case "fr-accept":
-                          return _buildFriendAccept(
-                            snapshot.data![index]["uid"],
-                            snapshot.data![index]["read"],
-                          );
-                        case "other":
-                          // other.add(snapshot.data![index]['uid']);
-                          break;
-                      }
-                      return Container();
-                    });
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    switch (snapshot.data![index]['type']) {
+                      case "like_post":
+                        return _buildLikePostNoti(
+                          snapshot.data![index]["uid"],
+                          snapshot.data![index]["read"],
+                          snapshot.data![index]["pid"],
+                        );
+                      case "fr":
+                        return _buildFriendRequests(
+                          snapshot.data![index]["uid"],
+                          snapshot.data![index]["read"],
+                        );
+                      case "fr-accept":
+                        return _buildFriendAccept(
+                          snapshot.data![index]["uid"],
+                          snapshot.data![index]["read"],
+                        );
+                      case "other":
+                        // other.add(snapshot.data![index]['uid']);
+                        break;
+                    }
+                    return Container();
+                  },
+                );
               }
-              return const Center(child: CircularProgressIndicator());
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
             },
           );
         }),
@@ -114,7 +127,22 @@ class _NotificationPageState extends State<NotificationPage> {
           return _skeletonTile();
         } else if (snapshot.hasData) {
           var profile = snapshot.data;
-          return _buildFriendRequestTile(profile, uid, read);
+          // return _buildFriendRequestTile(profile, uid, read);
+        }
+        return _skeletonTile();
+      },
+    );
+  }
+
+  FutureBuilder<Profile> _buildLikePostNoti(String uid, bool read, String pid) {
+    return FutureBuilder<Profile>(
+      future: pc.getProfileByUid(uid),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _skeletonTile();
+        } else if (snapshot.hasData) {
+          var profile = snapshot.data;
+          return _buildLikePostTile(profile, uid, read, pid);
         }
         return _skeletonTile();
       },
@@ -192,48 +220,47 @@ class _NotificationPageState extends State<NotificationPage> {
     );
   }
 
-  Widget _buildFriendRequestTile(Profile? profile, String uid, bool read) {
-    return InkWell(
-      onTap: () {
-        if (profile != null) {
-          nc.readNoti(uid);
-          Get.to(() => OtherProfilePage(profile: profile));
-        }
-      },
-      child: ListTile(
-        leading: CircleAvatar(child: AvatarPlus("$uid${profile?.name}")),
-        title: Text(
-          profile?.name ?? 'Unknown',
-          style: const TextStyle(fontWeight: FontWeight.w500),
-        ),
-        subtitle: Padding(
-          padding: EdgeInsets.only(top: Get.width * 0.01),
-          child: Row(
-            children: [
-              InkWell(
-                onTap: () async {
-                  await afc.acceptFriendRequest(profile!);
-                  setState(() {});
-                },
-                child: afc.isLoading.value
-                    ? const CircularProgressIndicator()
-                    : const Text(
-                        "Accept",
-                        style: TextStyle(color: Colors.blueAccent),
-                      ),
-              ),
-              SizedBox(width: Get.width * 0.05),
-              InkWell(
-                onTap: () {},
-                child: const Text(
-                  "Decline",
-                  style: TextStyle(color: Colors.redAccent),
+  Widget _buildLikePostTile(
+      Profile? profile, String uid, bool read, String pid) {
+    PostController postController = PostController();
+
+    return FutureBuilder<Post?>(
+      future: postController.getPostById(pid),
+      builder: (context, snapshot) {
+        return InkWell(
+          onTap: () async {
+            if (profile != null) {
+              Get.to(
+                () => PostDetailPage(
+                  postData: snapshot.data!,
+                  profileData: profile,
                 ),
+              );
+              await nc.readNoti("like_${snapshot.data!.id}_${profile.uid}");
+            }
+          },
+          child: ListTile(
+            leading: CircleAvatar(child: AvatarPlus("$uid${profile?.name}")),
+            title: Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: "${profile?.name} ",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: profile!.color,
+                    ),
+                  ),
+                  const TextSpan(
+                    text: "liked your post.",
+                  ),
+                ],
               ),
-            ],
+            ),
+            // subtitle: const Text("your post: ${p}"),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emotion_tracker/app/data/models/post.dart';
 import 'package:emotion_tracker/app/data/services/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -22,6 +23,14 @@ class NotiController extends GetxController {
 
   Future<void> getAllNotification() async {
     notifications.value = streamAllNoti();
+  }
+
+  Future<void> likePost(Post post) async {
+    await ns.likePostNoti(post);
+  }
+
+  Future<void> unlikePost(Post post) async {
+    await ns.unlikePostNoti(post);
   }
 
   Future<void> readNoti(String nid) async {

@@ -205,7 +205,7 @@ class _PostWidgetState extends State<PostWidget> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 30),
       child: Card(
-        color: Colors.indigo.withOpacity(0.1),
+        color: Colors.indigoAccent.withOpacity(0.1),
         child: Container(
           width: Get.width,
           padding: EdgeInsets.symmetric(
@@ -476,6 +476,9 @@ class _PostWidgetState extends State<PostWidget> {
                   ),
                 ),
                 SizedBox(height: Get.height * 0.02),
+                Divider(
+                  color: Colors.grey.withOpacity(0.3),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [

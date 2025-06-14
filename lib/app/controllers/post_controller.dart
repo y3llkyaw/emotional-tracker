@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
+import 'package:emotion_tracker/app/controllers/noti_controller.dart';
 import 'package:emotion_tracker/app/data/models/post.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/sources/enums.dart';
@@ -24,6 +25,7 @@ class PostController extends GetxController {
   final body = ''.obs;
 
   final friendController = Get.put(FriendsController());
+  final notiController = Get.put(NotiController());
   var friends = <String>[].obs;
 
   late DocumentSnapshot? lastPublicPostDoc = null;
@@ -164,6 +166,16 @@ class PostController extends GetxController {
     });
   }
 
+  Future<Post?> getPostById(String pid) async {
+    final result =
+        await FirebaseFirestore.instance.collection("posts").doc(pid).get();
+    if (result.exists) {
+      print(result.data());
+      return Post.fromJson(result.data()!);
+    }
+    return null;
+  }
+
   Future<void> updatePost(Post post) async {
     log("Updating post: ${post.id}");
     log("Body: ${body.value}");
@@ -292,6 +304,8 @@ class PostController extends GetxController {
       // "createdAt": DateTime.now(),
     }).onError((error, stackTrace) {
       Get.snackbar("Error", error.toString());
+    }).then((v) async {
+      await notiController.likePost(post);
     });
   }
 
@@ -306,7 +320,10 @@ class PostController extends GetxController {
         .then((value) {})
         .onError((error, stackTrace) {
       Get.snackbar("Error", error.toString());
+    }).then((v) async {
+      await notiController.unlikePost(post);
     });
+    ;
   }
 
   Future<void> reportPost(Post post) async {

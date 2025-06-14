@@ -1,8 +1,10 @@
 import 'package:emotion_tracker/app/controllers/matching_controller.dart';
+import 'package:emotion_tracker/app/controllers/noti_controller.dart';
 import 'package:emotion_tracker/app/controllers/online_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
 import 'package:emotion_tracker/app/ui/pages/create_post_page/create_post_page.dart';
+import 'package:emotion_tracker/app/ui/pages/notification_page/notification_page.dart';
 import 'package:emotion_tracker/app/ui/pages/posts_page.dart/post_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +19,7 @@ class MoodMatePage extends StatelessWidget {
 
   final MatchingController matchingController = Get.put(MatchingController());
   final onlineController = Get.put(OnlineController());
+  final notiController = Get.put(NotiController());
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +40,41 @@ class MoodMatePage extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              SizedBox(width: Get.width * 0.03),
-              const Icon(CupertinoIcons.heart_fill),
               const Spacer(),
-              const Icon(
-                CupertinoIcons.bell_solid,
+              IconButton(
+                onPressed: () {
+                  Get.to(() => const NotificationPage());
+                },
+                icon: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    const Icon(CupertinoIcons.bell_solid),
+                    StreamBuilder<Object>(
+                        stream: notiController.streamUnreadNoti(),
+                        builder: (context, snapshot) {
+                          final unreadNoti = snapshot.data as List;
+                          if (unreadNoti.isEmpty) {
+                            return Container();
+                          }
+                          return Transform(
+                            transform: Matrix4.translationValues(20, -10, 0),
+                            child: CircleAvatar(
+                              radius: 8,
+                              backgroundColor: Colors.red,
+                              child: Center(
+                                  child: Text(
+                                unreadNoti.length.toString(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )),
+                            ),
+                          );
+                        })
+                  ],
+                ),
                 color: Colors.blue,
               ),
             ],
