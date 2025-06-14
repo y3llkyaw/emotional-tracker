@@ -49,33 +49,90 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Get.theme.canvasColor,
-        title: ListTile(
-          leading: Stack(
-            children: [
-              AvatarPlus(
-                widget.profile.uid.toString() + widget.profile.name,
-                width: 40,
-              ),
-              const Positioned(
-                right: 0,
-                bottom: 0,
-                child: CircleAvatar(
-                  radius: 5,
-                  backgroundColor: Colors.green,
+        title: StreamBuilder(
+            stream:
+                onlineController.friendOnlineStatusStream(widget.profile.uid),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final isOnline = (snapshot.data as Map?)?["isOnline"];
+                final lastSeem = (snapshot.data as Map?)?["lastSeem"];
+                return ListTile(
+                  leading: Stack(
+                    children: [
+                      AvatarPlus(
+                        widget.profile.uid.toString() + widget.profile.name,
+                        width: 40,
+                      ),
+                      isOnline
+                          ? const Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: CircleAvatar(
+                                radius: 5,
+                                backgroundColor: Colors.green,
+                              ),
+                            )
+                          : const Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: CircleAvatar(
+                                radius: 5,
+                                backgroundColor: Colors.grey,
+                              ),
+                            ),
+                    ],
+                  ),
+                  title: Text(
+                    widget.profile.name,
+                    style: TextStyle(
+                      color: widget.profile.color,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  subtitle: Obx(
+                    () => Text(
+                      !isOnline
+                          ? timeago
+                              .format(
+                                lastSeem,
+                              )
+                              .toString()
+                          : "online",
+                    ),
+                  ),
+                );
+              }
+              return ListTile(
+                leading: Stack(
+                  children: [
+                    AvatarPlus(
+                      widget.profile.uid.toString() + widget.profile.name,
+                      width: 40,
+                    ),
+                    const Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: CircleAvatar(
+                        radius: 5,
+                        backgroundColor: Colors.green,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-          title: Text(
-            widget.profile.name,
-            style: TextStyle(color: widget.profile.color),
-          ),
-          subtitle: Obx(
-            () => Text(
-              timeago.format(onlineController.lastSeem.value).toString(),
-            ),
-          ),
-        ),
+                title: Text(
+                  widget.profile.name,
+                  style: TextStyle(
+                    color: widget.profile.color,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                subtitle: Obx(
+                  () => Text(
+                    timeago.format(onlineController.lastSeem.value).toString(),
+                  ),
+                ),
+              );
+            }),
       ),
       body: Column(
         children: [
@@ -699,98 +756,102 @@ class _ChatPageState extends State<ChatPage> {
       onLongPress: () {
         showMessageActionBottomSheet(message, widget.profile.uid);
       },
-      child: Column(
-        crossAxisAlignment:
-            message.uid != FirebaseAuth.instance.currentUser!.uid
-                ? CrossAxisAlignment.end
-                : CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment:
-                message.uid != FirebaseAuth.instance.currentUser!.uid
-                    ? MainAxisAlignment.end
-                    : MainAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                margin: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  // color: Colors.black12,
-                  color: Colors.grey.withOpacity(0.5),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft:
-                        message.uid != FirebaseAuth.instance.currentUser!.uid
-                            ? const Radius.circular(20)
-                            : const Radius.circular(0),
-                    bottomRight:
-                        message.uid != FirebaseAuth.instance.currentUser!.uid
-                            ? const Radius.circular(0)
-                            : const Radius.circular(20),
-                    topRight: const Radius.circular(20),
-                    topLeft: const Radius.circular(20),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: Get.height * 0.15,
-                      width: Get.width * 0.3,
-                      child: AnimatedEmoji(
-                        AnimatedEmojis.fromEmojiString(
-                          message.message,
-                        )!, // Add null check operator to handle nullable AnimatedEmojiData
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Container(
-            margin: const EdgeInsets.only(right: 20, left: 20),
-            child: Row(
-              mainAxisAlignment: chatController.messages[index].uid ==
-                      FirebaseAuth.instance.currentUser!.uid
-                  ? MainAxisAlignment.start
-                  : MainAxisAlignment.end,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+            vertical: Get.height * .005, horizontal: Get.width * 0.015),
+        child: Column(
+          crossAxisAlignment:
+              message.uid != FirebaseAuth.instance.currentUser!.uid
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment:
+                  message.uid != FirebaseAuth.instance.currentUser!.uid
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
               children: [
-                chatController.messages[index].uid ==
-                        FirebaseAuth.instance.currentUser!.uid
-                    ? Icon(
-                        Icons.done_all,
-                        size: Get.width * 0.03,
-                        color: message.read ? Colors.green : Colors.black12,
-                      )
-                    : Container(),
-                SizedBox(
-                  width: Get.width * 0.014,
-                ),
-                Text(
-                  timeago.format(
-                    chatController.messages[index].timestamp.toDate(),
-                    // locale:
-                    //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  margin: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    // color: Colors.black12,
+                    color: Colors.grey.withOpacity(0.5),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft:
+                          message.uid != FirebaseAuth.instance.currentUser!.uid
+                              ? const Radius.circular(20)
+                              : const Radius.circular(0),
+                      bottomRight:
+                          message.uid != FirebaseAuth.instance.currentUser!.uid
+                              ? const Radius.circular(0)
+                              : const Radius.circular(20),
+                      topRight: const Radius.circular(20),
+                      topLeft: const Radius.circular(20),
+                    ),
                   ),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                SizedBox(
-                  width: Get.width * 0.014,
-                ),
-                chatController.messages[index].uid ==
-                        FirebaseAuth.instance.currentUser!.uid
-                    ? Container()
-                    : Icon(
-                        Icons.done_all,
-                        size: Get.width * 0.03,
-                        color: message.read ? Colors.green : Colors.black12,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: Get.height * 0.15,
+                        width: Get.width * 0.3,
+                        child: AnimatedEmoji(
+                          AnimatedEmojis.fromEmojiString(
+                            message.message,
+                          )!, // Add null check operator to handle nullable AnimatedEmojiData
+                        ),
                       ),
+                    ],
+                  ),
+                ),
               ],
             ),
-          ),
-        ],
+            Container(
+              margin: const EdgeInsets.only(right: 20, left: 20),
+              child: Row(
+                mainAxisAlignment: chatController.messages[index].uid ==
+                        FirebaseAuth.instance.currentUser!.uid
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.end,
+                children: [
+                  chatController.messages[index].uid ==
+                          FirebaseAuth.instance.currentUser!.uid
+                      ? Icon(
+                          Icons.done_all,
+                          size: Get.width * 0.03,
+                          color: message.read ? Colors.green : Colors.black12,
+                        )
+                      : Container(),
+                  SizedBox(
+                    width: Get.width * 0.014,
+                  ),
+                  Text(
+                    timeago.format(
+                      chatController.messages[index].timestamp.toDate(),
+                      // locale:
+                      //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
+                    ),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  SizedBox(
+                    width: Get.width * 0.014,
+                  ),
+                  chatController.messages[index].uid ==
+                          FirebaseAuth.instance.currentUser!.uid
+                      ? Container()
+                      : Icon(
+                          Icons.done_all,
+                          size: Get.width * 0.03,
+                          color: message.read ? Colors.green : Colors.black12,
+                        ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -803,7 +864,7 @@ class _ChatPageState extends State<ChatPage> {
       },
       child: Container(
         padding: EdgeInsets.symmetric(
-            vertical: Get.height * .005, horizontal: Get.width * 0.03),
+            vertical: Get.height * .005, horizontal: Get.width * 0.015),
         child: Column(
           crossAxisAlignment:
               message.uid != FirebaseAuth.instance.currentUser!.uid
@@ -839,6 +900,9 @@ class _ChatPageState extends State<ChatPage> {
                           color: message.read ? Colors.green : Colors.black12,
                         )
                       : Container(),
+                  SizedBox(
+                    width: Get.width * 0.01,
+                  ),
                   Text(
                     timeago.format(
                       chatController.messages[index].timestamp.toDate(),

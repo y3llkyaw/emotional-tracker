@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/data/models/comment.dart';
 import 'package:emotion_tracker/app/data/models/post.dart';
@@ -99,6 +99,8 @@ class CommentController extends GetxController {
         'likes': FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid])
       }).then((value) {
         // Get.snackbar("Success", "Comment liked successfully");
+      }).onError((e, stackTrace) {
+        log(e.toString());
       });
     } catch (e) {
       Get.snackbar("Error", e.toString());

@@ -51,7 +51,10 @@ class UserCard extends StatelessWidget {
           Text(
             profile!.name,
             textAlign: TextAlign.center,
-            style: TextStyle(color: profile!.color),
+            style: TextStyle(
+              color: profile!.color,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           Text(
             onlineController.isOnline.value

@@ -69,6 +69,26 @@ class OnlineController extends GetxController {
     });
   }
 
+  /// Stream a friend's online status and last seen in real time
+  Stream<Map<String, dynamic>> friendOnlineStatusStream(String uid) {
+    final ref = FirebaseDatabase.instance.ref("isOnline/$uid");
+    return ref.onValue.map((event) {
+      if (event.snapshot.exists && event.snapshot.value != null) {
+        final data = Map<String, dynamic>.from(event.snapshot.value as Map);
+        return {
+          "isOnline": data["isOnline"] ?? false,
+          "lastSeem": data["lastSeem"] != null
+              ? DateTime.tryParse(data["lastSeem"])
+              : null,
+        };
+      }
+      return {
+        "isOnline": false,
+        "lastSeem": null,
+      };
+    });
+  }
+
   // Get all friends online status (for a list of uids)
   Future<void> getFriendsOnlineStatus(List<String> uids) async {
     try {

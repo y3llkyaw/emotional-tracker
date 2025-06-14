@@ -140,7 +140,9 @@ class _MessagePageState extends State<MessagePage> {
                     Text(
                       friend.name,
                       style: TextStyle(
-                          fontWeight: FontWeight.w500, color: friend.color),
+                        fontWeight: FontWeight.bold,
+                        color: friend.color,
+                      ),
                     ),
                   ],
                 ),

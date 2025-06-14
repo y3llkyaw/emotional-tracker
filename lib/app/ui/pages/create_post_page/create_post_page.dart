@@ -2,7 +2,10 @@ import 'dart:developer';
 
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/controllers/post_controller.dart';
+import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/post.dart';
+import 'package:emotion_tracker/app/data/models/profile.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_page/profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,10 +26,14 @@ class CreatePostPage extends StatefulWidget {
 
 class _CreatePostPageState extends State<CreatePostPage> {
   final createPostPageController = Get.put(PostController());
+  final ProfilePageController profilePageController =
+      Get.put(ProfilePageController());
   final user = FirebaseAuth.instance.currentUser!;
   final TextEditingController bodyController = TextEditingController();
+  late Profile? profile;
   @override
   void initState() {
+    profile = profilePageController.userProfile.value ?? null;
     bodyController.text = widget.isEditing ? widget.post!.body : "";
     super.initState();
   }
@@ -58,7 +65,13 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       // size: 50,
                     ),
                   ),
-                  title: Text(user.displayName ?? "User"),
+                  title: Text(
+                    user.displayName ?? "User",
+                    style: TextStyle(
+                      color: profile?.color ?? Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   subtitle: Row(
                     children: [
                       Icon(

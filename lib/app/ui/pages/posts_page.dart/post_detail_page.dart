@@ -8,6 +8,8 @@ import 'package:emotion_tracker/app/data/models/post.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/bottom_sheet.dart';
 import 'package:emotion_tracker/app/ui/pages/create_post_page/create_post_page.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_page/other_profile_page.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_page/profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -58,334 +60,368 @@ class _PostDetailPageState extends State<PostDetailPage> {
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(
           horizontal: Get.width * 0.05,
-          vertical: Get.height * 0.02,
+          vertical: Get.height * 0.01,
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                CircleAvatar(
-                  child: AvatarPlus(
-                    "${widget.profileData.uid}${widget.profileData.name}",
-                  ),
+            // Post Card
+            Card(
+              color: Colors.indigo.withOpacity(0.1),
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  vertical: Get.height * 0.01,
+                  horizontal: Get.width * 0.04,
                 ),
-                const SizedBox(width: 10),
-                Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      widget.profileData.name,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: widget.profileData.gender.toLowerCase() ==
-                                "gender.male"
-                            ? Colors.blue
-                            : Colors.pink,
-                      ),
-                    ),
-                    Container(
-                      width: Get.width * 0.1,
-                      decoration: BoxDecoration(
-                        color: widget.profileData.gender.toLowerCase() ==
-                                "gender.male"
-                            ? Colors.blue.withOpacity(0.1)
-                            : Colors.pink.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            widget.profileData.gender.toLowerCase() ==
-                                    "gender.male"
-                                ? Icons.male
-                                : Icons.female,
-                            size: 15,
-                            color: widget.profileData.gender.toLowerCase() ==
-                                    "gender.male"
-                                ? Colors.blue
-                                : Colors.pink,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          child: AvatarPlus(
+                            "${widget.profileData.uid}${widget.profileData.name}",
                           ),
-                          const SizedBox(width: 5),
-                          Text(
-                            widget.profileData.age.toString(),
-                            style: TextStyle(
-                              fontSize: Get.width * 0.025,
-                              color: widget.profileData.gender.toLowerCase() ==
-                                      "gender.male"
-                                  ? Colors.blue
-                                  : Colors.pink,
+                        ),
+                        const SizedBox(width: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.profileData.name,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color:
+                                    widget.profileData.gender.toLowerCase() ==
+                                            "gender.male"
+                                        ? Colors.blue
+                                        : Colors.pink,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                Column(
-                  children: [
-                    SafeArea(
-                      child: ElTooltip(
-                        controller: _tooltipController,
-                        showArrow: true,
-                        color: Colors.blue.withOpacity(0.4),
-                        appearAnimationDuration:
-                            const Duration(milliseconds: 300),
-                        disappearAnimationDuration:
-                            const Duration(milliseconds: 300),
-                        position: ElTooltipPosition.bottomEnd,
-                        content: widget.postData.uid ==
-                                FirebaseAuth.instance.currentUser!.uid
-                            ? Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.end,
+                            Container(
+                              width: Get.width * 0.1,
+                              decoration: BoxDecoration(
+                                color:
+                                    widget.profileData.gender.toLowerCase() ==
+                                            "gender.male"
+                                        ? Colors.blue.withOpacity(0.1)
+                                        : Colors.pink.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  ElevatedButton.icon(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.blue,
-                                    ),
-                                    onPressed: () {
-                                      _tooltipController.hide();
-                                      Get.to(
-                                        () => CreatePostPage(
-                                          isEditing: true,
-                                          post: widget.postData,
-                                        ),
-                                        transition: Transition.rightToLeft,
-                                      );
-                                    },
-                                    label: const Text(
-                                      "Edit",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    icon: Icon(
-                                      Icons.edit,
-                                      size: Get.width * 0.04,
-                                      color: Colors.white,
-                                    ),
+                                  Icon(
+                                    widget.profileData.gender.toLowerCase() ==
+                                            "gender.male"
+                                        ? Icons.male
+                                        : Icons.female,
+                                    size: 15,
+                                    color: widget.profileData.gender
+                                                .toLowerCase() ==
+                                            "gender.male"
+                                        ? Colors.blue
+                                        : Colors.pink,
                                   ),
-                                  ElevatedButton.icon(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.red,
-                                    ),
-                                    onPressed: () async {
-                                      _tooltipController.hide();
-                                      Get.to(
-                                        () => CreatePostPage(
-                                          isEditing: true,
-                                          post: widget.postData,
-                                        ),
-                                        transition: Transition.rightToLeft,
-                                      );
-                                    },
-                                    label: const Text(
-                                      "Delete",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    icon: Icon(
-                                      Icons.delete,
-                                      size: Get.width * 0.04,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  ElevatedButton.icon(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.grey,
-                                    ),
-                                    onPressed: () async {
-                                      _tooltipController.hide();
-                                      await postController
-                                          .hidePost(widget.postData)
-                                          .then((value) {});
-                                      // TODO: Implement hide post functionality
-                                    },
-                                    label: const Text(
-                                      "Hide",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    icon: Icon(
-                                      CupertinoIcons.eye_slash,
-                                      size: Get.width * 0.04,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  ElevatedButton.icon(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.redAccent,
-                                    ),
-                                    onPressed: () async {
-                                      _tooltipController.hide();
-                                      showReportBottomSheet(widget.postData);
-                                    },
-                                    label: const Text(
-                                      "Report",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    icon: Icon(
-                                      Icons.report,
-                                      size: Get.width * 0.04,
-                                      color: Colors.white,
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    widget.profileData.age.toString(),
+                                    style: TextStyle(
+                                      fontSize: Get.width * 0.025,
+                                      color: widget.profileData.gender
+                                                  .toLowerCase() ==
+                                              "gender.male"
+                                          ? Colors.blue
+                                          : Colors.pink,
                                     ),
                                   ),
                                 ],
                               ),
-                        child: Icon(
-                          Icons.more_horiz,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ),
-                    Text(
-                      timeago.format(
-                        widget.postData.createdAt,
-                        locale: 'en_short',
-                        allowFromNow: true,
-                        clock: DateTime.now(),
-                      ),
-                      style: TextStyle(
-                        fontSize: Get.width * 0.025,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            // Post body with see more/less
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final span = TextSpan(
-                  text: widget.postData.body,
-                  style: TextStyle(fontSize: Get.width * 0.037),
-                );
-                final tp = TextPainter(
-                  text: span,
-                  maxLines: _maxLines,
-                  textDirection: TextDirection.ltr,
-                )..layout(maxWidth: constraints.maxWidth);
-
-                final isOverflow = tp.didExceedMaxLines;
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Text(
-                        widget.postData.body,
-                        style: TextStyle(fontSize: Get.width * 0.037),
-                        maxLines: _isExpanded ? null : _maxLines,
-                        overflow: _isExpanded
-                            ? TextOverflow.visible
-                            : TextOverflow.ellipsis,
-                      ),
-                    ),
-                    if (isOverflow)
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _isExpanded = !_isExpanded;
-                          });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 4.0),
-                          child: Text(
-                            _isExpanded ? "See less" : "See more",
-                            style: TextStyle(
-                              color: Colors.blue,
-                              fontWeight: FontWeight.bold,
-                              fontSize: Get.width * 0.032,
                             ),
-                          ),
+                          ],
                         ),
-                      ),
-                  ],
-                );
-              },
-            ),
-            SizedBox(
-              height: 16,
-              child: Divider(
-                color: Colors.grey.withOpacity(0.5),
-                thickness: 0.5,
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                StreamBuilder(
-                  stream: postController.getLikeStream(widget.postData),
-                  builder: (context, snapshot) {
-                    // snapshot.data as List<String?>;
-                    final likes = snapshot.data as List<String>? ?? [];
-                    return Row(
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            likes.contains(
-                                    FirebaseAuth.instance.currentUser!.uid)
-                                ? CupertinoIcons.heart_fill
-                                : CupertinoIcons.heart,
-                            color: Colors.blue,
-                          ),
-                          onPressed: () async {
-                            if (likes.contains(
-                                FirebaseAuth.instance.currentUser!.uid)) {
-                              await postController.unlikePost(widget.postData);
-                            } else {
-                              await postController.likePost(widget.postData);
-                            }
-                          },
-                        ),
-                        Text(
-                          snapshot.data != null ? likes.length.toString() : "0",
-                          style: TextStyle(
-                            fontSize: Get.width * 0.03,
-                          ),
+                        const Spacer(),
+                        Column(
+                          children: [
+                            SafeArea(
+                              child: ElTooltip(
+                                controller: _tooltipController,
+                                showArrow: true,
+                                color: Colors.blue.withOpacity(0.4),
+                                appearAnimationDuration:
+                                    const Duration(milliseconds: 300),
+                                disappearAnimationDuration:
+                                    const Duration(milliseconds: 300),
+                                position: ElTooltipPosition.bottomEnd,
+                                content: widget.postData.uid ==
+                                        FirebaseAuth.instance.currentUser!.uid
+                                    ? Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          ElevatedButton.icon(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.blue,
+                                            ),
+                                            onPressed: () {
+                                              _tooltipController.hide();
+                                              Get.to(
+                                                () => CreatePostPage(
+                                                  isEditing: true,
+                                                  post: widget.postData,
+                                                ),
+                                                transition:
+                                                    Transition.rightToLeft,
+                                              );
+                                            },
+                                            label: const Text(
+                                              "Edit",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            icon: Icon(
+                                              Icons.edit,
+                                              size: Get.width * 0.04,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          ElevatedButton.icon(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.red,
+                                            ),
+                                            onPressed: () async {
+                                              _tooltipController.hide();
+                                              Get.to(
+                                                () => CreatePostPage(
+                                                  isEditing: true,
+                                                  post: widget.postData,
+                                                ),
+                                                transition:
+                                                    Transition.rightToLeft,
+                                              );
+                                            },
+                                            label: const Text(
+                                              "Delete",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            icon: Icon(
+                                              Icons.delete,
+                                              size: Get.width * 0.04,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          ElevatedButton.icon(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.grey,
+                                            ),
+                                            onPressed: () async {
+                                              _tooltipController.hide();
+                                              await postController
+                                                  .hidePost(widget.postData)
+                                                  .then((value) {});
+                                              // TODO: Implement hide post functionality
+                                            },
+                                            label: const Text(
+                                              "Hide",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            icon: Icon(
+                                              CupertinoIcons.eye_slash,
+                                              size: Get.width * 0.04,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          ElevatedButton.icon(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.redAccent,
+                                            ),
+                                            onPressed: () async {
+                                              _tooltipController.hide();
+                                              showReportBottomSheet(
+                                                widget.postData,
+                                              );
+                                            },
+                                            label: const Text(
+                                              "Report",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            icon: Icon(
+                                              Icons.report,
+                                              size: Get.width * 0.04,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                child: Icon(
+                                  Icons.more_horiz,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ),
+                            Text(
+                              timeago.format(
+                                widget.postData.createdAt,
+                                locale: 'en_short',
+                                allowFromNow: true,
+                                clock: DateTime.now(),
+                              ),
+                              style: TextStyle(
+                                fontSize: Get.width * 0.025,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
-                    );
-                  },
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(
-                        CupertinoIcons.chat_bubble_2,
-                        color: Colors.blue,
-                      ),
-                      onPressed: () {
-                        // Handle comment action
+                    ),
+                    const SizedBox(height: 8),
+                    // Post body with see more/less
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final span = TextSpan(
+                          text: widget.postData.body,
+                          style: TextStyle(fontSize: Get.width * 0.037),
+                        );
+                        final tp = TextPainter(
+                          text: span,
+                          maxLines: _maxLines,
+                          textDirection: TextDirection.ltr,
+                        )..layout(maxWidth: constraints.maxWidth);
+
+                        final isOverflow = tp.didExceedMaxLines;
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Text(
+                                widget.postData.body,
+                                style: TextStyle(fontSize: Get.width * 0.037),
+                                maxLines: _isExpanded ? null : _maxLines,
+                                overflow: _isExpanded
+                                    ? TextOverflow.visible
+                                    : TextOverflow.ellipsis,
+                              ),
+                            ),
+                            if (isOverflow)
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _isExpanded = !_isExpanded;
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 4.0),
+                                  child: Text(
+                                    _isExpanded ? "See less" : "See more",
+                                    style: TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: Get.width * 0.032,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        );
                       },
                     ),
-                    // Text(
-                    //   widget.postData.comments?.length.toString() ?? "",
-                    //   style: TextStyle(
-                    //     fontSize: Get.width * 0.03,
-                    //   ),
-                    // ),
+                    SizedBox(
+                      height: 16,
+                      child: Divider(
+                        color: Colors.grey.withOpacity(0.5),
+                        thickness: 0.5,
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        StreamBuilder(
+                          stream: postController.getLikeStream(widget.postData),
+                          builder: (context, snapshot) {
+                            // snapshot.data as List<String?>;
+                            final likes = snapshot.data as List<String>? ?? [];
+                            return Row(
+                              children: [
+                                IconButton(
+                                  icon: Icon(
+                                    likes.contains(FirebaseAuth
+                                            .instance.currentUser!.uid)
+                                        ? CupertinoIcons.heart_fill
+                                        : CupertinoIcons.heart,
+                                    color: Colors.blue,
+                                  ),
+                                  onPressed: () async {
+                                    if (likes.contains(FirebaseAuth
+                                        .instance.currentUser!.uid)) {
+                                      await postController
+                                          .unlikePost(widget.postData);
+                                    } else {
+                                      await postController
+                                          .likePost(widget.postData);
+                                    }
+                                  },
+                                ),
+                                Text(
+                                  likes.isEmpty
+                                      ? ""
+                                      : snapshot.data != null
+                                          ? likes.length.toString()
+                                          : "0",
+                                  style: TextStyle(
+                                    fontSize: Get.width * 0.03,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(
+                                CupertinoIcons.chat_bubble_2,
+                                color: Colors.blue,
+                              ),
+                              onPressed: () {
+                                // Handle comment action
+                              },
+                            ),
+                            // Text(
+                            //   widget.postData.comments?.length.toString() ?? "",
+                            //   style: TextStyle(
+                            //     fontSize: Get.width * 0.03,
+                            //   ),
+                            // ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-              ],
+              ),
+            ),
+            SizedBox(
+              height: Get.height * 0.02,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -538,14 +574,30 @@ class CommentWidget extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        profile.name,
-                        style: TextStyle(
-                          fontSize: Get.width * 0.03,
-                          fontWeight: FontWeight.w600,
-                          color: profile.gender.toLowerCase() == "gender.male"
-                              ? Colors.blue
-                              : Colors.pink,
+                      InkWell(
+                        onTap: () {
+                          if (profile.uid ==
+                              FirebaseAuth.instance.currentUser!.uid) {
+                            Get.to(
+                              () => const ProfilePage(),
+                              transition: Transition.rightToLeft,
+                            );
+                          } else {
+                            Get.to(
+                              () => OtherProfilePage(profile: profile),
+                              transition: Transition.rightToLeft,
+                            );
+                          }
+                        },
+                        child: Text(
+                          profile.name,
+                          style: TextStyle(
+                            fontSize: Get.width * 0.03,
+                            fontWeight: FontWeight.w600,
+                            color: profile.gender.toLowerCase() == "gender.male"
+                                ? Colors.blue
+                                : Colors.pink,
+                          ),
                         ),
                       ),
                       Container(

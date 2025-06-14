@@ -720,6 +720,15 @@ void showDeleteCommentBottomSheet(
                   },
                 )
               : Container(),
+          comment.uid != FirebaseAuth.instance.currentUser!.uid
+              ? ListTile(
+                  leading: const Icon(Icons.report, color: Colors.red),
+                  title: const Text("Report"),
+                  onTap: () async {
+                    showReportBottomSheet(post);
+                  },
+                )
+              : Container(),
         ],
       ),
     ),
