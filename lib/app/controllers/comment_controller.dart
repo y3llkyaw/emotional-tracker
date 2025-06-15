@@ -15,6 +15,8 @@ class CommentController extends GetxController {
 
   final ns = NotificationService();
 
+  final _cuid = FirebaseAuth.instance.currentUser!.uid;
+
   Future<void> addComment(Post post) async {
     isLoading.value = true;
     try {
@@ -68,7 +70,6 @@ class CommentController extends GetxController {
             .doc(comment.postId)
             .get();
 
-        // print(result.data());
         await ns
             .deleteNoti(result.data()!["uid"],
                 "comment_${comment.postId}_${comment.id}")
@@ -104,17 +105,18 @@ class CommentController extends GetxController {
     }
   }
 
-  Future<void> likeComment(Post post, String commentId) async {
+  Future<void> likeComment(Post post, Comment comment) async {
     isLoading.value = true;
     try {
       await FirebaseFirestore.instance
           .collection('posts')
           .doc(post.id)
           .collection("comments")
-          .doc(commentId)
+          .doc(comment.id)
           .update({
         'likes': FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid])
-      }).then((value) {
+      }).then((value) async {
+        await ns.likeCommentNoti(post, comment);
         // Get.snackbar("Success", "Comment liked successfully");
       }).onError((e, stackTrace) {
         log(e.toString());
@@ -126,19 +128,19 @@ class CommentController extends GetxController {
     }
   }
 
-  Future<void> unlikeComment(Post post, String commentId) async {
+  Future<void> unlikeComment(Post post, Comment comment) async {
     isLoading.value = true;
     try {
       await FirebaseFirestore.instance
           .collection('posts')
           .doc(post.id)
           .collection("comments")
-          .doc(commentId)
+          .doc(comment.id)
           .update({
         'likes':
             FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid])
-      }).then((value) {
-        // Get.snackbar("Success", "Comment unliked successfully");
+      }).then((value) async {
+        ns.deleteNoti(comment.uid, "like_comment_${_cuid}_${comment.id}");
       });
     } catch (e) {
       Get.snackbar("Error", e.toString());

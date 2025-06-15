@@ -594,33 +594,21 @@ class CommentWidget extends StatelessWidget {
                           style: TextStyle(
                             fontSize: Get.width * 0.03,
                             fontWeight: FontWeight.w600,
-                            color: profile.gender.toLowerCase() == "gender.male"
-                                ? Colors.blue
-                                : Colors.pink,
+                            color: profile.color,
                           ),
                         ),
                       ),
                       Container(
                         width: Get.width * 0.1,
                         decoration: BoxDecoration(
-                          color: profile.gender.toLowerCase() == "gender.male"
-                              ? Colors.blue.withOpacity(0.1)
-                              : Colors.pink.withOpacity(0.1),
+                          color: profile.color.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              profile.gender.toLowerCase() == "gender.male"
-                                  ? Icons.male
-                                  : Icons.female,
-                              size: 12,
-                              color:
-                                  profile.gender.toLowerCase() == "gender.male"
-                                      ? Colors.blue
-                                      : Colors.pink,
-                            ),
+                            Icon(profile.genderIcon,
+                                size: 12, color: profile.color),
                             const SizedBox(width: 5),
                             Text(
                               profile.age.toString(),
@@ -677,10 +665,12 @@ class CommentWidget extends StatelessWidget {
                                     FirebaseAuth.instance.currentUser!.uid) ??
                                 false) {
                               await commentController.unlikeComment(
-                                  post, comment.id);
+                                post,
+                                comment,
+                              );
                             } else {
                               await commentController.likeComment(
-                                  post, comment.id);
+                                  post, comment);
                             }
                           },
                           child: Container(

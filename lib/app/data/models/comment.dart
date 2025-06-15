@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emotion_tracker/app/data/models/post.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 
 class Comment {
@@ -11,6 +12,7 @@ class Comment {
   final DateTime createdAt;
   final DateTime updatedAt;
   Profile? profile;
+  Post? post;
 
   Comment({
     required this.id,
@@ -21,6 +23,7 @@ class Comment {
     required this.updatedAt,
     this.likes = const [],
     this.replies = const [],
+    this.post,
   });
 
   factory Comment.fromJson(Map<String, dynamic> json) {

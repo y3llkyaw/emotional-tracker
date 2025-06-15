@@ -58,6 +58,22 @@ class NotificationService {
     });
   }
 
+  Future<void> likeCommentNoti(Post post, Comment comment) async {
+    await _firestore
+        .collection('profile')
+        .doc(comment.uid)
+        .collection('notifications')
+        .doc("like_comment_${_cuid}_${comment.id}")
+        .set({
+      "id": "like_comment_${_cuid}_${comment.id}",
+      "type": "like_comment",
+      "pid": post.id,
+      "cid": comment.id,
+      "uid": _cuid,
+      "read": false,
+    });
+  }
+
   Future<void> unlikePostNoti(Post post) async {
     await _firestore
         .collection('profile')
@@ -67,7 +83,7 @@ class NotificationService {
         .delete();
   }
 
-  Future<void> commentNoti( Post post, Comment comment) async {
+  Future<void> commentNoti(Post post, Comment comment) async {
     await _firestore
         .collection('profile')
         .doc(post.uid)
@@ -82,8 +98,4 @@ class NotificationService {
       "created_at": Timestamp.now(),
     });
   }
-
-  
-
-  
 }

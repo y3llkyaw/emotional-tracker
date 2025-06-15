@@ -85,22 +85,25 @@ class _NotificationPageState extends State<NotificationPage> {
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
                     switch (snapshot.data![index]['type']) {
+                      case "like_comment":
+                        return _buildLikeCommentNoti(
+                          snapshot.data![index]["uid"],
+                          snapshot.data![index]["read"],
+                          snapshot.data![index]["pid"],
+                        );
+                      case "comment_post":
+                        return _buildCommentNoti(
+                          snapshot.data![index]["uid"],
+                          snapshot.data![index]["read"],
+                          snapshot.data![index]["pid"],
+                        );
                       case "like_post":
                         return _buildLikePostNoti(
                           snapshot.data![index]["uid"],
                           snapshot.data![index]["read"],
                           snapshot.data![index]["pid"],
                         );
-                      case "fr":
-                        return _buildFriendRequests(
-                          snapshot.data![index]["uid"],
-                          snapshot.data![index]["read"],
-                        );
-                      case "fr-accept":
-                        return _buildFriendAccept(
-                          snapshot.data![index]["uid"],
-                          snapshot.data![index]["read"],
-                        );
+
                       case "other":
                         // other.add(snapshot.data![index]['uid']);
                         break;
@@ -119,21 +122,6 @@ class _NotificationPageState extends State<NotificationPage> {
     );
   }
 
-  FutureBuilder<Profile> _buildFriendRequests(String uid, bool read) {
-    return FutureBuilder(
-      future: pc.getProfileByUid(uid),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _skeletonTile();
-        } else if (snapshot.hasData) {
-          var profile = snapshot.data;
-          // return _buildFriendRequestTile(profile, uid, read);
-        }
-        return _skeletonTile();
-      },
-    );
-  }
-
   FutureBuilder<Profile> _buildLikePostNoti(String uid, bool read, String pid) {
     return FutureBuilder<Profile>(
       future: pc.getProfileByUid(uid),
@@ -149,74 +137,34 @@ class _NotificationPageState extends State<NotificationPage> {
     );
   }
 
-  FutureBuilder<Profile> _buildFriendAccept(String uid, bool read) {
-    return FutureBuilder(
+  FutureBuilder<Profile> _buildCommentNoti(String uid, bool read, String pid) {
+    return FutureBuilder<Profile>(
       future: pc.getProfileByUid(uid),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _skeletonTile();
         } else if (snapshot.hasData) {
           var profile = snapshot.data;
-
-          return _buildFriendAcceptTile(profile, uid, read);
+          return _buildCommentTile(profile, uid, read, pid);
         }
         return _skeletonTile();
       },
     );
   }
 
-  List<Widget> _buildOtherNotifications(List<String> otherNotifications) {
-    // Implement this method to build other notifications
-    return otherNotifications.map((uid) {
-      return FutureBuilder(
-        future: pc.getProfileByUid(uid),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return _skeletonTile();
-          } else if (snapshot.hasData) {
-            var profile = snapshot.data as Profile?;
-            return _buildOtherNotificationsTile(profile, uid);
-          }
+  FutureBuilder<Profile> _buildLikeCommentNoti(
+      String uid, bool read, String pid) {
+    return FutureBuilder<Profile>(
+      future: pc.getProfileByUid(uid),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return _skeletonTile();
-        },
-      );
-    }).toList();
-  }
-
-  Widget _buildOtherNotificationsTile(Profile? profile, String uid) {
-    return ListTile(
-      leading: CircleAvatar(child: AvatarPlus("$uid${profile?.name}")),
-      title: Text(
-        profile?.name ?? 'Unknown',
-        style: const TextStyle(fontWeight: FontWeight.w500),
-      ),
-      subtitle: Padding(
-        padding: EdgeInsets.only(top: Get.width * 0.01),
-        child: Row(
-          children: [
-            InkWell(
-              onTap: () async {
-                await afc.acceptFriendRequest(profile!);
-                setState(() {});
-              },
-              child: afc.isLoading.value
-                  ? const CircularProgressIndicator()
-                  : const Text(
-                      "Accept",
-                      style: TextStyle(color: Colors.blueAccent),
-                    ),
-            ),
-            SizedBox(width: Get.width * 0.05),
-            InkWell(
-              onTap: () {},
-              child: const Text(
-                "Decline",
-                style: TextStyle(color: Colors.redAccent),
-              ),
-            ),
-          ],
-        ),
-      ),
+        } else if (snapshot.hasData) {
+          var profile = snapshot.data;
+          return _buildLikeCommentTile(profile, uid, read, pid);
+        }
+        return _skeletonTile();
+      },
     );
   }
 
@@ -240,7 +188,27 @@ class _NotificationPageState extends State<NotificationPage> {
             }
           },
           child: ListTile(
-            leading: CircleAvatar(child: AvatarPlus("$uid${profile?.name}")),
+            leading: Stack(
+              alignment: Alignment.center,
+              children: [
+                CircleAvatar(
+                  child: AvatarPlus("$uid${profile?.name}"),
+                ),
+                Transform(
+                  transform: Matrix4.translationValues(20, 15, 0),
+                  child: CircleAvatar(
+                    radius: 12,
+                    backgroundColor: profile?.color.withOpacity(0.8) ??
+                        Colors.grey.withOpacity(0.1),
+                    child: const Icon(
+                      CupertinoIcons.heart_fill,
+                      size: 15,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             title: Text.rich(
               TextSpan(
                 children: [
@@ -264,46 +232,119 @@ class _NotificationPageState extends State<NotificationPage> {
     );
   }
 
-  Widget _buildFriendAcceptTile(Profile? profile, String uid, bool read) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: Get.width * 0.002),
-      child: InkWell(
-        onTap: () {
-          if (profile != null) {
-            nc.readNoti(uid);
-            Get.to(
-              () => FriendProfilePage(profile: profile),
-            );
-          }
-        },
-        child: ListTile(
-          leading: CircleAvatar(
-            child: AvatarPlus("$uid${profile?.name}"),
-          ),
-          title: Row(
-            children: [
-              Text(
-                "${profile?.name}",
-                style: const TextStyle(fontWeight: FontWeight.w500),
+  Widget _buildLikeCommentTile(
+    Profile? profile,
+    String uid,
+    bool read,
+    String pid,
+  ) {
+    PostController postController = PostController();
+
+    return FutureBuilder<Post?>(
+      future: postController.getPostById(pid),
+      builder: (context, snapshot) {
+        return InkWell(
+          onTap: () async {
+            if (profile != null) {
+              Get.to(
+                () => PostDetailPage(
+                  postData: snapshot.data!,
+                  profileData: profile,
+                ),
+              );
+              await nc.readNoti("comment_${snapshot.data!.id}_${profile.uid}");
+            }
+          },
+          child: ListTile(
+            leading: CircleAvatar(child: AvatarPlus("$uid${profile?.name}")),
+            title: Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: "${profile?.name} ",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: profile!.color,
+                    ),
+                  ),
+                  const TextSpan(
+                    text: "liked your comment.",
+                  ),
+                ],
               ),
-              SizedBox(width: Get.width * 0.04),
-              Icon(
-                CupertinoIcons.check_mark_circled,
-                size: Get.width * 0.04,
-                color: Colors.green,
+            ),
+            // subtitle: const Text("your post: ${p}"),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCommentTile(
+    Profile? profile,
+    String uid,
+    bool read,
+    String pid,
+  ) {
+    PostController postController = PostController();
+
+    return FutureBuilder<Post?>(
+      future: postController.getPostById(pid),
+      builder: (context, snapshot) {
+        return InkWell(
+          onTap: () async {
+            if (profile != null) {
+              Get.to(
+                () => PostDetailPage(
+                  postData: snapshot.data!,
+                  profileData: profile,
+                ),
+              );
+              await nc.readNoti("comment_${snapshot.data!.id}_${profile.uid}");
+            }
+          },
+          child: ListTile(
+            leading: Stack(
+              alignment: Alignment.center,
+              children: [
+                CircleAvatar(
+                  child: AvatarPlus("$uid${profile?.name}"),
+                ),
+                Transform(
+                  transform: Matrix4.translationValues(20, 15, 0),
+                  child: CircleAvatar(
+                    radius: 12,
+                    backgroundColor: profile?.color.withOpacity(0.8) ??
+                        Colors.grey.withOpacity(0.1),
+                    child: const Icon(
+                      CupertinoIcons.chat_bubble_fill,
+                      size: 15,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            title: Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: "${profile?.name} ",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: profile!.color,
+                    ),
+                  ),
+                  const TextSpan(
+                    text: "commented your post.",
+                  ),
+                ],
               ),
-            ],
+            ),
+            // subtitle: const Text("your post: ${p}"),
           ),
-          subtitle: Padding(
-            padding: EdgeInsets.only(top: Get.width * 0.01),
-            child: const Text("accepted your friend request"),
-          ),
-          trailing: IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.more_horiz),
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 
