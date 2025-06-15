@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/data/models/comment.dart';
 import 'package:emotion_tracker/app/data/models/post.dart';
+import 'package:emotion_tracker/app/data/services/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
@@ -11,6 +12,8 @@ class CommentController extends GetxController {
   final isLoading = false.obs;
   final commentList = <Comment>[].obs;
   final commentLikes = [].obs;
+
+  final ns = NotificationService();
 
   Future<void> addComment(Post post) async {
     isLoading.value = true;
@@ -26,6 +29,10 @@ class CommentController extends GetxController {
         'createdAt': DateTime.now(),
         'updatedAt': DateTime.now(),
       }).then((value) async {
+        final result = await value.get();
+
+        Comment comment = Comment.fromJson(result.data()!);
+        comment.id = value.id;
         await FirebaseFirestore.instance
             .collection('posts')
             .doc(post.id)
@@ -34,6 +41,7 @@ class CommentController extends GetxController {
             .update({'id': value.id}).then((value) async {
           Get.snackbar("Success", "Comment added successfully");
         });
+        await ns.commentNoti(post, comment);
       }).onError((error, stackTrace) {
         Get.snackbar("Error", error.toString());
       });
@@ -46,8 +54,6 @@ class CommentController extends GetxController {
   }
 
   Future<void> deleteComment(Comment comment) async {
-    print(comment.id);
-    print(comment.postId);
     isLoading.value = true;
     try {
       await FirebaseFirestore.instance
@@ -56,8 +62,19 @@ class CommentController extends GetxController {
           .collection("comments")
           .doc(comment.id)
           .delete()
-          .then((value) {
-        Get.snackbar("Success", "Comment deleted successfully");
+          .then((value) async {
+        final result = await FirebaseFirestore.instance
+            .collection("posts")
+            .doc(comment.postId)
+            .get();
+
+        // print(result.data());
+        await ns
+            .deleteNoti(result.data()!["uid"],
+                "comment_${comment.postId}_${comment.id}")
+            .then((value) {
+          Get.snackbar("Success", "Comment deleted successfully");
+        });
       });
     } catch (e) {
       Get.snackbar("Error", e.toString());

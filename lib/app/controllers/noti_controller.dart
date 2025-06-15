@@ -37,6 +37,9 @@ class NotiController extends GetxController {
     await ns.readNoti(nid);
   }
 
+  Future<void> commentNoti(String nid) async {
+    await ns.readNoti(nid);
+  }
   Stream<List<Map<String, dynamic>>> streamUnreadNoti() {
     log("stream worked");
     return FirebaseFirestore.instance

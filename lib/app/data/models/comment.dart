@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 
 class Comment {
-  final String id;
+  String id;
   final String postId;
   final String uid;
   final String comment;

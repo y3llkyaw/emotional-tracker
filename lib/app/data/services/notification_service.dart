@@ -1,8 +1,8 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emotion_tracker/app/data/models/comment.dart';
 import 'package:emotion_tracker/app/data/models/post.dart';
-import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class NotificationService {
@@ -44,63 +44,46 @@ class NotificationService {
   }
 
   Future<void> likePostNoti(Post post) async {
-    final uid = FirebaseAuth.instance.currentUser!.uid;
     await _firestore
         .collection('profile')
         .doc(post.uid)
         .collection('notifications')
-        .doc("like_${post.id}_$uid")
+        .doc("like_${post.id}_$_cuid")
         .set({
-      "id": "like_${post.id}_$uid",
+      "id": "like_${post.id}_$_cuid",
       "type": "like_post",
       "pid": post.id,
-      "uid": uid,
+      "uid": _cuid,
       "read": false,
     });
   }
 
   Future<void> unlikePostNoti(Post post) async {
-    final uid = FirebaseAuth.instance.currentUser!.uid;
     await _firestore
         .collection('profile')
         .doc(post.uid)
         .collection('notifications')
-        .doc("like_${post.id}_$uid")
+        .doc("like_${post.id}_$_cuid")
         .delete();
   }
 
-  Future<void> sendFriendRequstNoti(Profile profile) async {
+  Future<void> commentNoti( Post post, Comment comment) async {
     await _firestore
         .collection('profile')
-        .doc(profile.uid)
+        .doc(post.uid)
         .collection('notifications')
-        .doc(_cuid)
+        .doc("comment_${post.id}_${comment.id}")
         .set({
-      "type": "fr",
+      "id": "comment_${post.id}_${comment.id}",
+      "pid": post.id,
+      "type": "comment_post",
       "uid": _cuid,
       "read": false,
+      "created_at": Timestamp.now(),
     });
   }
 
-  Future<void> deleteFriendRequestNotification(String uid) async {
-    await _firestore
-        .collection('profile')
-        .doc(_cuid)
-        .collection('notifications')
-        .doc(uid)
-        .delete();
-  }
+  
 
-  Future<void> sendFriendAcceptNoti(Profile profile) async {
-    await _firestore
-        .collection('profile')
-        .doc(profile.uid)
-        .collection('notifications')
-        .doc(_cuid)
-        .set({
-      "type": "fr-accept",
-      "uid": _cuid,
-      "read": false,
-    });
-  }
+  
 }
