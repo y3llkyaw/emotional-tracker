@@ -170,7 +170,6 @@ class PostController extends GetxController {
     final result =
         await FirebaseFirestore.instance.collection("posts").doc(pid).get();
     if (result.exists) {
-      print(result.data());
       return Post.fromJson(result.data()!);
     }
     return null;
@@ -227,7 +226,18 @@ class PostController extends GetxController {
             await profilePageController.getProfileByUid(newPost.uid);
         publicPosts.insert(0, newPost);
         Get.back();
-        Get.snackbar("Success", "Post created successfully");
+        Get.snackbar(
+          "Success",
+          "Post added successfully",
+          icon: const Icon(Icons.check_circle, color: Colors.green),
+          snackPosition: SnackPosition.BOTTOM,
+          instantInit: false,
+          shouldIconPulse: true,
+          maxWidth: Get.width * 0.7,
+          duration: const Duration(
+            milliseconds: 800,
+          ),
+        );
       });
       isLoading.value = false;
     }).onError((error, stackTrace) {
@@ -246,7 +256,7 @@ class PostController extends GetxController {
       Get.snackbar(
         "Success",
         "Post deleted successfully",
-        icon: const Icon(Icons.check_circle, color: Colors.green),
+        icon: const Icon(Icons.delete, color: Colors.green),
         snackPosition: SnackPosition.BOTTOM,
         instantInit: false,
         shouldIconPulse: true,
@@ -305,14 +315,15 @@ class PostController extends GetxController {
     }).onError((error, stackTrace) {
       Get.snackbar("Error", error.toString());
     }).then((v) async {
-      await notiController.likePost(post);
+      if (post.uid != uid) {
+        await notiController.likePost(post);
+      }
     });
   }
 
   Future<void> unlikePost(Post post) async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
     final postRef = FirebaseFirestore.instance.collection("posts").doc(post.id);
-
     await postRef
         .collection("likes")
         .doc(uid)

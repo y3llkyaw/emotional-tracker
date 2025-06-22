@@ -197,15 +197,15 @@ class _ChatPageState extends State<ChatPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              chatController.showEmoji.value
-                                  ? "keyboard"
-                                  : "stickers",
-                              style: TextStyle(
-                                fontSize: Get.width * 0.03,
-                                color: Colors.black26,
-                              ),
-                            ),
+                            // Text(
+                            //   chatController.showEmoji.value
+                            //       ? "keyboard"
+                            //       : "stickers",
+                            //   style: TextStyle(
+                            //     fontSize: Get.width * 0.03,
+                            //     color: Colors.black26,
+                            //   ),
+                            // ),
                             IconButton(
                               onPressed: () {
                                 chatController.showEmoji.value =

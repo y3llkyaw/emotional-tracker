@@ -533,7 +533,7 @@ class _PostWidgetState extends State<PostWidget> {
                             Get.to(
                               () => PostDetailPage(
                                 postData: widget.post,
-                                profileData: widget.post.profile!,
+                                // profileData: widget.post.profile!,
                               ),
                               transition: Transition.rightToLeft,
                             );

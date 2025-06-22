@@ -5,7 +5,9 @@ import 'package:emotion_tracker/app/data/models/comment.dart';
 import 'package:emotion_tracker/app/data/models/post.dart';
 import 'package:emotion_tracker/app/data/services/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class CommentController extends GetxController {
   final comment = ''.obs;
@@ -16,6 +18,23 @@ class CommentController extends GetxController {
   final ns = NotificationService();
 
   final _cuid = FirebaseAuth.instance.currentUser!.uid;
+
+  Future<Comment> getCommentById(Post post, String cid) async {
+    try {
+      return await FirebaseFirestore.instance
+          .collection('posts')
+          .doc(post.id)
+          .collection("comments")
+          .doc(cid)
+          .get()
+          .then((value) => Comment.fromJson(value.data() ?? {}));
+    } catch (e) {
+      log(e.toString(), name: "Error");
+      rethrow;
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   Future<void> addComment(Post post) async {
     isLoading.value = true;
@@ -28,8 +47,7 @@ class CommentController extends GetxController {
         'uid': FirebaseAuth.instance.currentUser!.uid,
         'postId': post.id,
         'comment': comment.value,
-        'createdAt': DateTime.now(),
-        'updatedAt': DateTime.now(),
+        'createdAt': Timestamp.now(),
       }).then((value) async {
         final result = await value.get();
 
@@ -41,9 +59,18 @@ class CommentController extends GetxController {
             .collection("comments")
             .doc(value.id)
             .update({'id': value.id}).then((value) async {
-          Get.snackbar("Success", "Comment added successfully");
+          Fluttertoast.showToast(
+            gravity: ToastGravity.TOP,
+            msg: "Comment added successfully",
+            toastLength: Toast.LENGTH_SHORT,
+            backgroundColor: Colors.indigo,
+            textColor: Colors.white,
+          );
         });
-        await ns.commentNoti(post, comment);
+
+        if (post.uid != _cuid) {
+          await ns.commentNoti(post, comment);
+        }
       }).onError((error, stackTrace) {
         Get.snackbar("Error", error.toString());
       });
@@ -74,7 +101,13 @@ class CommentController extends GetxController {
             .deleteNoti(result.data()!["uid"],
                 "comment_${comment.postId}_${comment.id}")
             .then((value) {
-          Get.snackbar("Success", "Comment deleted successfully");
+          Fluttertoast.showToast(
+            gravity: ToastGravity.TOP,
+            msg: "Comment deleted successfully",
+            toastLength: Toast.LENGTH_SHORT,
+            backgroundColor: Colors.indigo,
+            textColor: Colors.white,
+          );
         });
       });
     } catch (e) {
@@ -116,8 +149,9 @@ class CommentController extends GetxController {
           .update({
         'likes': FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid])
       }).then((value) async {
-        await ns.likeCommentNoti(post, comment);
-        // Get.snackbar("Success", "Comment liked successfully");
+        if (comment.uid != _cuid) {
+          await ns.likeCommentNoti(post, comment);
+        }
       }).onError((e, stackTrace) {
         log(e.toString());
       });

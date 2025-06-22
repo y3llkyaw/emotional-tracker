@@ -55,6 +55,7 @@ class NotificationService {
       "pid": post.id,
       "uid": _cuid,
       "read": false,
+      "created_at": Timestamp.now()
     });
   }
 
@@ -71,6 +72,7 @@ class NotificationService {
       "cid": comment.id,
       "uid": _cuid,
       "read": false,
+      "created_at": Timestamp.now()
     });
   }
 

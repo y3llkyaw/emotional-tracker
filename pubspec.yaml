@@ -63,6 +63,7 @@ dependencies:
   flutter_rating_stars: ^1.1.0
   floating_draggable_widget: ^2.3.0
   el_tooltip: ^2.2.1
+  fluttertoast: ^8.2.12
   # animated_rating_bar: ^0.0.8
 
 dev_dependencies:

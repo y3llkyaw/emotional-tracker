@@ -1,17 +1,11 @@
-import 'package:avatar_plus/avatar_plus.dart';
-import 'package:emotion_tracker/app/controllers/friends_controller.dart';
-import 'package:emotion_tracker/app/controllers/noti_controller.dart';
-import 'package:emotion_tracker/app/controllers/post_controller.dart';
-import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
-import 'package:emotion_tracker/app/data/models/post.dart';
-import 'package:emotion_tracker/app/data/models/profile.dart';
-import 'package:emotion_tracker/app/ui/pages/posts_page.dart/post_detail_page.dart';
-import 'package:emotion_tracker/app/ui/pages/profile_page/friend_profile_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:emotion_tracker/app/controllers/noti_controller.dart';
+import 'package:emotion_tracker/app/ui/pages/posts_page.dart/post_detail_page.dart';
+import 'package:avatar_plus/avatar_plus.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({Key? key}) : super(key: key);
@@ -22,99 +16,84 @@ class NotificationPage extends StatefulWidget {
 
 class _NotificationPageState extends State<NotificationPage> {
   final NotiController nc = Get.put(NotiController());
-  final ProfilePageController pc = Get.put(ProfilePageController());
-  final FriendsController afc = Get.put(FriendsController());
+
+  @override
+  void initState() {
+    super.initState();
+    nc.getAllNotification();
+  }
 
   @override
   Widget build(BuildContext context) {
-    nc.getAllNotification();
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Padding(
-          padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
-          child: const Row(
-            children: [
-              Text(
-                "Notifications",
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Icon(
-                  CupertinoIcons.bell_fill,
+        title: const Text(
+          "Notifications",
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        actions: [
+          PopupMenuButton<String>(
+            color: Colors.grey,
+            icon: const Icon(Icons.more_horiz),
+            onSelected: (value) async {
+              if (value == 'mark_all_read') {
+                await nc.markAllUnreadAsRead();
+              }
+              if (value == 'delete_all') {
+                await nc.deleteAllNotifications();
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem<String>(
+                value: 'mark_all_read',
+                child: ListTile(
+                  leading: Icon(Icons.done_all),
+                  title: Text('Mark all as read'),
                 ),
-              )
+              ),
+              const PopupMenuItem<String>(
+                value: 'delete_all',
+                child: ListTile(
+                  leading: Icon(Icons.delete_forever),
+                  title: Text('Delete All Noti'),
+                ),
+              ),
+              // Add more actions here if needed
             ],
           ),
-        ),
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
         child: Obx(() {
-          return StreamBuilder<List<Map<String, dynamic>>>(
-            stream: nc.notifications.value,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data!.isEmpty) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        CupertinoIcons.bell,
-                        color: Colors.grey.shade500,
-                        size: Get.height * 0.03,
-                      ),
-                      SizedBox(
-                        width: Get.width * 0.04,
-                      ),
-                      Center(
-                        child: Text(
-                          "you have no notifications right now !",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: Get.width * 0.036,
-                            color: Get.theme.colorScheme.primary,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                }
-                return ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    switch (snapshot.data![index]['type']) {
-                      case "like_comment":
-                        return _buildLikeCommentNoti(
-                          snapshot.data![index]["uid"],
-                          snapshot.data![index]["read"],
-                          snapshot.data![index]["pid"],
-                        );
-                      case "comment_post":
-                        return _buildCommentNoti(
-                          snapshot.data![index]["uid"],
-                          snapshot.data![index]["read"],
-                          snapshot.data![index]["pid"],
-                        );
-                      case "like_post":
-                        return _buildLikePostNoti(
-                          snapshot.data![index]["uid"],
-                          snapshot.data![index]["read"],
-                          snapshot.data![index]["pid"],
-                        );
-
-                      case "other":
-                        // other.add(snapshot.data![index]['uid']);
-                        break;
-                    }
-                    return Container();
-                  },
-                );
+          final list = nc.enrichedNotifications;
+          if (list.isEmpty) {
+            return Center(
+              child: Text(
+                "You have no notifications right now!",
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: Get.width * 0.036,
+                  color: Get.theme.colorScheme.primary,
+                ),
+              ),
+            );
+          }
+          return ListView.builder(
+            itemCount: list.length,
+            itemBuilder: (context, index) {
+              final item = list[index];
+              switch (item['type']) {
+                case "like_post":
+                  return buildLikePostTile(item);
+                case "comment_post":
+                  return buildCommentTile(item);
+                case "like_comment":
+                  return buildLikeCommentTile(item);
+                default:
+                  return Container();
               }
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
             },
           );
         }),
@@ -122,260 +101,174 @@ class _NotificationPageState extends State<NotificationPage> {
     );
   }
 
-  FutureBuilder<Profile> _buildLikePostNoti(String uid, bool read, String pid) {
-    return FutureBuilder<Profile>(
-      future: pc.getProfileByUid(uid),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _skeletonTile();
-        } else if (snapshot.hasData) {
-          var profile = snapshot.data;
-          return _buildLikePostTile(profile, uid, read, pid);
+  Widget buildLikePostTile(Map<String, dynamic> item) {
+    final profile = item['profile'];
+    final post = item['post'];
+    final isRead = item['read'] == true;
+    final Timestamp ts = item['created_at'];
+
+    return InkWell(
+      onTap: () async {
+        if (post != null) {
+          Get.to(() => PostDetailPage(postData: post));
+          await nc.readNoti(item['id']);
         }
-        return _skeletonTile();
+        await nc.readNoti(item['id']);
       },
-    );
-  }
-
-  FutureBuilder<Profile> _buildCommentNoti(String uid, bool read, String pid) {
-    return FutureBuilder<Profile>(
-      future: pc.getProfileByUid(uid),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _skeletonTile();
-        } else if (snapshot.hasData) {
-          var profile = snapshot.data;
-          return _buildCommentTile(profile, uid, read, pid);
-        }
-        return _skeletonTile();
-      },
-    );
-  }
-
-  FutureBuilder<Profile> _buildLikeCommentNoti(
-      String uid, bool read, String pid) {
-    return FutureBuilder<Profile>(
-      future: pc.getProfileByUid(uid),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _skeletonTile();
-        } else if (snapshot.hasData) {
-          var profile = snapshot.data;
-          return _buildLikeCommentTile(profile, uid, read, pid);
-        }
-        return _skeletonTile();
-      },
-    );
-  }
-
-  Widget _buildLikePostTile(
-      Profile? profile, String uid, bool read, String pid) {
-    PostController postController = PostController();
-
-    return FutureBuilder<Post?>(
-      future: postController.getPostById(pid),
-      builder: (context, snapshot) {
-        return InkWell(
-          onTap: () async {
-            if (profile != null) {
-              Get.to(
-                () => PostDetailPage(
-                  postData: snapshot.data!,
-                  profileData: profile,
-                ),
-              );
-              await nc.readNoti("like_${snapshot.data!.id}_${profile.uid}");
-            }
-          },
-          child: ListTile(
-            leading: Stack(
-              alignment: Alignment.center,
+      child: Container(
+        decoration: BoxDecoration(
+          color: isRead ? Colors.transparent : Colors.blue.withOpacity(0.08),
+          border: Border(
+            left: BorderSide(
+              color: isRead ? Colors.transparent : Colors.blue,
+              width: 4,
+            ),
+          ),
+        ),
+        child: ListTile(
+          leading: buildAvatar(profile.uid, profile.name,
+              icon: CupertinoIcons.heart_fill),
+          title: Text.rich(
+            TextSpan(
               children: [
-                CircleAvatar(
-                  child: AvatarPlus("$uid${profile?.name}"),
-                ),
-                Transform(
-                  transform: Matrix4.translationValues(20, 15, 0),
-                  child: CircleAvatar(
-                    radius: 12,
-                    backgroundColor: profile?.color.withOpacity(0.8) ??
-                        Colors.grey.withOpacity(0.1),
-                    child: const Icon(
-                      CupertinoIcons.heart_fill,
-                      size: 15,
-                      color: Colors.white,
-                    ),
+                TextSpan(
+                  text: profile.name,
+                  style: TextStyle(
+                    color: profile.color,
                   ),
+                ),
+                const TextSpan(text: " liked your post: "),
+                TextSpan(text: post?.body ?? "you deleted!"),
+                TextSpan(
+                  text: "  ${timeago.format(ts.toDate())}",
+                  style: const TextStyle(fontSize: 12),
                 ),
               ],
             ),
-            title: Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text: "${profile?.name} ",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: profile!.color,
-                    ),
-                  ),
-                  const TextSpan(
-                    text: "liked your post.",
-                  ),
-                ],
-              ),
-            ),
-            // subtitle: const Text("your post: ${p}"),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
-  Widget _buildLikeCommentTile(
-    Profile? profile,
-    String uid,
-    bool read,
-    String pid,
-  ) {
-    PostController postController = PostController();
+  Widget buildCommentTile(Map<String, dynamic> item) {
+    final profile = item['profile'];
+    final post = item['post'];
+    final isRead = item['read'] == true;
+    final ts = item['created_at'] as Timestamp;
 
-    return FutureBuilder<Post?>(
-      future: postController.getPostById(pid),
-      builder: (context, snapshot) {
-        return InkWell(
-          onTap: () async {
-            if (profile != null) {
-              Get.to(
-                () => PostDetailPage(
-                  postData: snapshot.data!,
-                  profileData: profile,
-                ),
-              );
-              await nc.readNoti("comment_${snapshot.data!.id}_${profile.uid}");
-            }
-          },
-          child: ListTile(
-            leading: CircleAvatar(child: AvatarPlus("$uid${profile?.name}")),
-            title: Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text: "${profile?.name} ",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: profile!.color,
-                    ),
-                  ),
-                  const TextSpan(
-                    text: "liked your comment.",
-                  ),
-                ],
-              ),
-            ),
-            // subtitle: const Text("your post: ${p}"),
-          ),
-        );
+    return InkWell(
+      onTap: () async {
+        if (post != null) {
+          Get.to(() => PostDetailPage(postData: post));
+          await nc.readNoti(item['id']);
+        }
+        await nc.readNoti(item['id']);
       },
-    );
-  }
-
-  Widget _buildCommentTile(
-    Profile? profile,
-    String uid,
-    bool read,
-    String pid,
-  ) {
-    PostController postController = PostController();
-
-    return FutureBuilder<Post?>(
-      future: postController.getPostById(pid),
-      builder: (context, snapshot) {
-        return InkWell(
-          onTap: () async {
-            if (profile != null) {
-              Get.to(
-                () => PostDetailPage(
-                  postData: snapshot.data!,
-                  profileData: profile,
-                ),
-              );
-              await nc.readNoti("comment_${snapshot.data!.id}_${profile.uid}");
-            }
-          },
-          child: ListTile(
-            leading: Stack(
-              alignment: Alignment.center,
+      child: Container(
+        decoration: BoxDecoration(
+          color: isRead ? Colors.transparent : Colors.blue.withOpacity(0.08),
+          border: Border(
+            left: BorderSide(
+              color: isRead ? Colors.transparent : Colors.blue,
+              width: 4,
+            ),
+          ),
+        ),
+        child: ListTile(
+          leading: buildAvatar(profile.uid, profile.name,
+              icon: CupertinoIcons.chat_bubble_fill),
+          title: Text.rich(
+            TextSpan(
               children: [
-                CircleAvatar(
-                  child: AvatarPlus("$uid${profile?.name}"),
+                TextSpan(
+                  text: profile.name,
+                  style: TextStyle(color: profile.color),
                 ),
-                Transform(
-                  transform: Matrix4.translationValues(20, 15, 0),
-                  child: CircleAvatar(
-                    radius: 12,
-                    backgroundColor: profile?.color.withOpacity(0.8) ??
-                        Colors.grey.withOpacity(0.1),
-                    child: const Icon(
-                      CupertinoIcons.chat_bubble_fill,
-                      size: 15,
-                      color: Colors.white,
-                    ),
-                  ),
+                const TextSpan(text: " commented on your post: "),
+                TextSpan(text: post?.body ?? "you deleted!"),
+                TextSpan(
+                  text: "  ${timeago.format(ts.toDate())}",
+                  style: const TextStyle(fontSize: 12),
                 ),
               ],
             ),
-            title: Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text: "${profile?.name} ",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: profile!.color,
-                    ),
-                  ),
-                  const TextSpan(
-                    text: "commented your post.",
-                  ),
-                ],
-              ),
-            ),
-            // subtitle: const Text("your post: ${p}"),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
-  // Widget _buildExpansionTile({
-  //   required IconData icon,
-  //   required String title,
-  //   required List<Widget> children,
-  // }) {
-  //   return ExpansionTile(
-  //     iconColor: Colors.black,
-  //     leading: Icon(icon),
-  //     title: Text(title),
-  //     children: children,
-  //   );
-  // }
+  Widget buildLikeCommentTile(Map<String, dynamic> item) {
+    final profile = item['profile'];
+    final post = item['post'];
+    final comment = item['comment'];
+    final isRead = item['read'] == true;
+    final ts = item['created_at'] as Timestamp;
 
-  Widget _skeletonTile() {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: Colors.grey.shade300,
+    return InkWell(
+      onTap: () async {
+        if (post != null) {
+          Get.to(() => PostDetailPage(postData: post));
+          await nc.readNoti(item['id']);
+        }
+        await nc.readNoti(item['id']);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: isRead ? Colors.transparent : Colors.blue.withOpacity(0.08),
+          border: Border(
+            left: BorderSide(
+              color: isRead ? Colors.transparent : Colors.blue,
+              width: 4,
+            ),
+          ),
+        ),
+        child: ListTile(
+          leading: buildAvatar(profile.uid, profile.name,
+              icon: CupertinoIcons.heart_fill),
+          title: Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: profile.name,
+                  style: TextStyle(color: profile.color),
+                ),
+                const TextSpan(text: " liked your comment: "),
+                TextSpan(text: comment?.comment ?? "deleted comment. "),
+                TextSpan(
+                  text: "  ${timeago.format(ts.toDate())}",
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ),
-      title: Container(
-        width: 100,
-        height: 10,
-        color: Colors.grey.shade300,
-      ),
-      subtitle: Container(
-        width: 150,
-        height: 10,
-        color: Colors.grey.shade300,
-      ),
+    );
+  }
+
+  Widget buildAvatar(String uid, String? name, {IconData? icon}) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        CircleAvatar(child: AvatarPlus("$uid$name")),
+        if (icon != null)
+          Transform.translate(
+            offset: const Offset(20, 15),
+            child: CircleAvatar(
+              radius: 12,
+              backgroundColor: Colors.black.withOpacity(0.3),
+              child: Icon(icon, size: 15, color: Colors.white),
+            ),
+          ),
+      ],
     );
   }
 }

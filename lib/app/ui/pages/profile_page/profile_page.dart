@@ -35,7 +35,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final ProfilePageController profilePageController = Get.find();
   final JournalController journalController = Get.find();
   final UidController uidController = Get.put(UidController());
-  Time selectedTime = Time(hour: 21, minute: 0, second: 0);
+  Time selectedTime = Time(hour: 20, minute: 0, second: 0);
 
   @override
   void initState() {

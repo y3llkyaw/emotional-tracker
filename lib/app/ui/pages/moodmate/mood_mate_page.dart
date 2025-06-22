@@ -50,29 +50,46 @@ class MoodMatePage extends StatelessWidget {
                   children: [
                     const Icon(CupertinoIcons.bell_solid),
                     StreamBuilder<Object>(
-                        stream: notiController.streamUnreadNoti(),
-                        builder: (context, snapshot) {
-                          final unreadNoti = snapshot.data as List;
-                          if (unreadNoti.isEmpty) {
-                            return Container();
-                          }
-                          return Transform(
-                            transform: Matrix4.translationValues(20, -10, 0),
-                            child: CircleAvatar(
-                              radius: 8,
-                              backgroundColor: Colors.red,
-                              child: Center(
-                                  child: Text(
+                      stream: notiController.streamUnreadNoti(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          // Show a loading indicator while waiting for data
+                          return Container();
+                        }
+
+                        if (snapshot.hasError) {
+                          // Handle errors in the stream
+                          return Container();
+                        }
+
+                        // Safely handle null data
+                        final unreadNoti =
+                            snapshot.data as List<dynamic>? ?? [];
+
+                        if (unreadNoti.isEmpty) {
+                          return Container();
+                        }
+
+                        return Transform(
+                          transform: Matrix4.translationValues(20, -10, 0),
+                          child: CircleAvatar(
+                            radius: 8,
+                            backgroundColor: Colors.red,
+                            child: Center(
+                              child: Text(
                                 unreadNoti.length.toString(),
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
                                 ),
-                              )),
+                              ),
                             ),
-                          );
-                        })
+                          ),
+                        );
+                      },
+                    )
                   ],
                 ),
                 color: Colors.blue,

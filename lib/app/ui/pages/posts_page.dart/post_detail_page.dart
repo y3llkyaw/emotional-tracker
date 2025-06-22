@@ -19,11 +19,12 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class PostDetailPage extends StatefulWidget {
   final Post postData;
-  final Profile profileData;
+  // final Profile profileData;
 
-  const PostDetailPage(
-      {Key? key, required this.postData, required this.profileData})
-      : super(key: key);
+  const PostDetailPage({
+    Key? key,
+    required this.postData,
+  }) : super(key: key);
 
   @override
   State<PostDetailPage> createState() => _PostDetailPageState();
@@ -32,6 +33,8 @@ class PostDetailPage extends StatefulWidget {
 class _PostDetailPageState extends State<PostDetailPage> {
   bool _isExpanded = false;
   static const int _maxLines = 4;
+  final ProfilePageController profilePageController =
+      Get.put(ProfilePageController());
   final CommentController commentController = Get.put(CommentController());
   final PostController postController = Get.put(PostController());
   final TextEditingController _commentController = TextEditingController();
@@ -78,67 +81,74 @@ class _PostDetailPageState extends State<PostDetailPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        CircleAvatar(
-                          child: AvatarPlus(
-                            "${widget.profileData.uid}${widget.profileData.name}",
-                          ),
-                        ),
-                        const SizedBox(width: 10),
                         Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              widget.profileData.name,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color:
-                                    widget.profileData.gender.toLowerCase() ==
-                                            "gender.male"
-                                        ? Colors.blue
-                                        : Colors.pink,
-                              ),
-                            ),
-                            Container(
-                              width: Get.width * 0.1,
-                              decoration: BoxDecoration(
-                                color:
-                                    widget.profileData.gender.toLowerCase() ==
-                                            "gender.male"
-                                        ? Colors.blue.withOpacity(0.1)
-                                        : Colors.pink.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    widget.profileData.gender.toLowerCase() ==
-                                            "gender.male"
-                                        ? Icons.male
-                                        : Icons.female,
-                                    size: 15,
-                                    color: widget.profileData.gender
-                                                .toLowerCase() ==
-                                            "gender.male"
-                                        ? Colors.blue
-                                        : Colors.pink,
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    widget.profileData.age.toString(),
-                                    style: TextStyle(
-                                      fontSize: Get.width * 0.025,
-                                      color: widget.profileData.gender
-                                                  .toLowerCase() ==
-                                              "gender.male"
-                                          ? Colors.blue
-                                          : Colors.pink,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            FutureBuilder<Profile>(
+                                future: profilePageController
+                                    .getProfileByUid(widget.postData.uid),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Container();
+                                  }
+
+                                  final profile = snapshot.data;
+                                  return Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CircleAvatar(
+                                        child: AvatarPlus(
+                                          profile!.uid + profile.name,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Column(
+                                        children: [
+                                          Text(
+                                            profile.name,
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: profile.color,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Container(
+                                            width: Get.width * 0.1,
+                                            decoration: BoxDecoration(
+                                              color: profile.color
+                                                  .withOpacity(0.1),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  profile.genderIcon,
+                                                  size: 15,
+                                                  color: profile.color,
+                                                ),
+                                                const SizedBox(width: 5),
+                                                Text(
+                                                  "19",
+                                                  style: TextStyle(
+                                                    fontSize: Get.width * 0.025,
+                                                    color: profile.color,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  );
+                                }),
                           ],
                         ),
                         const Spacer(),
@@ -521,38 +531,7 @@ class CommentWidget extends StatelessWidget {
           final profile = snapshot.data as Profile?;
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Shimmer effect while loading profile
-            return Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: Container(
-                margin: EdgeInsets.symmetric(
-                  vertical: Get.height * 0.01,
-                ),
-                child: ListTile(
-                  isThreeLine: true,
-                  leading: const CircleAvatar(
-                    backgroundColor: Colors.white,
-                    radius: 20,
-                  ),
-                  title: Container(
-                    width: Get.width * 0.2,
-                    height: 12,
-                    color: Colors.white,
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 6),
-                      Container(
-                        width: Get.width * 0.4,
-                        height: 10,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
+            return Container();
           }
           if (profile == null) {
             return const SizedBox.shrink();

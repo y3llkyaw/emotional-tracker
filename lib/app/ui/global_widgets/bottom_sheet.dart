@@ -690,9 +690,6 @@ void showDeleteCommentBottomSheet(
                     await commentController.deleteComment(comment).then((v) {
                       commentController.commentList.removeWhere(
                           (c) => c.id == comment.id && c.postId == post.id);
-                      Get.back();
-
-                      Get.snackbar("Success", "Comment deleted successfully");
                     });
                   },
                 )
