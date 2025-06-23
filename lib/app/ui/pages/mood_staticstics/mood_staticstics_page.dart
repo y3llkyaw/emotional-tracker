@@ -308,6 +308,8 @@ class _MoodStaticsticsPageState extends State<MoodStaticsticsPage> {
                               200, // Adjust based on how much scroll you want
                           child: LineChart(
                             LineChartData(
+                              maxX: journals.length.toDouble() - 1,
+                              maxY: 4,
                               titlesData: FlTitlesData(
                                 rightTitles: const AxisTitles(
                                     sideTitles: SideTitles(showTitles: false)),
@@ -359,7 +361,7 @@ class _MoodStaticsticsPageState extends State<MoodStaticsticsPage> {
                               lineBarsData: [
                                 LineChartBarData(
                                   spots: spots,
-                                  isCurved: false,
+                                  isCurved: true,
                                   // color: Colors.blue,
                                   barWidth: 3,
                                   dotData: FlDotData(

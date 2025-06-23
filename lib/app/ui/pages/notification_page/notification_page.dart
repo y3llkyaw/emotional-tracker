@@ -110,7 +110,10 @@ class _NotificationPageState extends State<NotificationPage> {
     return InkWell(
       onTap: () async {
         if (post != null) {
-          Get.to(() => PostDetailPage(postData: post));
+          Get.to(
+            () => PostDetailPage(postData: post),
+            transition: Transition.rightToLeft,
+          );
           await nc.readNoti(item['id']);
         }
         await nc.readNoti(item['id']);
@@ -162,7 +165,8 @@ class _NotificationPageState extends State<NotificationPage> {
     return InkWell(
       onTap: () async {
         if (post != null) {
-          Get.to(() => PostDetailPage(postData: post));
+          Get.to(() => PostDetailPage(postData: post),
+              transition: Transition.rightToLeft);
           await nc.readNoti(item['id']);
         }
         await nc.readNoti(item['id']);
@@ -213,7 +217,10 @@ class _NotificationPageState extends State<NotificationPage> {
     return InkWell(
       onTap: () async {
         if (post != null) {
-          Get.to(() => PostDetailPage(postData: post));
+          Get.to(
+            () => PostDetailPage(postData: post),
+            transition: Transition.rightToLeft,
+          );
           await nc.readNoti(item['id']);
         }
         await nc.readNoti(item['id']);
