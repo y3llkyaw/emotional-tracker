@@ -1,13 +1,17 @@
 import 'package:animated_emoji/animated_emoji.dart';
+import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/controllers/comment_controller.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/controllers/matching_controller.dart';
+import 'package:emotion_tracker/app/controllers/other_profile_page_controller.dart';
 import 'package:emotion_tracker/app/controllers/post_controller.dart';
+import 'package:emotion_tracker/app/controllers/post_detail_page_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/data/models/comment.dart';
 import 'package:emotion_tracker/app/data/models/message.dart';
 import 'package:emotion_tracker/app/data/models/post.dart';
+import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/sources/enums.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/radio_emoji_selction.dart';
@@ -726,6 +730,130 @@ void showDeleteCommentBottomSheet(
                   },
                 )
               : Container(),
+        ],
+      ),
+    ),
+  );
+}
+
+void showLikeCountBottomSheet(List<String> profileIds) async {
+  final pdController = Get.put(PostDetailPageController());
+
+  await pdController.getLikeProfileList(profileIds);
+
+  Get.bottomSheet(
+    Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Get.theme.scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      CupertinoIcons.heart_fill,
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Text(
+                      "Likes",
+                      style: GoogleFonts.aBeeZee(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  icon: const Icon(
+                    Icons.close,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+                    Get.back();
+                  },
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Obx(
+              () => ListView.builder(
+                itemCount: pdController.likedProfileList.length,
+                itemBuilder: (context, index) {
+                  final profile =
+                      pdController.likedProfileList[index][0] as Profile;
+                  final friendStatus =
+                      pdController.likedProfileList[index][1] as String;
+
+                  return ListTile(
+                    leading: CircleAvatar(
+                        child: CircleAvatar(
+                      child: AvatarPlus("${profile.uid}${profile.name}"),
+                    )),
+                    title: Row(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              profile.name,
+                              style: GoogleFonts.aBeeZee(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: profile.color,
+                              ),
+                            ),
+                            Container(
+                              width: Get.width * 0.1,
+                              decoration: BoxDecoration(
+                                color: profile.color.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    profile.genderIcon,
+                                    size: 15,
+                                    color: profile.color,
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    profile.age.toString(),
+                                    style: TextStyle(
+                                      fontSize: Get.width * 0.025,
+                                      color: profile.color,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    trailing: SizedBox(
+                      width: Get.width * 0.1,
+                      child: Center(
+                        child: Text(
+                          friendStatus,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
         ],
       ),
     ),

@@ -507,16 +507,24 @@ class _PostWidgetState extends State<PostWidget> {
                                 }
                               },
                             ),
-                            SizedBox(
-                              width: Get.width * 0.03,
-                              child: Text(
-                                likes.isEmpty
-                                    ? ""
-                                    : snapshot.data != null
-                                        ? likes.length.toString()
-                                        : "0",
-                                style: TextStyle(
-                                  fontSize: Get.width * 0.03,
+                            InkWell(
+                              radius: 20,
+                              onTap: () {
+                                showLikeCountBottomSheet(likes);
+                              },
+                              child: SizedBox(
+                                width: Get.width * 0.035,
+                                child: Center(
+                                  child: Text(
+                                    likes.isEmpty
+                                        ? ""
+                                        : snapshot.data != null
+                                            ? likes.length.toString()
+                                            : "0",
+                                    style: TextStyle(
+                                      fontSize: Get.width * 0.03,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),

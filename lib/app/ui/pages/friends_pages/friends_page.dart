@@ -39,10 +39,14 @@ class _FriendsPageState extends State<FriendsPage> {
                 "Friends",
                 style: GoogleFonts.playfairDisplay(
                   fontWeight: FontWeight.w600,
+                  color: Colors.white,
                 ),
               ),
               SizedBox(width: Get.width * 0.03),
-              const Icon(CupertinoIcons.person_3_fill)
+              const Icon(
+                CupertinoIcons.person_3_fill,
+                color: Colors.white,
+              )
             ],
           ),
         ),
@@ -88,13 +92,17 @@ class _FriendsPageState extends State<FriendsPage> {
                           child: Stack(
                             alignment: Alignment.topRight,
                             children: [
-                              const Icon(CupertinoIcons.person_fill),
+                              const Icon(
+                                CupertinoIcons.person_fill,
+                                color: Colors.grey,
+                              ),
                               Transform(
                                 transform: Matrix4.translationValues(
                                     Get.width * 0.02, 0, 0),
                                 child: Icon(
                                   CupertinoIcons.bell_fill,
                                   size: Get.width * 0.03,
+                                  color: Colors.grey,
                                 ),
                               ),
                               Transform(

@@ -38,17 +38,24 @@ class MoodMatePage extends StatelessWidget {
                 "MoodMate",
                 style: GoogleFonts.playfairDisplay(
                   fontWeight: FontWeight.w600,
+                  color: Colors.white
                 ),
               ),
               const Spacer(),
               IconButton(
                 onPressed: () {
-                  Get.to(() => const NotificationPage());
+                  Get.to(
+                    () => const NotificationPage(),
+                    transition: Transition.rightToLeft,
+                  );
                 },
                 icon: Stack(
                   alignment: Alignment.center,
                   children: [
-                    const Icon(CupertinoIcons.bell_solid),
+                    const Icon(
+                      CupertinoIcons.bell_solid,
+                      color: Colors.grey,
+                    ),
                     StreamBuilder<Object>(
                       stream: notiController.streamUnreadNoti(),
                       builder: (context, snapshot) {
@@ -167,7 +174,9 @@ class MoodMatePage extends StatelessWidget {
                                   stream: onlineController.getOnlineUserCount(),
                                   builder: (context, snapshot) {
                                     return Text(
-                                      snapshot.data.toString(),
+                                      snapshot.data == null
+                                          ? "unknown"
+                                          : snapshot.data.toString(),
                                       textAlign: TextAlign.left,
                                       style: GoogleFonts.aBeeZee(
                                         fontWeight: FontWeight.bold,
