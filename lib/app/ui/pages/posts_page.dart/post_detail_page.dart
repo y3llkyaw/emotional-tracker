@@ -391,14 +391,22 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                     }
                                   },
                                 ),
-                                Text(
-                                  likes.isEmpty
-                                      ? ""
-                                      : snapshot.data != null
-                                          ? likes.length.toString()
-                                          : "0",
-                                  style: TextStyle(
-                                    fontSize: Get.width * 0.03,
+                                InkWell(
+                                  onTap: () => showLikeCountBottomSheet(likes),
+                                  child: SizedBox(
+                                    width: 10,
+                                    child: Center(
+                                      child: Text(
+                                        likes.isEmpty
+                                            ? ""
+                                            : snapshot.data != null
+                                                ? likes.length.toString()
+                                                : "0",
+                                        style: TextStyle(
+                                          fontSize: Get.width * 0.03,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -665,10 +673,17 @@ class CommentWidget extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Text(
-                          snapshot.data?.length.toString() ?? "0",
-                          style: TextStyle(
-                            fontSize: Get.width * 0.02,
+                        InkWell(
+                          onTap: () {},
+                          child: SizedBox(
+                            width: 10,
+                            height: 10,
+                            child: Text(
+                              snapshot.data?.length.toString() ?? "0",
+                              style: TextStyle(
+                                fontSize: Get.width * 0.02,
+                              ),
+                            ),
                           ),
                         ),
                       ],

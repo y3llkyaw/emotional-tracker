@@ -65,7 +65,7 @@ class DefaultFirebaseOptions {
     projectId: 'emotion-tracker-7728e',
     databaseURL: 'https://emotion-tracker-7728e-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'emotion-tracker-7728e.firebasestorage.app',
-    androidClientId: '52163657696-qv3vdqapahpmtjb3arlfkv5mce9l2i97.apps.googleusercontent.com',
+    androidClientId: '52163657696-kc8820gh5thbmrja6qhne027hom5pfks.apps.googleusercontent.com',
     iosClientId: '52163657696-smsv37ff54i8lhurhp2fhg1l92c4gb0d.apps.googleusercontent.com',
     iosBundleId: 'com.example.emotionTracker',
   );

@@ -59,11 +59,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "52163657696-qv3vdqapahpmtjb3arlfkv5mce9l2i97.apps.googleusercontent.com",
+          "client_id": "52163657696-kc8820gh5thbmrja6qhne027hom5pfks.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.emotion_tracker",
-            "certificate_hash": "99bcfbc3907b21c143c391cf773fbd1ce30aad29"
+            "certificate_hash": "b402ec649d3213fb2f194cb87f63a9fc96d3f6bb"
           }
         },
         {

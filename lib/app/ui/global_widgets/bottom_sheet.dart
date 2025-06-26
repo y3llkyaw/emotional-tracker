@@ -2,6 +2,7 @@ import 'package:animated_emoji/animated_emoji.dart';
 import 'package:avatar_plus/avatar_plus.dart';
 import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/controllers/comment_controller.dart';
+import 'package:emotion_tracker/app/controllers/home_controller.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/controllers/matching_controller.dart';
 import 'package:emotion_tracker/app/controllers/other_profile_page_controller.dart';
@@ -15,6 +16,7 @@ import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/sources/enums.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/radio_emoji_selction.dart';
+import 'package:emotion_tracker/app/ui/pages/profile_page/other_profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -738,7 +740,7 @@ void showDeleteCommentBottomSheet(
 
 void showLikeCountBottomSheet(List<String> profileIds) async {
   final pdController = Get.put(PostDetailPageController());
-
+  final homePageController = Get.put(HomeController());
   await pdController.getLikeProfileList(profileIds);
 
   Get.bottomSheet(
@@ -794,58 +796,77 @@ void showLikeCountBottomSheet(List<String> profileIds) async {
                   final friendStatus =
                       pdController.likedProfileList[index][1] as String;
 
-                  return ListTile(
-                    leading: CircleAvatar(
-                        child: CircleAvatar(
-                      child: AvatarPlus("${profile.uid}${profile.name}"),
-                    )),
-                    title: Row(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              profile.name,
-                              style: GoogleFonts.aBeeZee(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: profile.color,
+                  return InkWell(
+                    onTap: () async {
+                      if (profile.uid ==
+                          FirebaseAuth.instance.currentUser!.uid) {
+                        Get.back();
+                        homePageController.changeIndex(4);
+                        // return;
+                      } else {
+                        Get.to(
+                          () => OtherProfilePage(profile: profile),
+                          transition: Transition.rightToLeft,
+                        );
+                      }
+                    },
+                    child: ListTile(
+                      leading: CircleAvatar(
+                          child: CircleAvatar(
+                        child: AvatarPlus("${profile.uid}${profile.name}"),
+                      )),
+                      title: Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                profile.name,
+                                style: GoogleFonts.aBeeZee(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: profile.color,
+                                ),
                               ),
-                            ),
-                            Container(
-                              width: Get.width * 0.1,
-                              decoration: BoxDecoration(
-                                color: profile.color.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    profile.genderIcon,
-                                    size: 15,
-                                    color: profile.color,
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    profile.age.toString(),
-                                    style: TextStyle(
-                                      fontSize: Get.width * 0.025,
+                              Container(
+                                width: Get.width * 0.1,
+                                decoration: BoxDecoration(
+                                  color: profile.color.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      profile.genderIcon,
+                                      size: 15,
                                       color: profile.color,
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      profile.age.toString(),
+                                      style: TextStyle(
+                                        fontSize: Get.width * 0.025,
+                                        color: profile.color,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    trailing: SizedBox(
-                      width: Get.width * 0.1,
-                      child: Center(
-                        child: Text(
-                          friendStatus,
+                            ],
+                          ),
+                        ],
+                      ),
+                      trailing: SizedBox(
+                        width: Get.width * 0.1,
+                        child: Center(
+                          child: Text(
+                            friendStatus == "none"
+                                ? "You"
+                                : friendStatus == "friend"
+                                    ? "Friend"
+                                    : "Not Friend",
+                          ),
                         ),
                       ),
                     ),
