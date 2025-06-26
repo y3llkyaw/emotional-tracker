@@ -39,9 +39,9 @@ class AuthController extends GetxController {
           await _auth.signInWithCredential(credential);
 
       await profilePageController.getCurrentUserProfile().then((v) {
-        Get.toNamed("/home");
+        Get.offNamed("/home");
       }).onError((error, stacTrace) {
-        Get.toNamed("/profile/name");
+        Get.offNamed("/profile/name");
       });
       // Get.snackbar("Success", "Logged in successfully!");
       isLoading.value = false;

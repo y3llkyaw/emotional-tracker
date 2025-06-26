@@ -674,14 +674,20 @@ class CommentWidget extends StatelessWidget {
                           ),
                         ),
                         InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            showLikeCountBottomSheet(
+                              likeList ?? [],
+                            );
+                          },
                           child: SizedBox(
-                            width: 10,
-                            height: 10,
-                            child: Text(
-                              snapshot.data?.length.toString() ?? "0",
-                              style: TextStyle(
-                                fontSize: Get.width * 0.02,
+                            width: 20,
+
+                            child: Center(
+                              child: Text(
+                                snapshot.data?.length.toString() ?? "0",
+                                style: TextStyle(
+                                  fontSize: Get.width * 0.02,
+                                ),
                               ),
                             ),
                           ),
