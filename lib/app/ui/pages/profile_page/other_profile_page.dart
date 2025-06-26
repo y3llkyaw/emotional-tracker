@@ -31,7 +31,6 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
   final TextStyle textStyle = const TextStyle(
     color: Colors.white,
   );
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
