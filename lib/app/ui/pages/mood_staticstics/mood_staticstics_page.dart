@@ -28,7 +28,6 @@ class _MoodStaticsticsPageState extends State<MoodStaticsticsPage> {
   );
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     journals = moodStaticsticsPageController.filteredJournal;
   }

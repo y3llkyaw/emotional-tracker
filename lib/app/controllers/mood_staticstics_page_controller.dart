@@ -81,4 +81,6 @@ class MoodStaticsticsPageController extends GetxController {
     if (stdDev < 1.8) return 'Moderated';
     return 'High';
   }
+
+  
 }

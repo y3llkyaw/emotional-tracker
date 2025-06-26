@@ -62,41 +62,47 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
                         color: widget.profile.color,
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Tooltip(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: widget.profile.color,
-                          ),
-                          triggerMode: TooltipTriggerMode.tap,
-                          message: widget.profile.genderString,
-                          child: Icon(
-                            widget.profile.genderIcon,
-                            color: widget.profile.color,
-                          ),
-                        ),
-                        SizedBox(
-                          width: Get.width * 0.02,
-                        ),
-                        Tooltip(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: widget.profile.color,
-                          ),
-                          triggerMode: TooltipTriggerMode.tap,
-                          message: "age",
-                          child: Text(
-                            widget.profile.age.toString(),
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
+                    Container(
+                      width: Get.width * 0.2,
+                      height: Get.height * 0.03,
+                      decoration: BoxDecoration(
+                        color: widget.profile.color.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Tooltip(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: widget.profile.color,
+                            ),
+                            triggerMode: TooltipTriggerMode.tap,
+                            message: widget.profile.genderString,
+                            child: Icon(
+                              widget.profile.genderIcon,
                               color: widget.profile.color,
                             ),
                           ),
-                        ),
-                      ],
+                         
+                          Tooltip(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: widget.profile.color,
+                            ),
+                            triggerMode: TooltipTriggerMode.tap,
+                            message: "age",
+                            child: Text(
+                              widget.profile.age.toString(),
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: widget.profile.color,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(
                       height: Get.height * 0.02,

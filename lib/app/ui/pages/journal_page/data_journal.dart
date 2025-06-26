@@ -276,6 +276,7 @@ class JournalPageView extends StatelessWidget {
                                       editEmoji: journalList[index].emotion,
                                       editValue: journalList[index].value,
                                     ),
+                                    transition: Transition.rightToLeft,
                                   );
                                 },
                                 icon: const Icon(CupertinoIcons.pen),
