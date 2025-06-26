@@ -91,23 +91,6 @@ class HomePage extends GetView<HomeController> {
             ),
           ),
         ),
-        // floatingActionButton: Obx(
-        //   () {
-        //     print(matchingController.isMatching.value);
-        //     return matchingController.isMatching.value
-        //         ? FloatingActionButton.small(
-        //             backgroundColor: Get.theme.colorScheme.error,
-        //             onPressed: () {
-        //               Get.to(
-        //                 () => MatchingPage(),
-        //                 transition: Transition.downToUp,
-        //               );
-        //             },
-        //             child: const AnimatedEmoji(AnimatedEmojis.eyes),
-        //           )
-        //         : Container();
-        //   },
-        // ),
         bottomNavigationBar: Builder(
           builder: (context) {
             final theme = Theme.of(context);
