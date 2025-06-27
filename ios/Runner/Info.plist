@@ -52,10 +52,11 @@
 		<key>CFBundleURLTypes</key>
 		<array>
 			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
 				<key>CFBundleURLSchemes</key>
 				<array>
-					<string>
-						com.googleusercontent.apps.52163657696-smsv37ff54i8lhurhp2fhg1l92c4gb0d.apps.googleusercontent.com</string>
+					<string>com.googleusercontent.apps.52163657696-smsv37ff54i8lhurhp2fhg1l92c4gb0d</string>
 				</array>
 			</dict>
 		</array>

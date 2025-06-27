@@ -26,7 +26,11 @@ class AuthController extends GetxController {
     isLoading.value = true;
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return null; // User canceled login
+      if (googleUser == null) {
+        // User canceled login
+        isLoading.value = false;
+        return null;
+      }
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
@@ -46,7 +50,10 @@ class AuthController extends GetxController {
       // Get.snackbar("Success", "Logged in successfully!");
       isLoading.value = false;
       return userCredential.user;
-    } catch (e) {
+    } catch (e, stack) {
+      // Print error for debugging
+      print('Google sign-in error: $e');
+      print(stack);
       Get.snackbar("Error", e.toString());
       isLoading.value = false;
       return null;

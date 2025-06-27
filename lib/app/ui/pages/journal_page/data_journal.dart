@@ -276,6 +276,7 @@ class JournalPageView extends StatelessWidget {
                                       editEmoji: journalList[index].emotion,
                                       editValue: journalList[index].value,
                                     ),
+                                    transition: Transition.downToUp,
                                   );
                                 },
                                 icon: const Icon(CupertinoIcons.pen),
@@ -301,20 +302,23 @@ class JournalPageView extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Center(
-                              child: AnimatedEmoji(
-                                journalList[journalController
-                                        .indexDataJournal.value]
-                                    .emotion,
-                                errorWidget: Text(
+                              child: Hero(
+                                tag: "emoji_${journalList[index].date}",
+                                child: AnimatedEmoji(
                                   journalList[journalController
                                           .indexDataJournal.value]
-                                      .emotion
-                                      .toUnicodeEmoji(),
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(fontSize: 100),
+                                      .emotion,
+                                  errorWidget: Text(
+                                    journalList[journalController
+                                            .indexDataJournal.value]
+                                        .emotion
+                                        .toUnicodeEmoji(),
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 100),
+                                  ),
+                                  size: 150,
+                                  source: AnimatedEmojiSource.asset,
                                 ),
-                                size: 150,
-                                source: AnimatedEmojiSource.asset,
                               ),
                             ),
                             Center(

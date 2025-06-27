@@ -137,9 +137,12 @@ class _NewJournalPageState extends State<NewJournalPage> {
                         backgroundColor: valueToColor(
                                 journalController.moodSlider.value.toInt())
                             .withOpacity(0.6),
-                        child: AnimatedEmoji(
-                          journalController.emotion.value,
-                          size: Get.width / 5,
+                        child: Hero(
+                          tag: "emoji_${widget.date}",
+                          child: AnimatedEmoji(
+                            journalController.emotion.value,
+                            size: Get.width / 5,
+                          ),
                         ),
                       ),
                       MoodSliderWidget(

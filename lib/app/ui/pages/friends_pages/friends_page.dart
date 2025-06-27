@@ -39,13 +39,11 @@ class _FriendsPageState extends State<FriendsPage> {
                 "Friends",
                 style: GoogleFonts.playfairDisplay(
                   fontWeight: FontWeight.w600,
-                  color: Colors.white,
                 ),
               ),
               SizedBox(width: Get.width * 0.03),
               const Icon(
                 CupertinoIcons.person_3_fill,
-                color: Colors.white,
               )
             ],
           ),

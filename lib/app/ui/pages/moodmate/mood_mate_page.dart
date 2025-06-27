@@ -38,7 +38,6 @@ class MoodMatePage extends StatelessWidget {
                 "MoodMate",
                 style: GoogleFonts.playfairDisplay(
                   fontWeight: FontWeight.w600,
-                  color: Colors.white
                 ),
               ),
               const Spacer(),
