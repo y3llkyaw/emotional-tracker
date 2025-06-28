@@ -400,7 +400,7 @@ class _PostWidgetState extends State<PostWidget> {
                                         _tooltipController.hide();
                                       } catch (_) {}
                                     }
-                                    showReportBottomSheet(widget.post);
+                                    showReportBottomSheet(widget.post, null);
                                   },
                                   label: const Text(
                                     "Report",

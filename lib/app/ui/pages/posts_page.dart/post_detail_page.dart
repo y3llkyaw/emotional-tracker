@@ -260,6 +260,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                             _tooltipController.hide();
                                             showReportBottomSheet(
                                               widget.postData,
+                                              null,
                                             );
                                           },
                                           label: const Text(

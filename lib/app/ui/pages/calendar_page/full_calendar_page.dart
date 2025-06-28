@@ -45,7 +45,7 @@ class _FullCalendarPageState extends State<FullCalendarPage> {
                       width: Get.width * 0.02,
                     ),
                     const Icon(
-                      CupertinoIcons.calendar_circle_fill,
+                      CupertinoIcons.calendar,
                     ),
                     const Spacer(),
                     IconButton(

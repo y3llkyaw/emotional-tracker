@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/controllers/friends_controller.dart';
 import 'package:emotion_tracker/app/controllers/noti_controller.dart';
+import 'package:emotion_tracker/app/data/models/comment.dart';
 import 'package:emotion_tracker/app/data/models/post.dart';
 import 'package:emotion_tracker/app/data/models/profile.dart';
 import 'package:emotion_tracker/app/sources/enums.dart';
@@ -28,8 +29,8 @@ class PostController extends GetxController {
   final notiController = Get.put(NotiController());
   var friends = <String>[].obs;
 
-  late DocumentSnapshot? lastPublicPostDoc = null;
-  late DocumentSnapshot? lastFriendPostDoc = null;
+  late DocumentSnapshot? lastPublicPostDoc;
+  late DocumentSnapshot? lastFriendPostDoc;
 
   @override
   void onInit() async {
@@ -341,6 +342,25 @@ class PostController extends GetxController {
     final uid = FirebaseAuth.instance.currentUser!.uid;
     final reportRef = FirebaseFirestore.instance.collection("reports").doc();
     await reportRef.set({
+      "postId": post.id,
+      "uid": uid,
+      "type": selectedReportType.value.toString(),
+      "createdAt": DateTime.now(),
+      "reason": reportBody.value,
+    }).then((value) {
+      reportBody.value = '';
+      Get.back();
+      Get.snackbar("Success", "Post reported successfully");
+    }).onError((error, stackTrace) {
+      Get.snackbar("Error", error.toString());
+    });
+  }
+
+  Future<void> reportComment(Post post, Comment comment) async {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final reportRef = FirebaseFirestore.instance.collection("reports").doc();
+    await reportRef.set({
+      "commentId": comment.id, // Assuming post.id is the comment ID
       "postId": post.id,
       "uid": uid,
       "type": selectedReportType.value.toString(),

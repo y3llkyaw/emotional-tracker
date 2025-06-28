@@ -5,7 +5,6 @@ import 'package:emotion_tracker/app/controllers/comment_controller.dart';
 import 'package:emotion_tracker/app/controllers/home_controller.dart';
 import 'package:emotion_tracker/app/controllers/journal_controller.dart';
 import 'package:emotion_tracker/app/controllers/matching_controller.dart';
-import 'package:emotion_tracker/app/controllers/other_profile_page_controller.dart';
 import 'package:emotion_tracker/app/controllers/post_controller.dart';
 import 'package:emotion_tracker/app/controllers/post_detail_page_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
@@ -263,7 +262,7 @@ void showDataBottomSheet(
   );
 }
 
-void showReportBottomSheet(Post post) {
+void showReportBottomSheet(Post post, Comment? comment) {
   final PostController postController = Get.put(PostController());
 
   Get.bottomSheet(
@@ -279,7 +278,7 @@ void showReportBottomSheet(Post post) {
         children: [
           Center(
             child: Text(
-              "Report Post",
+              "Report${comment != null ? " Comment" : " Post"}",
               style: GoogleFonts.aBeeZee(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
@@ -348,7 +347,7 @@ void showReportBottomSheet(Post post) {
                     ),
                   ),
                 ),
-              ); // Placeholder
+              );
             },
           ),
           SizedBox(height: Get.height * 0.02),
@@ -389,7 +388,11 @@ void showReportBottomSheet(Post post) {
                         postController.reportBody.value.isEmpty
                     ? null
                     : () async {
-                        await postController.reportPost(post);
+                        if (comment != null) {
+                          await postController.reportComment(post, comment);
+                        } else {
+                          await postController.reportPost(post);
+                        }
                       },
                 label: const Text(
                   "Submit Report",
@@ -521,7 +524,7 @@ void showDatingFilterSheet() {
                           borderRadius:
                               const BorderRadius.all(Radius.circular(20)),
                           color:
-                              matchingController.filterGender == "gender.female"
+                              "gender.female" == matchingController.filterGender
                                   ? Get.theme.colorScheme.error
                                   : Colors.blueGrey,
                         ),
@@ -702,33 +705,10 @@ void showDeleteCommentBottomSheet(
               : Container(),
           comment.uid != FirebaseAuth.instance.currentUser!.uid
               ? ListTile(
-                  leading:
-                      const Icon(CupertinoIcons.eye_slash, color: Colors.red),
-                  title: const Text("Hide"),
-                  onTap: () async {
-                    Get.back();
-                    await commentController.deleteComment(comment).then((v) {
-                      commentController.commentList.removeWhere(
-                        (c) => c.id == comment.id && c.postId == post.id,
-                      );
-                      Get.back();
-                      Get.snackbar(
-                        "Success",
-                        "Comment hidden successfully",
-                        duration: const Duration(
-                          milliseconds: 500,
-                        ),
-                      );
-                    });
-                  },
-                )
-              : Container(),
-          comment.uid != FirebaseAuth.instance.currentUser!.uid
-              ? ListTile(
                   leading: const Icon(Icons.report, color: Colors.red),
                   title: const Text("Report"),
                   onTap: () async {
-                    showReportBottomSheet(post);
+                    showReportBottomSheet(post, comment);
                   },
                 )
               : Container(),
