@@ -64,211 +64,218 @@ class _NewJournalPageState extends State<NewJournalPage> {
       AnimatedEmojis.joy,
     ];
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: AnimatedContainer(
           height: Get.height,
           duration: const Duration(
             milliseconds: 200,
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: SingleChildScrollView(
+            // Added to make the whole page scrollable when keyboard opens
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            children: [
+                              Title(
+                                color: Colors.black,
+                                child: Text(
+                                  "WHAT'S YOUR MOOD TODAY?",
+                                  style: TextStyle(
+                                    fontSize: Get.height * 0.021,
+                                    fontWeight: FontWeight.bold,
+                                    wordSpacing: 0,
+                                    letterSpacing: 0.3,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Spacer(),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: Get.width * 0.04),
+                            child: IconButton(
+                              onPressed: () {
+                                Get.back();
+                              },
+                              icon: const Icon(
+                                CupertinoIcons.xmark,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Title(
+                        color: Colors.black,
+                        child: Text(
+                          DateFormat('EEEE, MMMM d, y').format(widget.date),
+                          style: TextStyle(
+                            fontSize: Get.height * 0.017,
+                            fontWeight: FontWeight.w500,
+                            wordSpacing: 0,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Obx(
+                  () => Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
+                        CircleAvatar(
+                          radius: Get.width / 5,
+                          backgroundColor: valueToColor(
+                                  journalController.moodSlider.value.toInt())
+                              .withOpacity(0.6),
+                          child: Hero(
+                            tag: "emoji_${widget.date}",
+                            child: AnimatedEmoji(
+                              journalController.emotion.value,
+                              size: Get.width / 5,
+                            ),
+                          ),
+                        ),
+                        MoodSliderWidget(
+                          isColumn: true,
+                          onChange: (value) {
+                            journalController.moodSlider.value = value;
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: Get.height * 0.55,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Obx(
+                          () => JournalEmojiWidget(
+                            emojis: profilePageController
+                                    .userProfile.value!.recentEmojis.isEmpty
+                                ? basicEmojis
+                                : profilePageController
+                                    .userProfile.value!.recentEmojis,
+                            onClick: (emoji) {
+                              journalController.emotion.value = emoji;
+                            },
+                          ),
+                        ),
                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Title(
-                              color: Colors.black,
-                              child: Text(
-                                "WHAT'S YOUR MOOD TODAY?",
-                                style: TextStyle(
-                                  fontSize: Get.height * 0.021,
-                                  fontWeight: FontWeight.bold,
-                                  wordSpacing: 0,
-                                  letterSpacing: 0.3,
+                            SizedBox(
+                              height: Get.height * 0.03,
+                            ),
+                            Obx(
+                              () => Container(
+                                padding: EdgeInsets.all(Get.width * 0.04),
+                                decoration: BoxDecoration(
+                                  // color: Colors.white60,
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(20),
+                                  ),
+                                  border: Border.all(
+                                    width: 1,
+                                    color: Colors.grey.withOpacity(0.5),
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: valueToColor(journalController
+                                              .moodSlider.value
+                                              .toInt())
+                                          .withOpacity(0.4),
+                                      spreadRadius: 1,
+                                      blurRadius: 0.4,
+                                      // offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: TextField(
+                                  decoration: const InputDecoration(
+                                    hintText: "Describe how you feel today!",
+                                    border: InputBorder.none,
+                                  ),
+                                  controller: textEditingController,
+                                  maxLines: 10,
                                 ),
                               ),
                             ),
                           ],
                         ),
                         const Spacer(),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: Get.width * 0.04),
-                          child: IconButton(
-                            onPressed: () {
-                              Get.back();
+                        Obx(
+                          () => CustomButton(
+                            isLoading: journalController.isLoading.value,
+                            text: "Confirm",
+                            color: valueToColor(
+                                    journalController.moodSlider.value.toInt())
+                                .withOpacity(0.6),
+                            onPressed: () async {
+                              journalController.content.value =
+                                  textEditingController.text;
+                              journalController.date.value = widget.date;
+                              journalController.moodSlider.value =
+                                  moodSliderController.sliderValue.value.toInt();
+                              journalController
+                                  .createJournal()
+                                  .then((value) async {
+                                await profilePageController
+                                    .getCurrentUserProfile()
+                                    .then((value) {
+                                  if (!profilePageController
+                                      .userProfile.value!.recentEmojis
+                                      .contains(
+                                          journalController.emotion.value)) {
+                                    profilePageController
+                                        .userProfile.value!.recentEmojis
+                                        .add(journalController.emotion.value);
+                                    profilePageController
+                                        .userProfile.value!.recentEmojis
+                                        .removeAt(0);
+                                  }
+                                  profilePageController
+                                      .updateRecentEmojis()
+                                      .then((value) {});
+                                });
+                                if (widget.editEmoji != null) {
+                                  Get.back();
+                                  await journalController.getJournal(widget.date);
+                                  // Get.to(() => DataJournalPage(date: widget.date));
+                                }
+                                journalController.moodSlider.value = 2;
+                              });
+                              // final player = AudioPlayer();
+                              // player.play(AssetSource("audio/multi-pop.mp3"));
                             },
-                            icon: const Icon(
-                              CupertinoIcons.xmark,
-                            ),
                           ),
-                        ),
+                        )
                       ],
                     ),
-                    Title(
-                      color: Colors.black,
-                      child: Text(
-                        DateFormat('EEEE, MMMM d, y').format(widget.date),
-                        style: TextStyle(
-                          fontSize: Get.height * 0.017,
-                          fontWeight: FontWeight.w500,
-                          wordSpacing: 0,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Obx(
-                () => Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      CircleAvatar(
-                        radius: Get.width / 5,
-                        backgroundColor: valueToColor(
-                                journalController.moodSlider.value.toInt())
-                            .withOpacity(0.6),
-                        child: Hero(
-                          tag: "emoji_${widget.date}",
-                          child: AnimatedEmoji(
-                            journalController.emotion.value,
-                            size: Get.width / 5,
-                          ),
-                        ),
-                      ),
-                      MoodSliderWidget(
-                        isColumn: true,
-                        onChange: (value) {
-                          journalController.moodSlider.value = value;
-                        },
-                      ),
-                    ],
                   ),
                 ),
-              ),
-              SizedBox(
-                height: Get.height * 0.55,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Obx(
-                        () => JournalEmojiWidget(
-                          emojis: profilePageController
-                                  .userProfile.value!.recentEmojis.isEmpty
-                              ? basicEmojis
-                              : profilePageController
-                                  .userProfile.value!.recentEmojis,
-                          onClick: (emoji) {
-                            journalController.emotion.value = emoji;
-                          },
-                        ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: Get.height * 0.03,
-                          ),
-                          Obx(
-                            () => Container(
-                              padding: EdgeInsets.all(Get.width * 0.04),
-                              decoration: BoxDecoration(
-                                // color: Colors.white60,
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(20),
-                                ),
-                                border: Border.all(
-                                  width: 1,
-                                  color: Colors.grey.withOpacity(0.5),
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: valueToColor(journalController
-                                            .moodSlider.value
-                                            .toInt())
-                                        .withOpacity(0.4),
-                                    spreadRadius: 1,
-                                    blurRadius: 0.4,
-                                    // offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: TextField(
-                                decoration: const InputDecoration(
-                                  hintText: "Describe how you feel today!",
-                                  border: InputBorder.none,
-                                ),
-                                controller: textEditingController,
-                                maxLines: 10,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Spacer(),
-                      Obx(
-                        () => CustomButton(
-                          isLoading: journalController.isLoading.value,
-                          text: "Confirm",
-                          color: valueToColor(
-                                  journalController.moodSlider.value.toInt())
-                              .withOpacity(0.6),
-                          onPressed: () async {
-                            journalController.content.value =
-                                textEditingController.text;
-                            journalController.date.value = widget.date;
-                            journalController.moodSlider.value =
-                                moodSliderController.sliderValue.value.toInt();
-                            journalController
-                                .createJournal()
-                                .then((value) async {
-                              await profilePageController
-                                  .getCurrentUserProfile()
-                                  .then((value) {
-                                if (!profilePageController
-                                    .userProfile.value!.recentEmojis
-                                    .contains(
-                                        journalController.emotion.value)) {
-                                  profilePageController
-                                      .userProfile.value!.recentEmojis
-                                      .add(journalController.emotion.value);
-                                  profilePageController
-                                      .userProfile.value!.recentEmojis
-                                      .removeAt(0);
-                                }
-                                profilePageController
-                                    .updateRecentEmojis()
-                                    .then((value) {});
-                              });
-                              if (widget.editEmoji != null) {
-                                Get.back();
-                                await journalController.getJournal(widget.date);
-                                // Get.to(() => DataJournalPage(date: widget.date));
-                              }
-                              journalController.moodSlider.value = 2;
-                            });
-                            // final player = AudioPlayer();
-                            // player.play(AssetSource("audio/multi-pop.mp3"));
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
