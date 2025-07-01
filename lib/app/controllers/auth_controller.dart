@@ -44,17 +44,14 @@ class AuthController extends GetxController {
           await _auth.signInWithCredential(credential);
 
       await profilePageController.getCurrentUserProfile().then((v) {
-        Get.offNamed("/home");
+        Get.offAllNamed("/home");
       }).onError((error, stacTrace) {
-        Get.offNamed("/profile/name");
+        Get.offAllNamed("/profile/name");
       });
       // Get.snackbar("Success", "Logged in successfully!");
       isLoading.value = false;
       return userCredential.user;
-    } catch (e, stack) {
-      // Print error for debugging
-      print('Google sign-in error: $e');
-      print(stack);
+    } catch (e) {
       Get.snackbar("Error", e.toString());
       isLoading.value = false;
       return null;
