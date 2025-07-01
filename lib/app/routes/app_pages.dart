@@ -113,7 +113,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.PROFILE_EDIT_EMAIL,
-      page: () => const EmailVerifyPage(),
+      page: () => EmailVerifyPage(),
       transition: Transition.rightToLeft,
       transitionDuration: defaultTransitionDuration,
     ),

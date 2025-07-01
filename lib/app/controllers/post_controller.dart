@@ -74,6 +74,11 @@ class PostController extends GetxController {
 
   Future<void> getFriendPosts() async {
     isLoading.value = true;
+    if (friends.isEmpty) {
+      friendPosts.value = [];
+      isLoading.value = false;
+      return;
+    }
     await friPostsRef.get().then((value) async {
       final posts = await Future.wait(value.docs.map((e) async {
         var post = Post.fromJson(e.data());

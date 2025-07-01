@@ -1,14 +1,24 @@
+import 'package:emotion_tracker/app/controllers/email_verify_controller.dart';
+import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class EmailVerifyPage extends StatelessWidget {
-  const EmailVerifyPage({Key? key}) : super(key: key);
-
+  EmailVerifyPage({Key? key}) : super(key: key);
+  final emailverifyController = Get.put(EmailVerifyController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text(
+          "Email Verification",
+          style: TextStyle(
+            fontSize: Get.width * 0.05,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: Column(
         children: [
           Padding(
@@ -51,15 +61,29 @@ class EmailVerifyPage extends StatelessWidget {
                     ),
             ),
           ),
-          // Container(
-          //   margin: const EdgeInsets.symmetric(horizontal: 16),
-          //   child: const TextField(
-          //     decoration: InputDecoration(
-          //       labelText: "Email",
-          //       border: OutlineInputBorder(),
-          //     ),
-          //   ),
-          // ),
+          Obx(
+            () => emailverifyController.isEmailVerified.value
+                ? Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: CustomButton(
+                      text: "Email Verified",
+                      onPressed: () {
+                        Get.back();
+                      },
+                      color: Colors.green,
+                    ),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: CustomButton(
+                      text: "Resend Verification Email",
+                      onPressed: () {
+                        emailverifyController.sendVerificationEmail();
+                      },
+                      color: Colors.blue,
+                    ),
+                  ),
+          ),
         ],
       ),
     );
