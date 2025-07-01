@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
+import 'package:emotion_tracker/app/ui/pages/create_account_page/register_email_verified_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -121,8 +122,12 @@ class AuthController extends GetxController {
     try {
       await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
+
       Get.snackbar("Success", "Account created successfully!");
-      Get.offAllNamed("/home");
+
+      Get.offAll(
+        () => const RegisterEmailVerifiedPage(),
+      );
     } catch (e) {
       Get.snackbar("Error", e.toString());
     }

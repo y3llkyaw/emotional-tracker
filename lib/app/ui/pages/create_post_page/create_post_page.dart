@@ -46,104 +46,104 @@ class _CreatePostPageState extends State<CreatePostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text(widget.isEditing ? "Editing Post" : "Create Post"),
-        ),
-        body: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: Get.width * 0.05,
-            ),
-            child: Column(
-              children: [
-                ListTile(
-                  leading: CircleAvatar(
-                    child: AvatarPlus(
-                      "${user.uid}${user.displayName}",
-                      // size: 50,
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(widget.isEditing ? "Editing Post" : "Create Post"),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: Get.width * 0.05,
+          ),
+          child: Column(
+            children: [
+              ListTile(
+                leading: CircleAvatar(
+                  child: AvatarPlus(
+                    "${user.uid}${user.displayName}",
+                    // size: 50,
+                  ),
+                ),
+                title: Text(
+                  user.displayName ?? "User",
+                  style: TextStyle(
+                    color: profile?.color ?? Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                subtitle: Row(
+                  children: [
+                    Icon(
+                      Icons.calendar_today,
+                      size: 15,
+                      color: Colors.grey[600],
                     ),
-                  ),
-                  title: Text(
-                    user.displayName ?? "User",
-                    style: TextStyle(
-                      color: profile?.color ?? Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: Row(
-                    children: [
-                      Icon(
-                        Icons.calendar_today,
-                        size: 15,
-                        color: Colors.grey[600],
-                      ),
-                      const SizedBox(width: 5),
-                      Text(DateTime.now().toString().split(" ")[0]),
-                    ],
-                  ),
-                  trailing: Obx(
-                    () => SizedBox(
-                      width: Get.width * 0.3,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            onPressed:
-                                createPostPageController.body.value.isEmpty ||
-                                        createPostPageController.isLoading.value
-                                    ? null
-                                    : () async {
-                                        if (widget.isEditing) {
-                                          log("update post");
-                                          await createPostPageController
-                                              .updatePost(widget.post!);
-                                        } else {
-                                          log("crate post");
-                                          await createPostPageController
-                                              .createPost();
-                                        }
-                                        Get.back();
-                                      },
-                            child: Text(
-                              widget.isEditing ? "Update" : "Post",
-                              style: const TextStyle(
-                                color: Colors.white,
-                              ),
+                    const SizedBox(width: 5),
+                    Text(DateTime.now().toString().split(" ")[0]),
+                  ],
+                ),
+                trailing: Obx(
+                  () => SizedBox(
+                    width: Get.width * 0.3,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                        ],
-                      ),
+                          onPressed: createPostPageController
+                                      .body.value.isEmpty ||
+                                  createPostPageController.isLoading.value
+                              ? null
+                              : () async {
+                                  if (widget.isEditing) {
+                                    log("update post");
+                                    await createPostPageController
+                                        .updatePost(widget.post!);
+                                  } else {
+                                    log("crate post");
+                                    await createPostPageController.createPost();
+                                  }
+                                  Get.back();
+                                },
+                          child: Text(
+                            widget.isEditing ? "Update" : "Post",
+                            style: const TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                SizedBox(height: Get.height * 0.001),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
-                  child: TextField(
-                    controller: bodyController,
-                    onChanged: (value) {
-                      // value = widget.isEditing ? widget.post!.body : value;
-                      createPostPageController.body.value = value;
-                    },
-                    maxLines: 25,
-                    decoration: const InputDecoration(
-                      hintText: "What's on your mind?",
-                      border: InputBorder.none,
-                    ),
+              ),
+              SizedBox(height: Get.height * 0.001),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
+                child: TextField(
+                 
+                  onChanged: (value) {
+                    // value = widget.isEditing ? widget.post!.body : value;
+                    createPostPageController.body.value = value;
+                  },
+                  maxLines: 25,
+                  decoration: const InputDecoration(
+                    hintText: "What's on your mind?",
+                    border: InputBorder.none,
                   ),
                 ),
-                // Spacer(),
-                const SizedBox(height: 20),
-              ],
-            ),
+              ),
+              // Spacer(),
+              const SizedBox(height: 20),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

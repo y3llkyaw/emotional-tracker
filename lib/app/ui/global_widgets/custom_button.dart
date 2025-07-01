@@ -52,10 +52,10 @@ class CustomButton extends StatelessWidget {
               : Text(
                   text,
                   style: TextStyle(
-                      // wordSpacing: 4,
-                      fontSize: fontSize,
-                      color: fontColor,
-                      fontWeight: FontWeight.bold),
+                    fontSize: fontSize,
+                    color: fontColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
         ),
       ),

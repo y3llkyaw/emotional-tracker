@@ -8,6 +8,8 @@ class EmailVerifyController extends GetxController {
   RxBool isEmailVerified =
       (FirebaseAuth.instance.currentUser?.emailVerified ?? false).obs;
   Timer? _timer;
+  Timer? _resendTimer;
+  RxInt resendCooldown = 60.obs;
 
   @override
   void onInit() {
@@ -18,11 +20,25 @@ class EmailVerifyController extends GetxController {
       isEmailVerified.value =
           FirebaseAuth.instance.currentUser?.emailVerified ?? false;
     });
+    _startResendCooldown();
+  }
+
+  void _startResendCooldown() {
+    _resendTimer?.cancel();
+    resendCooldown.value = 60;
+    _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (resendCooldown.value > 0) {
+        resendCooldown.value--;
+      } else {
+        _resendTimer?.cancel();
+      }
+    });
   }
 
   @override
   void onClose() {
     _timer?.cancel();
+    _resendTimer?.cancel();
     super.onClose();
   }
 
@@ -32,6 +48,7 @@ class EmailVerifyController extends GetxController {
       await user.sendEmailVerification().then((v) {
         Get.snackbar("Verification Email Sent",
             "Please check your email to verify your account.");
+        _startResendCooldown();
       }).catchError((e) {
         Get.snackbar("Error", "Failed to send verification email!");
         log(

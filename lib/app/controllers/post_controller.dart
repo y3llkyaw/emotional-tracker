@@ -29,8 +29,8 @@ class PostController extends GetxController {
   final notiController = Get.put(NotiController());
   var friends = <String>[].obs;
 
-  late DocumentSnapshot? lastPublicPostDoc;
-  late DocumentSnapshot? lastFriendPostDoc;
+  late DocumentSnapshot? lastPublicPostDoc = null;
+  late DocumentSnapshot? lastFriendPostDoc = null;
 
   @override
   void onInit() async {
@@ -73,7 +73,6 @@ class PostController extends GetxController {
   }
 
   Future<void> getFriendPosts() async {
-    isLoading.value = true;
     if (friends.isEmpty) {
       friendPosts.value = [];
       isLoading.value = false;
@@ -90,15 +89,12 @@ class PostController extends GetxController {
       if (value.docs.isNotEmpty) {
         lastFriendPostDoc = value.docs.last;
       }
-      isLoading.value = false;
     }).onError((error, stackTrace) {
       Get.snackbar("Error", error.toString());
-      isLoading.value = false;
     });
   }
 
   loadmoreFriendPosts() async {
-    isLoading.value = true;
     if (lastFriendPostDoc == null) {
       isLoading.value = false;
       return;
@@ -119,12 +115,10 @@ class PostController extends GetxController {
     }).onError((error, stackTrace) {
       // Get.snackbar("Error", error.toString());
       log("Error loading more friend posts: $error");
-      isLoading.value = false;
     });
   }
 
   Future<void> getPublicPost() async {
-    isLoading.value = true;
     await pubPostsRef.get().then((value) async {
       final posts = await Future.wait(value.docs.map((e) async {
         var post = Post.fromJson(e.data());
@@ -136,19 +130,15 @@ class PostController extends GetxController {
       if (value.docs.isNotEmpty) {
         lastPublicPostDoc = value.docs.last;
       }
-      isLoading.value = false;
     }).onError((error, stackTrace) {
       Get.snackbar("Error", error.toString());
-      isLoading.value = false;
     });
   }
 
   loadmorePublicPosts() async {
-    if (isLoading.value) return;
-    isLoading.value = true;
     if (lastFriendPostDoc == null) {
       isLoading.value = false;
-      return;
+      return [];
     }
     await pubPostsRef
         .startAfterDocument(lastPublicPostDoc!)
@@ -165,10 +155,8 @@ class PostController extends GetxController {
       if (value.docs.isNotEmpty) {
         lastPublicPostDoc = value.docs.last;
       }
-      isLoading.value = false;
     }).onError((error, stackTrace) {
       log("Error loading more friend posts: $error");
-      isLoading.value = false;
     });
   }
 

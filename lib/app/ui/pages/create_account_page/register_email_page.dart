@@ -92,9 +92,8 @@ class _RegisterEmailPageState extends State<RegisterEmailPage> {
                     const Text("I agree to terms & conditions"),
                   ],
                 ),
-
                 const Text(
-                  "By continuing, I agree to Alan Mind's Terms of Service. I also consent to the use of my app usage data to improve MindPeers and the relevancy of advertising campaigns for the app. Alan Mind will never use your journal entries: only you can read them. See our Privacy Policy for more information",
+                  "By continuing, I agree to Mood Mate's Terms of Service. I also consent to the use of my app usage data to improve MindPeers and the relevancy of advertising campaigns for the app. Mood Mate will never use your journal entries: only you can read them. See our Privacy Policy for more information",
                   style: TextStyle(fontSize: 12),
                 ),
                 SizedBox(
@@ -165,18 +164,18 @@ class _RegisterEmailPageState extends State<RegisterEmailPage> {
                         );
                         return;
                       }
-                      await authController.registerWithEmail(
-                        emailController.text,
-                        passwordController.text,
-                      );
+
+                      await authController
+                          .registerWithEmail(
+                            emailController.text,
+                            passwordController.text,
+                          )
+                          .then((v) {});
                     },
                     isDisabled: !registerEmailController.isAgreed.value ||
                         authController.isLoading.value,
                   ),
                 ),
-                // const SizedBox(),
-                // const SizedBox(),
-                // const SizedBox(),
               ],
             ),
           ),

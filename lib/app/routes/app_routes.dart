@@ -14,6 +14,8 @@ class AppRoutes {
   static const PROFILE_EDIT_EMAIL = '/profile/update/email';
   static const PROFILE_EDIT_BIRTHDAY = '/profile/update/birthday';
 
+// Email Verify Middleware
+  static const EMAIL_VERIFY = '/email-verify';
 
   // Auth Middleware
   static const LOGIN = '/login';

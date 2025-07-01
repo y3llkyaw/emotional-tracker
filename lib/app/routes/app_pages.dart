@@ -6,11 +6,13 @@ import 'package:emotion_tracker/app/bindings/profile_setup_binding.dart';
 import 'package:emotion_tracker/app/bindings/profile_update_binding.dart';
 import 'package:emotion_tracker/app/bindings/register_binding.dart';
 import 'package:emotion_tracker/app/routes/middlewares/auth_middleware.dart';
+import 'package:emotion_tracker/app/routes/middlewares/email_verify_middleware.dart';
 import 'package:emotion_tracker/app/routes/middlewares/local_auth_middleware.dart';
 import 'package:emotion_tracker/app/routes/middlewares/profile_middleware.dart';
 import 'package:emotion_tracker/app/ui/pages/calendar_page/calendar_page.dart';
 import 'package:emotion_tracker/app/ui/pages/create_account_page/create_account_page.dart';
 import 'package:emotion_tracker/app/ui/pages/create_account_page/register_email_page.dart';
+import 'package:emotion_tracker/app/ui/pages/create_account_page/register_email_verified_page.dart';
 import 'package:emotion_tracker/app/ui/pages/friends_pages/friends_add_page.dart';
 import 'package:emotion_tracker/app/ui/pages/landing_page/landing_page.dart';
 import 'package:emotion_tracker/app/ui/pages/local_auth_page/local_auth_page.dart';
@@ -54,6 +56,7 @@ class AppPages {
       transitionDuration: defaultTransitionDuration,
       middlewares: [
         AuthMiddleware(),
+        EmailVerifyMiddleware(),
         ProfileMiddleware(),
         LocalAuthMiddleware(),
       ],
@@ -131,5 +134,12 @@ class AppPages {
       transition: Transition.rightToLeft,
       transitionDuration: defaultTransitionDuration,
     ),
+    GetPage(
+      name: AppRoutes.EMAIL_VERIFY,
+      page: () =>  RegisterEmailVerifiedPage(),
+      transition: Transition.rightToLeft,
+      transitionDuration: defaultTransitionDuration,
+    ),
+   
   ];
 }
