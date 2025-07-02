@@ -2,6 +2,7 @@ import 'package:emotion_tracker/app/controllers/auth_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/form_container_widget.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/outline_button.dart';
+import 'package:emotion_tracker/app/ui/pages/login_page/forget_password_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -19,7 +20,7 @@ class LoginPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'Login ',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 20),
         ),
       ),
       body: SingleChildScrollView(
@@ -83,8 +84,14 @@ class LoginPage extends StatelessWidget {
                   },
                 ),
               ),
-              SizedBox(
-                height: Get.height * 0.03,
+              TextButton(
+                onPressed: () {
+                  Get.to(() => const ForgetPasswordPage());
+                },
+                child: const Text(
+                  "Forgot Password ?",
+                  style: TextStyle(color: Colors.blue),
+                ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -113,7 +120,7 @@ class LoginPage extends StatelessWidget {
                 () => OutlineButtonWidget(
                   isLoading: authController.isLoading.value,
                   asset: "assets/image/google.svg",
-                  text: "Sign Up with Google",
+                  text: "Sign In with Google",
                   onPressed: () async {
                     authController.signInWithGoogle();
                   },

@@ -25,12 +25,11 @@ class _RegisterEmailPageState extends State<RegisterEmailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: false,
+        centerTitle: true,
         title: const Text(
           'Register With Email',
           style: TextStyle(
             fontSize: 20,
-            fontWeight: FontWeight.bold,
           ),
         ),
       ),
