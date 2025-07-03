@@ -15,11 +15,9 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   final TextEditingController emailController = TextEditingController();
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     emailController.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,7 +86,6 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                     });
                   }),
               SizedBox(height: Get.height * 0.025),
-              SizedBox(height: Get.height * 0.03),
             ],
           ),
         ),
