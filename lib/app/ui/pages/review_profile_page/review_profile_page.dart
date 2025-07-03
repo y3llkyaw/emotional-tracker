@@ -220,12 +220,16 @@ class _ReviewProfilePageState extends State<ReviewProfilePage> {
                 children: [
                   CustomButton(
                     isLoading: reviewProfilePageController.isLoading.value,
-                    // isDisabled: reviewProfilePageController.isLoading.value,
-                    text: "Skip",
-                    color: const Color.fromARGB(255, 128, 128, 128)
-                        .withOpacity(0.5),
-                    onPressed: () {
-                      Get.back();
+                    color: Get.theme.colorScheme.error,
+                    isDisabled: reviewProfilePageController.reviewText.value
+                        .trim()
+                        .isEmpty,
+                    text: "Review",
+                    onPressed: () async {
+                      if (_reviewTxtController.text.isNotEmpty) {
+                        await reviewProfilePageController.giveReview(
+                            widget.uid, _reviewTxtController.text);
+                      }
                     },
                   ),
                   SizedBox(
@@ -233,17 +237,12 @@ class _ReviewProfilePageState extends State<ReviewProfilePage> {
                   ),
                   CustomButton(
                     isLoading: reviewProfilePageController.isLoading.value,
-                    color: Get.theme.colorScheme.error,
-                    isDisabled: reviewProfilePageController.reviewText.value
-                        .trim()
-                        .isEmpty,
-                    text: "Review",
-                    onPressed: () async {
-                      // print("object");
-                      if (_reviewTxtController.text.isNotEmpty) {
-                        await reviewProfilePageController.giveReview(
-                            widget.uid, _reviewTxtController.text);
-                      }
+                    // isDisabled: reviewProfilePageController.isLoading.value,
+                    text: "Skip",
+                    color: const Color.fromARGB(255, 128, 128, 128)
+                        .withOpacity(0.5),
+                    onPressed: () {
+                      Get.back();
                     },
                   ),
                   SizedBox(

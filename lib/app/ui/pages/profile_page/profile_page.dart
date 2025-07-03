@@ -200,62 +200,51 @@ class _ProfilePageState extends State<ProfilePage> {
                       FirebaseAuth.instance.currentUser!.displayName ??
                       '',
                   style: TextStyle(
-                    color: profilePageController.userProfile.value?.gender ==
-                            "Gender.Female"
-                        ? Colors.pink
-                        : Colors.blue,
+                    color: profilePageController.userProfile.value!.color,
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
+                Container(
+                  width: Get.width * 0.2,
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  decoration: BoxDecoration(
+                    color: profilePageController.userProfile.value?.color
+                            .withOpacity(0.1) ??
+                        Colors.grey,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
                       profilePageController.userProfile.value != null
-                          ? "${DateTime.now().difference(profilePageController.userProfile.value!.dob.toDate()).inDays ~/ 365}"
-                          : "",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color:
-                            profilePageController.userProfile.value?.gender ==
-                                    "Gender.Female"
-                                ? Colors.pink
-                                : Colors.blue,
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.all(10),
-                      width: 2,
-                      color: Colors.grey,
-                      height: 20,
-                    ),
-                    profilePageController.userProfile.value != null
-                        ? Tooltip(
-                            triggerMode: TooltipTriggerMode.tap,
-                            message: profilePageController
-                                .userProfile.value!.gender
-                                .split(".")
-                                .last,
-                            child: Icon(
-                              profilePageController.userProfile.value!.gender ==
-                                      "Gender.Male"
-                                  ? Icons.male
-                                  : profilePageController
-                                              .userProfile.value!.gender ==
-                                          "Gender.Female"
-                                      ? Icons.female
-                                      : CupertinoIcons.question_circle,
-                              color: profilePageController
-                                          .userProfile.value!.gender ==
+                          ? Tooltip(
+                              triggerMode: TooltipTriggerMode.tap,
+                              message: profilePageController
+                                  .userProfile.value!.genderString,
+                              child: Icon(
+                                  profilePageController
+                                      .userProfile.value!.genderIcon,
+                                  color: profilePageController
+                                      .userProfile.value!.color),
+                            )
+                          : Container(),
+                      Text(
+                        profilePageController.userProfile.value != null
+                            ? "${DateTime.now().difference(profilePageController.userProfile.value!.dob.toDate()).inDays ~/ 365}"
+                            : "",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color:
+                              profilePageController.userProfile.value?.gender ==
                                       "Gender.Female"
                                   ? Colors.pink
                                   : Colors.blue,
-                            ),
-                          )
-                        : Container(),
-                  ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

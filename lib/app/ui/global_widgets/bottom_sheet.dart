@@ -524,12 +524,12 @@ void showDatingFilterSheet() {
                           borderRadius:
                               const BorderRadius.all(Radius.circular(20)),
                           color:
-                              "gender.female" == matchingController.filterGender
+                              matchingController.filterGender == "gender.female"
                                   ? Get.theme.colorScheme.error
                                   : Colors.blueGrey,
                         ),
                         child: Icon(
-                          Icons.female,
+                          Icons.male,
                           color: Colors.white,
                           size: Get.width * 0.2,
                         ),
@@ -541,47 +541,7 @@ void showDatingFilterSheet() {
                         "Female",
                         style: GoogleFonts.aBeeZee(
                           fontWeight: FontWeight.bold,
-                          color: matchingController.filterGender == Icons.female
-                              ? Get.theme.colorScheme.error
-                              : Colors.grey,
-                          fontSize: 20,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    matchingController.filterGender.value = "gender.both";
-                  },
-                  child: Column(
-                    children: [
-                      Container(
-                        width: Get.width * 0.25,
-                        height: Get.width * 0.25,
-                        decoration: BoxDecoration(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(20)),
-                          color:
-                              matchingController.filterGender == "gender.both"
-                                  ? Get.theme.colorScheme.error
-                                  : Colors.blueGrey,
-                        ),
-                        child: Icon(
-                          Icons.transgender,
-                          color: Colors.white,
-                          size: Get.width * 0.2,
-                        ),
-                      ),
-                      SizedBox(
-                        height: Get.height * 0.015,
-                      ),
-                      Text(
-                        "Both",
-                        style: GoogleFonts.aBeeZee(
-                          fontWeight: FontWeight.bold,
-                          color: matchingController.filterGender ==
-                                  Icons.transgender
+                          color: matchingController.filterGender == Icons.male
                               ? Get.theme.colorScheme.error
                               : Colors.grey,
                           fontSize: 20,
@@ -646,10 +606,8 @@ void showDatingFilterSheet() {
                 child: CustomButton(
                   // fontSize: 10,
                   color: Get.theme.colorScheme.error,
-                  text: "Find Your MoodMate",
+                  text: "Find",
                   onPressed: () async {
-                    // await matchingController.startMatching(
-                    //     profilePageController.userProfile.value!);
                     matchingController.findingMatchPerson();
                     Get.back();
                   },

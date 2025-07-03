@@ -247,18 +247,6 @@ class PostController extends GetxController {
         .doc(postId)
         .delete()
         .then((value) {
-      Get.snackbar(
-        "Success",
-        "Post deleted successfully",
-        icon: const Icon(Icons.delete, color: Colors.green),
-        snackPosition: SnackPosition.BOTTOM,
-        instantInit: false,
-        shouldIconPulse: true,
-        maxWidth: Get.width * 0.7,
-        duration: const Duration(
-          milliseconds: 800,
-        ),
-      );
       publicPosts.removeWhere((p) => p.id == postId);
       isDeleting.value = false;
     }).onError((error, stackTrace) {

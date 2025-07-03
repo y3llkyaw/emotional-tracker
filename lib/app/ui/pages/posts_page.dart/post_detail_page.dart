@@ -201,14 +201,13 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                           ),
                                           onPressed: () async {
                                             _tooltipController.hide();
-                                            Get.to(
-                                              () => CreatePostPage(
-                                                isEditing: true,
-                                                post: widget.postData,
-                                              ),
-                                              transition:
-                                                  Transition.rightToLeft,
-                                            );
+                                            await postController
+                                                .deletePost(
+                                              widget.postData.id!,
+                                            )
+                                                .then((value) {
+                                              Get.back(); // Close the post detail page
+                                            });
                                           },
                                           label: const Text(
                                             "Delete",
