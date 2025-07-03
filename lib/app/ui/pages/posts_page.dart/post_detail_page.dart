@@ -40,11 +40,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
   @override
   void initState() {
     super.initState();
-    // Avoid calling getComments synchronously in initState to prevent rebuild issues.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      commentController.commentList.clear();
-      commentController.getComments(widget.postData);
-    });
+    commentController.commentList.clear();
+    commentController.getComments(widget.postData);
   }
 
   @override
