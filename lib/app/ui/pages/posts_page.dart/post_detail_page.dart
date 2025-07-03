@@ -40,8 +40,11 @@ class _PostDetailPageState extends State<PostDetailPage> {
   @override
   void initState() {
     super.initState();
-    commentController.commentList.clear();
-    commentController.getComments(widget.postData);
+    // Avoid calling getComments synchronously in initState to prevent rebuild issues.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      commentController.commentList.clear();
+      commentController.getComments(widget.postData);
+    });
   }
 
   @override
@@ -201,13 +204,14 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                           ),
                                           onPressed: () async {
                                             _tooltipController.hide();
-                                            await postController
-                                                .deletePost(
-                                              widget.postData.id!,
-                                            )
-                                                .then((value) {
-                                              Get.back(); // Close the post detail page
-                                            });
+                                            Get.to(
+                                              () => CreatePostPage(
+                                                isEditing: true,
+                                                post: widget.postData,
+                                              ),
+                                              transition:
+                                                  Transition.rightToLeft,
+                                            );
                                           },
                                           label: const Text(
                                             "Delete",
