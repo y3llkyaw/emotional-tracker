@@ -1,5 +1,4 @@
 import 'package:cool_dropdown/cool_dropdown.dart';
-import 'package:cool_dropdown/models/cool_dropdown_item.dart';
 import 'package:datepicker_dropdown/datepicker_dropdown.dart';
 import 'package:datepicker_dropdown/order_format.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
@@ -29,44 +28,7 @@ class _ProfileNamePageState extends State<ProfileNamePage> {
   final DropdownController<int> yearController = DropdownController();
   var gender = Gender.Male;
 
-  // Generate lists for days, months, and years
-  final List<Map<String, dynamic>> days = List.generate(
-    31,
-    (index) =>
-        {"label": "${index + 1}".padLeft(2, '0'), "value": "${index + 1}"},
-  );
-
-  final List<Map<String, dynamic>> months = [
-    {"label": "January", "value": "01"},
-    {"label": "February", "value": "02"},
-    {"label": "March", "value": "03"},
-    {"label": "April", "value": "04"},
-    {"label": "May", "value": "05"},
-    {"label": "June", "value": "06"},
-    {"label": "July", "value": "07"},
-    {"label": "August", "value": "08"},
-    {"label": "September", "value": "09"},
-    {"label": "October", "value": "10"},
-    {"label": "November", "value": "11"},
-    {"label": "December", "value": "12"},
-  ];
-
-  final List<Map<String, dynamic>> years = List.generate(
-    100,
-    (index) => {
-      "label": "${DateTime.now().year - index}",
-      "value": "${DateTime.now().year - index}"
-    },
-  );
-
   @override
-
-  /// Clean up the used resources.
-  ///
-  /// This method is called when this object is removed from the tree permanently.
-  /// It is not called when the object is moved to another location in the tree.
-  ///
-  /// It is safe to call [dispose] multiple times.
   void dispose() {
     super.dispose();
     nameController.dispose();
@@ -82,7 +44,6 @@ class _ProfileNamePageState extends State<ProfileNamePage> {
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: Get.width * 0.06,
-            // vertical: Get.height * 0.03,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -116,6 +77,9 @@ class _ProfileNamePageState extends State<ProfileNamePage> {
               ),
               Center(
                 child: GenderPickerWithImage(
+                  size: 60,
+                  maleImage: const AssetImage("assets/image/male.png"),
+                  femaleImage: const AssetImage("assets/image/female.png"),
                   onChanged: (value) {
                     profileSetupController.gender.value = value!;
                   },
@@ -125,53 +89,71 @@ class _ProfileNamePageState extends State<ProfileNamePage> {
                     fontWeight: FontWeight.bold,
                   ),
                   unSelectedGenderTextStyle: const TextStyle(
-                    // color: Colors.black,
                     fontWeight: FontWeight.normal,
                   ),
                   equallyAligned: true,
                   showOtherGender: false,
                 ),
               ),
-              // textfield goes here
               FormContainerWidget(
                 hintText: "Your Name",
                 controller: nameController,
               ),
-              SafeArea(
-                child: DropdownDatePicker(
-                  dateformatorder: OrderFormat.YDM, // default is myd
-                  inputDecoration: InputDecoration(
-                    enabledBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey, width: 1.0),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
+              Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: Get.width * 0.02,
+                      ),
+                      const Text(
+                        "Birthday",
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: Get.height * 0.02,
+                  ),
+                  SafeArea(
+                    child: DropdownDatePicker(
+                      dateformatorder: OrderFormat.YDM, // default is myd
+                      inputDecoration: InputDecoration(
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.grey, width: 1.0),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      isDropdownHideUnderline: true,
+                      isFormValidator: true,
+                      startYear: 1900,
+                      endYear: 2020,
+                      width: 10,
+
+                      onChangedDay: (value) => profileSetupController
+                          .day.value = int.parse(value.toString()),
+                      onChangedMonth: (value) => profileSetupController
+                          .month.value = int.parse(value.toString()),
+                      onChangedYear: (value) => profileSetupController
+                          .year.value = int.parse(value.toString()),
+                      boxDecoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey, width: 1.0),
+                      ),
+                      showDay: true,
+                      dayFlex: 2,
+                      hintDay: 'Day',
+                      hintMonth: 'Month',
+                      hintYear: 'Year',
+                      hintTextStyle: const TextStyle(color: Colors.grey),
                     ),
                   ),
-                  isDropdownHideUnderline: true,
-                  isFormValidator: true,
-                  startYear: 1900,
-                  endYear: 2020,
-                  width: 10,
-                  selectedDay: 14,
-                  selectedMonth: 10,
-                  selectedYear: 1993,
-                  onChangedDay: (value) => profileSetupController.day.value =
-                      int.parse(value.toString()),
-                  onChangedMonth: (value) => profileSetupController
-                      .month.value = int.parse(value.toString()),
-                  onChangedYear: (value) => profileSetupController.year.value =
-                      int.parse(value.toString()),
-                  boxDecoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey, width: 1.0),
-                  ),
-                  showDay: true,
-                  dayFlex: 2,
-                  hintDay: 'Day',
-                  hintMonth: 'Month',
-                  hintYear: 'Year',
-                  hintTextStyle: const TextStyle(color: Colors.grey),
-                ),
+                ],
               ),
               Obx(
                 () => CustomButton(

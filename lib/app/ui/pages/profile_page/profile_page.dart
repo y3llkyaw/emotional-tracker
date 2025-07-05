@@ -214,7 +214,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     decoration: BoxDecoration(
                       color:
-                          userProfile?.color?.withOpacity(0.1) ?? Colors.grey,
+                          userProfile?.color.withOpacity(0.1) ?? Colors.grey,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
