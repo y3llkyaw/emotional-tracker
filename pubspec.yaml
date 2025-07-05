@@ -65,6 +65,8 @@ dependencies:
   el_tooltip: ^2.2.1
   fluttertoast: ^8.2.12
   connectivity_plus: ^5.0.2
+  flutter_holo_date_picker: ^2.0.0
+  datepicker_dropdown: ^0.1.7
   # animated_rating_bar: ^0.0.8
 
 dev_dependencies:

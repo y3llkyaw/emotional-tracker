@@ -1,10 +1,13 @@
 import 'package:cool_dropdown/cool_dropdown.dart';
 import 'package:cool_dropdown/models/cool_dropdown_item.dart';
+import 'package:datepicker_dropdown/datepicker_dropdown.dart';
+import 'package:datepicker_dropdown/order_format.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_setup_controller.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/custom_button.dart';
 import 'package:emotion_tracker/app/ui/global_widgets/form_container_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gender_picker/source/enums.dart';
 import 'package:gender_picker/source/gender_picker.dart';
 import 'package:get/get.dart';
@@ -105,10 +108,10 @@ class _ProfileNamePageState extends State<ProfileNamePage> {
               ),
               // Image goes here
               Center(
-                child: Image(
-                  image: const AssetImage('assets/image/detective.png'),
-                  height: Get.width * 0.4,
-                  width: Get.width * 0.4,
+                child: SizedBox(
+                  height: Get.height * 0.17,
+                  child:
+                      SvgPicture.asset('assets/image/undraw_profile-data.svg'),
                 ),
               ),
               Center(
@@ -134,69 +137,42 @@ class _ProfileNamePageState extends State<ProfileNamePage> {
                 hintText: "Your Name",
                 controller: nameController,
               ),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  SizedBox(
-                    width: Get.width * 0.25,
-                    child: CoolDropdown(
-                      resultOptions: const ResultOptions(
-                        placeholder: "Year",
-                      ),
-                      dropdownList: years.map((month) {
-                        return CoolDropdownItem<String>(
-                          label: month["label"],
-                          value: month["value"],
-                        );
-                      }).toList(),
-                      controller: DropdownController(),
-                      onChange: (value) {
-                        // print(value.runtimeType);
-                        profileSetupController.year.value =
-                            int.parse(value.toString());
-                      },
+              SafeArea(
+                child: DropdownDatePicker(
+                  dateformatorder: OrderFormat.YDM, // default is myd
+                  inputDecoration: InputDecoration(
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  SizedBox(
-                    width: Get.width * 0.25,
-                    child: CoolDropdown(
-                        resultOptions: const ResultOptions(
-                          placeholder: "Month",
-                        ),
-                        dropdownList: months.map((month) {
-                          return CoolDropdownItem<String>(
-                            label: month["label"],
-                            value: month["value"],
-                          );
-                        }).toList(),
-                        controller: DropdownController(),
-                        onChange: (value) {
-                          profileSetupController.month.value =
-                              int.parse(value.toString());
-                        }),
+                  isDropdownHideUnderline: true,
+                  isFormValidator: true,
+                  startYear: 1900,
+                  endYear: 2020,
+                  width: 10,
+                  selectedDay: 14,
+                  selectedMonth: 10,
+                  selectedYear: 1993,
+                  onChangedDay: (value) => profileSetupController.day.value =
+                      int.parse(value.toString()),
+                  onChangedMonth: (value) => profileSetupController
+                      .month.value = int.parse(value.toString()),
+                  onChangedYear: (value) => profileSetupController.year.value =
+                      int.parse(value.toString()),
+                  boxDecoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey, width: 1.0),
                   ),
-                  SizedBox(
-                    width: Get.width * 0.25,
-                    child: CoolDropdown(
-                        resultOptions: const ResultOptions(
-                          placeholder: "Date",
-                        ),
-                        dropdownList: List.generate(
-                            31,
-                            (index) => CoolDropdownItem(
-                                  label: (index + 1).toString(),
-                                  value: index + 1,
-                                )).toList(),
-                        controller: DropdownController(),
-                        onChange: (value) {
-                          profileSetupController.day.value =
-                              int.parse(value.toString());
-                        }),
-                  ),
-                ],
+                  showDay: true,
+                  dayFlex: 2,
+                  hintDay: 'Day',
+                  hintMonth: 'Month',
+                  hintYear: 'Year',
+                  hintTextStyle: const TextStyle(color: Colors.grey),
+                ),
               ),
-
               Obx(
                 () => CustomButton(
                   text: "Continue",

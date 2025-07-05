@@ -253,7 +253,7 @@ class _TempChatPageState extends State<TempChatPage>
                             child: ElevatedButton.icon(
                               style: ButtonStyle(
                                 backgroundColor: WidgetStateProperty.all(
-                                  Colors.red,
+                                  Colors.redAccent.withOpacity(0.8),
                                 ),
                               ),
                               onPressed: () {},
@@ -283,11 +283,11 @@ class _TempChatPageState extends State<TempChatPage>
                               ),
                               onPressed: () {},
                               label: const Text(
-                                "follow",
+                                "Like",
                                 style: TextStyle(color: Colors.white),
                               ),
                               icon: const Icon(
-                                Icons.person_add,
+                                CupertinoIcons.heart_fill,
                                 color: Colors.white,
                               ),
                             ),
