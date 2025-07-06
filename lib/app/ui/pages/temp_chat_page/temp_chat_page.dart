@@ -6,6 +6,7 @@ import 'package:chat_bubbles/bubbles/bubble_normal.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emotion_tracker/app/controllers/chat_controller.dart';
 import 'package:emotion_tracker/app/controllers/matching_controller.dart';
+import 'package:emotion_tracker/app/controllers/other_profile_page_controller.dart';
 import 'package:emotion_tracker/app/controllers/profile_page_controller.dart';
 import 'package:emotion_tracker/app/controllers/temp_chat_controller.dart';
 import 'package:emotion_tracker/app/data/models/message.dart';
@@ -54,7 +55,7 @@ class _TempChatPageState extends State<TempChatPage>
   final profilePageController = Get.put(ProfilePageController());
   final chatController = Get.put(ChatController());
   final tempChatController = Get.put(TempChatController());
-
+  final controller = Get.put(OtherProfilePageController());
   final messageController = TextEditingController();
   late Timer _countdownTimer;
   var otherId = "";
@@ -121,7 +122,7 @@ class _TempChatPageState extends State<TempChatPage>
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text("Chat Page"),
+          title: const Text("Moodmate Chat"),
           actions: [
             IconButton(
               onPressed: () {},
@@ -145,28 +146,26 @@ class _TempChatPageState extends State<TempChatPage>
                     bottomRight: Radius.circular(10),
                   ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SizedBox(
-                      width: Get.width * 0.2,
-                      child: FutureBuilder(
-                        future: profilePageController.getProfileByUid(otherUid),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return SpinKitCircle(
-                              itemBuilder: (context, index) => DecoratedBox(
-                                decoration: BoxDecoration(
-                                  color:
-                                      index.isEven ? Colors.red : Colors.green,
-                                ),
-                              ),
-                              size: 15.0,
-                            );
-                          } else if (snapshot.hasData) {
-                            final profile = snapshot.data as Profile;
-                            return Column(
+                child: FutureBuilder(
+                  future: profilePageController.getProfileByUid(otherUid),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return SpinKitCircle(
+                        itemBuilder: (context, index) => DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: index.isEven ? Colors.red : Colors.green,
+                          ),
+                        ),
+                        size: 15.0,
+                      );
+                    } else if (snapshot.hasData) {
+                      final profile = snapshot.data as Profile;
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          SizedBox(
+                            width: Get.width * 0.2,
+                            child: Column(
                               children: [
                                 CircleAvatar(
                                   radius: 20,
@@ -183,14 +182,10 @@ class _TempChatPageState extends State<TempChatPage>
                                       triggerMode: TooltipTriggerMode.tap,
                                       message: "age",
                                       child: Text(
-                                        _calculateAge(profile.dob.toDate())
-                                            .toString(),
+                                        profile.age.toString(),
                                         style: GoogleFonts.aBeeZee(
                                           fontWeight: FontWeight.bold,
-                                          color:
-                                              profile.gender == "Gender.Female"
-                                                  ? Colors.pink
-                                                  : Colors.blue,
+                                          color: profile.color,
                                         ),
                                       ),
                                     ),
@@ -198,104 +193,92 @@ class _TempChatPageState extends State<TempChatPage>
                                     Container(
                                       width: 1,
                                       height: 20,
-                                      color: profile.gender == "Gender.Female"
-                                          ? Colors.pink
-                                          : Colors.blue,
+                                      color: profile.color,
                                     ),
                                     SizedBox(width: Get.width * 0.015),
                                     Tooltip(
                                       triggerMode: TooltipTriggerMode.tap,
-                                      message: profile.gender == "Gender.Male"
-                                          ? "Male"
-                                          : profile.gender == "Gender.Female"
-                                              ? "Female"
-                                              : "Other",
+                                      message: profile.genderString,
                                       child: Icon(
-                                        profile.gender == "Gender.Male"
-                                            ? Icons.male
-                                            : profile.gender == "Gender.Female"
-                                                ? Icons.female
-                                                : Icons.transgender,
-                                        color: profile.gender == "Gender.Female"
-                                            ? Colors.pink
-                                            : Colors.blue,
+                                        profile.genderIcon,
+                                        color: profile.color,
                                       ),
                                     ),
                                   ],
                                 ),
                               ],
-                            );
-                          } else {
-                            return Container();
-                          }
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      width: Get.width * 0.4,
-                      child: Obx(
-                        () => Text(
-                          tempChatController.timeRemaining.value,
-                          style: GoogleFonts.aBeeZee(
-                            fontSize: 15,
+                            ),
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: Get.width * 0.3,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
                           SizedBox(
-                            height: Get.height * 0.035,
-                            child: ElevatedButton.icon(
-                              style: ButtonStyle(
-                                backgroundColor: WidgetStateProperty.all(
-                                  Colors.redAccent.withOpacity(0.8),
+                            width: Get.width * 0.4,
+                            child: Obx(
+                              () => Text(
+                                tempChatController.timeRemaining.value,
+                                style: GoogleFonts.aBeeZee(
+                                  fontSize: 15,
                                 ),
-                              ),
-                              onPressed: () {},
-                              label: const Text(
-                                "report",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              icon: const Icon(
-                                CupertinoIcons.exclamationmark_bubble,
-                                color: Colors.white,
+                                textAlign: TextAlign.center,
                               ),
                             ),
                           ),
                           SizedBox(
-                            height: Get.height * 0.01,
-                          ),
-                          SizedBox(
-                            height: Get.height * 0.035,
-                            child: ElevatedButton.icon(
-                              style: ButtonStyle(
-                                backgroundColor: WidgetStateProperty.all(
-                                  Get.theme.colorScheme.error,
+                            width: Get.width * 0.3,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                SizedBox(
+                                  height: Get.height * 0.035,
+                                  child: ElevatedButton.icon(
+                                    style: ButtonStyle(
+                                      backgroundColor: WidgetStateProperty.all(
+                                        Colors.redAccent.withOpacity(0.8),
+                                      ),
+                                    ),
+                                    onPressed: () {},
+                                    label: const Text(
+                                      "report",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    icon: const Icon(
+                                      CupertinoIcons.exclamationmark_bubble,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                 ),
-                                // textStyle: TextStyle()
-                              ),
-                              onPressed: () {},
-                              label: const Text(
-                                "Like",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              icon: const Icon(
-                                CupertinoIcons.heart_fill,
-                                color: Colors.white,
-                              ),
+                                SizedBox(
+                                  height: Get.height * 0.01,
+                                ),
+                                buildFriendButton(profile),
+                                // SizedBox(
+                                //   height: Get.height * 0.035,
+                                //   child: ElevatedButton.icon(
+                                //     style: ButtonStyle(
+                                //       backgroundColor: WidgetStateProperty.all(
+                                //         Get.theme.colorScheme.error,
+                                //       ),
+                                //       // textStyle: TextStyle()
+                                //     ),
+                                //     onPressed: () {},
+                                //     label: const Text(
+                                //       "Like",
+                                //       style: TextStyle(color: Colors.white),
+                                //     ),
+                                //     icon: const Icon(
+                                //       CupertinoIcons.heart_fill,
+                                //       color: Colors.white,
+                                //     ),
+                                //   ),
+                                // ),
+                              ],
                             ),
                           ),
                         ],
-                      ),
-                    ),
-                  ],
+                      );
+                    }
+                    return Container();
+                  },
                 ),
               ),
               Expanded(
@@ -310,6 +293,8 @@ class _TempChatPageState extends State<TempChatPage>
                         return _buildMessageWidget(message, index, otherUid);
                       } else if (message.type == "sticker") {
                         return _buildStickerWidget(message, index, otherUid);
+                      } else if (message.type == "system") {
+                        return _buildSystemMessage(message);
                       }
                       return Container();
                     },
@@ -584,7 +569,6 @@ class _TempChatPageState extends State<TempChatPage>
             BubbleNormal(
               onLongPress: () {},
               color: Colors.grey.withOpacity(0.5),
-              // color: Get.theme.cardColor,
               textStyle: const TextStyle(
                 fontWeight: FontWeight.w500,
               ),
@@ -605,8 +589,6 @@ class _TempChatPageState extends State<TempChatPage>
                   Text(
                     timeago.format(
                       chatController.messages[index].timestamp.toDate(),
-                      // locale:
-                      //     'en_short', // Optional: use short format like '5m' instead of '5 minutes ago'
                     ),
                     style: TextStyle(
                       fontSize: 12,
@@ -635,6 +617,86 @@ class _TempChatPageState extends State<TempChatPage>
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSystemMessage(Message message) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            message.message,
+            style: const TextStyle(
+              fontWeight: FontWeight.w400,
+            ),
+            // style: Get.textTheme.titleSmall,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildFriendButton(Profile profile) {
+    controller.friendStatusStream(profile.uid);
+    return Obx(
+      () {
+        String buttonText = "Like";
+        var buttonIcon = CupertinoIcons.heart_fill;
+        Color btnColor = Colors.blue;
+        var onClick = () async {
+          await controller.addFriend(profile);
+        };
+        switch (controller.friendStatus.value) {
+          case "friend":
+            buttonIcon = CupertinoIcons.person_2_fill;
+            buttonText = "friends";
+            btnColor = Colors.grey;
+            onClick = () async {};
+            break;
+          case "requested":
+            buttonIcon = CupertinoIcons.heart_fill;
+            buttonText = "Liked";
+            btnColor = Colors.grey;
+            onClick = () async {};
+            break;
+          case "pending":
+            buttonIcon = CupertinoIcons.heart_fill;
+            buttonText = "Like Back";
+            btnColor = Colors.blueAccent;
+            onClick = () async {
+              await controller.confirmRequest(profile);
+            };
+            break;
+          default:
+        }
+
+        ButtonStyle buttonStyle = ButtonStyle(
+          backgroundColor: WidgetStateProperty.all(btnColor),
+          iconColor: WidgetStateProperty.all(Colors.white),
+        );
+
+        return SizedBox(
+          height: Get.height * 0.035,
+          width: Get.width * 0.3,
+          child: ElevatedButton.icon(
+            style: buttonStyle,
+            onPressed: onClick,
+            label: Text(
+              buttonText,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+              ),
+            ),
+            icon: Icon(
+              buttonIcon,
+              color: Colors.white,
+            ),
+          ),
+        );
+      },
     );
   }
 }
