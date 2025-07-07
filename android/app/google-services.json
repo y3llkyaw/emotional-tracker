@@ -93,6 +93,42 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:52163657696:android:c49729fd7a1742e71b3585",
+        "android_client_info": {
+          "package_name": "com.y3llhtetkyaw.emotion_tracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "52163657696-ei3c4p0tsbj56pvgk76ph2k9stefr4sk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCh6SvCc6LmXAVOMvD-ouzuoTyTBX65aZk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "52163657696-ei3c4p0tsbj56pvgk76ph2k9stefr4sk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "52163657696-smsv37ff54i8lhurhp2fhg1l92c4gb0d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.emotionTracker"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"
