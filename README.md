@@ -1,77 +1,73 @@
-# MoodMate
+# 🌙 MoodMate – Mood Tracker & Chat App
 
-MoodMate is a cross-platform mobile application designed to help users track and manage their moods. Available on both Android and iOS, MoodMate provides a simple and intuitive way to record daily moods, view mood trends, and receive insights based on mood patterns.
+A Flutter app that helps users **track moods**, **analyze emotional trends**, and **connect with others** through a smart **matching algorithm** and **real-time chat**.  
+Built with **Flutter** and **Firebase**, featuring a clean UI, animations, and light/dark themes.  
 
-## Features
+---
 
-- **Mood Tracking:** Record your mood with a simple and easy-to-use interface.
-- **Mood Journal:** Add notes and details about your mood entries.
-- **Mood Trends:** View graphs and trends to understand your mood patterns over time.
-- **Reminders:** Set daily reminders to log your mood.
-- **Secure:** Protect your data with optional biometric authentication.
+## ✨ Features
 
-<!-- ## Screenshots
+- 📅 **Mood Tracking**
+  - Rate your daily mood (1–5)
+  - Write journal-style entries
+  - View mood history with charts
 
-![MoodMate Screenshot](path_to_screenshot_1)
-![MoodMate Screenshot](path_to_screenshot_2) -->
+- 🔍 **Smart Matching**
+  - Match with users in real-time
+  - Filters for preferences
+  - Automatic redirection to chat on match
 
-## Installation
+- 💬 **Real-Time Chat**
+  - Emoji & sticker messaging
+  - Time-limited chat sessions
+  - Online/offline status
+  - Auto-exit when one user leaves
 
-### Android
+- 🎨 **UI/UX**
+  - Dark & Light themes
+  - Smooth transitions & animations
+  - Modern, minimal design
 
-1. Download the APK from the [releases page](https://github.com/y3llkyaw/emotional-tracker/releases).
-2. Open the APK file on your device.
-3. Follow the on-screen instructions to install the app.
+- 🔔 **Notifications**
+  - New match alerts
+  - Chat message notifications
 
-<!-- ### iOS
+---
 
-1. Download the app from the [App Store](link_to_app_store).
-2. Open the app on your device.
-3. Follow the on-screen instructions to set up the app. -->
+## 🛠️ Tech Stack
 
-## Usage
+- **Frontend**: Flutter (Dart), GetX for state management  
+- **Backend**: Firebase Auth, Firestore, Realtime Database, Cloud Messaging  
+- **Storage**: GetStorage / Hive (local), Firebase Cloud Storage (optional for images)  
+- **Other**: Lottie animations, animated_emoji, avatar_plus  
 
-1. Open the MoodMate app.
-2. Log your mood by selecting the appropriate mood icon and adding any additional notes.
-3. View your mood history and trends in the "History" tab.
-4. Set reminders in the settings to receive daily notifications to log your mood.
+---
 
-## Development
+## 📸 Screenshots
+
+| Mood Tracker | Mood Chart | Matching | Chat |
+|--------------|------------|----------|------|
+| ![Mood](screenshots/mood.png) | ![Chart](screenshots/chart.png) | ![Match](screenshots/match.png) | ![Chat](screenshots/chat.png) |
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
+- Flutter SDK installed
+- Firebase project configured
+- Emulator or physical device
 
-- [Flutter](https://flutter.dev/docs/get-started/install) (for cross-platform development)
-- [Android Studio](https://developer.android.com/studio) or [Xcode](https://developer.apple.com/xcode/) (for native development)
+### Installation
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/moodmate.git
 
-### Getting Started
+# Navigate into the project
+cd moodmate
 
-1. Clone the repository:
+# Get dependencies
+flutter pub get
 
-   ```bash
-   git clone https://github.com/yourusername/moodmate.git
-   cd moodmate
-   ```
-
-2. Install dependencies:
-
-   ```bash
-   flutter pub get
-   ```
-
-3. Run the app:
-`bash
-    flutter run
-    `
-<!--
-
-## Contributing
-
-Contributions are welcome! Please read the [contributing guidelines](link_to_contributing_guidelines) first. -->
-
-<!-- ## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. -->
-
-## Contact
-
-If you have any questions or feedback, feel free to reach out at [yellhtetkyaw.developer@gmail.com](mailto:yellhtetkyaw.developer@gmail.com).
+# Run the app
+flutter run
