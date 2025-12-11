@@ -29,7 +29,7 @@ Built with **Flutter** and **Firebase**, featuring a clean UI, animations, and l
   - Modern, minimal design
 
 - 🔔 **Notifications**
-  - New match alerts
+  - Match alerts
   - Chat message notifications
 
 ---
@@ -38,16 +38,8 @@ Built with **Flutter** and **Firebase**, featuring a clean UI, animations, and l
 
 - **Frontend**: Flutter (Dart), GetX for state management  
 - **Backend**: Firebase Auth, Firestore, Realtime Database, Cloud Messaging  
-- **Storage**: GetStorage / Hive (local), Firebase Cloud Storage (optional for images)  
+- **Storage**: GetStorage
 - **Other**: Lottie animations, animated_emoji, avatar_plus  
-
----
-
-## 📸 Screenshots
-
-| Mood Tracker | Mood Chart | Matching | Chat |
-|--------------|------------|----------|------|
-| ![Mood](screenshots/mood.png) | ![Chart](screenshots/chart.png) | ![Match](screenshots/match.png) | ![Chat](screenshots/chat.png) |
 
 ---
 
